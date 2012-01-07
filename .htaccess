@@ -1,0 +1,83 @@
+####
+##	@ Author		YAY!Scripting
+##	@ Date created		30-08-2010
+##	@ File			.htaccess
+##	
+##	@ Use			Do not edit
+####
+
+
+# /* == Rewrites */
+
+	# engine
+	rewriteEngine on
+
+	# force SSL
+	#RewriteCond %{HTTPS} off
+	#RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L,QSA]
+	
+	# www
+	#
+	# Note: when force SSL is turned on, change http:// to https:// in the following lines
+	#
+	RewriteCond %{HTTP_HOST} !^www.
+	RewriteRule (.*) http://www.%{HTTP_HOST}%{REQUEST_URI} [R=301,L,QSA]
+	
+	# minifier
+	RewriteRule (.+)\.css$ /system/com/compressCSS.php?file=$1.css [L,QSA]
+	RewriteRule (.+)\.js$ /system/com/compressJS.php?file=$1.js [L,QSA]
+	
+	# thumbs
+	RewriteCond %{QUERY_STRING} thumb
+	RewriteRule ^/(.+?)\.(png|jpg|jpeg|gif|bmp)$ /system/com/thumb.php?src=$1.$2 [L,QSA,NC]
+	
+	# force download
+	RewriteCond %{QUERY_STRING} download
+	RewriteRule ^/(.+?)\.(png|jpg|jpeg|gif|bmp)$ /system/com/download.php?src=$1.$2 [L,QSA,NC]
+	
+	# image cache
+	RewriteRule (.+)\.(png|jpg|jpeg|gif|bmp)$ /system/com/imagecache.php?file=$1&ext=$2 [L,QSA]
+	
+	# favicon
+	RewriteRule ^/favicon\.ico$ /system/com/imagecache.php?file=application/resources/image/favicon&ext=ico [L]
+	RewriteRule ^/appicon\.ico$ /system/com/imagecache.php?file=application/resources/image/appicon&ext=png [L]
+	
+	# com
+	RewriteRule ^/com/([^./]+)\.json$ /index.php?com=true&a=$1 [QSA]
+	RewriteRule ^/com/([^./]+)/([^./]+)\.json$ /index.php?com=true&a=$1&b=$2 [QSA]
+
+	# Dont rewrite external .html-files, these can be used as documentation.
+	RewriteCond %{REQUEST_URI} ^/system/external/(.+?)\.html
+	RewriteRule .* - [S=8]
+	
+	# Apache + IIS(/?) will accept this line of code.
+	RewriteRule ^/?([^./]+).html$ /index.php?a=$1 [QSA]
+	RewriteRule ^/?([^./]+)/([^./]+).html$ /index.php?a=$1&b=$2 [QSA]
+	RewriteRule ^/?([^./]+)/([^./]+)/([^./]+).html$ /index.php?a=$1&b=$2&c=$3 [QSA]
+	RewriteRule ^/?([^./]+)/([^./]+)/([^./]+)/([^./]+).html$ /index.php?a=$1&b=$2&c=$3&d=$4 [QSA]
+	RewriteRule ^/?([^./]+)/([^./]+)/([^./]+)/([^./]+)/([^./]+).html$ /index.php?a=$1&b=$2&c=$3&d=$4&e=$5 [QSA]
+	RewriteRule ^/?([^./]+)/([^./]+)/([^./]+)/([^./]+)/([^./]+)/([^./]+).html$ /index.php?a=$1&b=$2&c=$3&d=$4&e=$5&f=$6 [QSA]
+	RewriteRule ^/?([^./]+)/([^./]+)/([^./]+)/([^./]+)/([^./]+)/([^./]+)/([^./]+).html$ /index.php?a=$1&b=$2&c=$3&d=$4&e=$5&f=$6&g=$7 [QSA]
+	RewriteRule ^/?([^./]+)/([^./]+)/([^./]+)/([^./]+)/([^./]+)/([^./]+)/([^./]+)/([^./]+).html$ /index.php?a=$1&b=$2&c=$3&d=$4&e=$5&f=$6&g=$7&h=$8 [QSA]
+	
+
+# /* == File restriction */
+
+	RewriteCond %{REQUEST_URI} ^/application/(.*?)$
+	RewriteCond %{REQUEST_URI} !^/application/com/(.*?)$
+	RewriteCond %{REQUEST_URI} !^/application/resources/(.*?)$
+	RewriteRule ^/(.*?)$ /index.php?a=home [QSA]
+	
+	RewriteCond %{REQUEST_URI} ^/application/com/cronjob(.*?)$
+	RewriteRule ^/(.*?)$ /index.php?a=home [QSA]
+	
+	RewriteCond %{REQUEST_URI} ^/system/(.*?)$
+	RewriteCond %{REQUEST_URI} !^/system/com/(.*?)$
+	RewriteCond %{REQUEST_URI} !^/system/external/(.*?)$
+	RewriteRule ^/(.*?)$ /index.php?a=home [QSA]
+	
+	RewriteCond %{REQUEST_URI} ^/cache/(.*?)$
+	#RewriteRule ^/(.*?)$ /index.php?a=home [QSA]
+	
+	RewriteCond %{REQUEST_URI} ^/cronjob.php$
+	RewriteRule ^/(.*?)$ /index.php?a=home [QSA]

@@ -1,0 +1,1 @@
+This view is an admin-view. You can log out <a href="/admin/logout.html">here</a>.
