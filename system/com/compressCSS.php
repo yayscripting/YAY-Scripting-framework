@@ -1,6 +1,7 @@
 <?php
 /** minifies all CSS-files
  * 
+ * You can use LESS(http://leafo.net/lessphp/docs/) in any CSS-file, it will automatically get parsed(if the right config is set)
  * This file is automatically called when a css-file is beeing loaded.
  * This file does not use the core, that would be a huge overhead.
  * 
