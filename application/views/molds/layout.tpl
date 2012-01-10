@@ -2,7 +2,7 @@
 <html lang="nl">
 	<head>
 		
-		<title>YAY!Scripting Framework Example</title>
+		<title>{$title}</title>
 		
 		<link rel="stylesheet" href="/application/resources/style/normalize.css" />
 		<link rel="stylesheet" href="/application/resources/style/default.css" />
