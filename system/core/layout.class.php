@@ -61,6 +61,12 @@ class YS_Layout Extends Smarty
  	 * @var string
  	 */
  	private $mold = 'layout';
+ 	/** Title 
+	 *  
+	 * @access private 
+	 * @var string 
+	 */ 
+	 private $pageTitle;
  	
 	/** Constructor
 	 * 
@@ -141,6 +147,7 @@ class YS_Layout Extends Smarty
 		}
 		
 		// assign content to smarty
+		$this->assign('title', $this->pageTitle);
 		$this->assign('headers', $this->build_headers());
 		$this->assign('content', $content);
 		
@@ -264,6 +271,22 @@ class YS_Layout Extends Smarty
 		$prefix = "/application/resources/style/".(($this->environment->get() !== false) ? $this->environment->folder . "/" : "pages/");		
 		$this->set_header("link", array("rel" => "stylesheet", "type" => "text/css", "href" => (!$base ? $prefix : '') .$name.".css"));
 		
+	}
+	
+	/** Sets a new page-title.
+	 * 
+	 * Still needs to be parsed at the mold ({$title})
+	 * 
+	 * @access public
+	 * @param string $title New title
+	 * @return void
+	 * 
+	 */
+ 	public function setTitle($title)
+ 	{
+ 		
+ 		$this->pageTitle = $title;
+ 		
 	}
 	
 	/** Sets a new head-element
