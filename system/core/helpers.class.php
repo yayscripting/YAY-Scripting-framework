@@ -119,7 +119,7 @@ class YS_Helper
 		// load config/helpers
 		global $_config, $_helpers;
 		
-		$this->config = $_config;
+		$this->config = YS_Config::Load();
 		$this->helpers = $_helpers;
 		
 	}
