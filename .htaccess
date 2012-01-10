@@ -1,11 +1,3 @@
-####
-##	@ Author		YAY!Scripting
-##	@ Date created		30-08-2010
-##	@ File			.htaccess
-##	
-##	@ Use			Do not edit
-####
-
 
 # /* == Rewrites */
 
@@ -66,18 +58,18 @@
 	RewriteCond %{REQUEST_URI} ^/application/(.*?)$
 	RewriteCond %{REQUEST_URI} !^/application/com/(.*?)$
 	RewriteCond %{REQUEST_URI} !^/application/resources/(.*?)$
-	RewriteRule ^/(.*?)$ /index.php?a=home [QSA]
+	RewriteRule ^/(.*?)$ /index.php?a=error&b=403 [QSA]
 	
 	RewriteCond %{REQUEST_URI} ^/application/com/cronjob(.*?)$
-	RewriteRule ^/(.*?)$ /index.php?a=home [QSA]
+	RewriteRule ^/(.*?)$ /index.php?a=error&b=403 [QSA]
 	
 	RewriteCond %{REQUEST_URI} ^/system/(.*?)$
 	RewriteCond %{REQUEST_URI} !^/system/com/(.*?)$
 	RewriteCond %{REQUEST_URI} !^/system/external/(.*?)$
-	RewriteRule ^/(.*?)$ /index.php?a=home [QSA]
+	RewriteRule ^/(.*?)$ /index.php?a=error&b=403 [QSA]
 	
 	RewriteCond %{REQUEST_URI} ^/cache/(.*?)$
-	#RewriteRule ^/(.*?)$ /index.php?a=home [QSA]
+	#RewriteRule ^/(.*?)$ /index.php?a=error&b=403 [QSA]
 	
 	RewriteCond %{REQUEST_URI} ^/cronjob.php$
-	RewriteRule ^/(.*?)$ /index.php?a=home [QSA]
+	RewriteRule ^/(.*?)$ /index.php?a=error&b=403 [QSA]
