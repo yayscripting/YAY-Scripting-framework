@@ -10,6 +10,9 @@ class Home Extends YS_Controller
 	public function index()
 	{
 		
+		/* Changes the title set in runtime.php */
+		$this->layout->setTitle('Admin panel | YAY!Scripting Framework');
+		
 		
 		/* 
 			When a view will be called right now, the mold admin.tpl will be used(/views/molds/admin.tpl). 
