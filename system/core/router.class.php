@@ -93,6 +93,16 @@ class YS_Router Extends YS_Core
 		$env = YS_Environment::Load();
 		$environment = $env->get();
 		
+		// check for error-'controller'
+		if (isset($_GET['a']) && $_GET['a'] == 'error') {
+			
+			$error = intval((substr($_GET['b'], 0, 8) == 'trigger_') ? substr($_GET['b'], 8) : $_GET['b']);
+			
+			$this->error->http_error($error, true);
+			return;
+			
+		}
+		
 		// switch all GET-(location-)vars 1 spot. (a/b/d/f/e/f/g/h)
 		if ($environment !== false)
 			require_once 'system/functions/router.handleGET.inc.php';
