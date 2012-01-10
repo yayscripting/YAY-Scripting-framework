@@ -9,9 +9,11 @@
  */
  
 try {
- 
+ 	
+ 	$config = YS_Config::Load();
+ 	
 	// compress
-	if ($_config->compress->html === true) {
+	if ($config->compress->html === true) {
 		
 		// check if headers allow minifying
 		$headers = headers_list();
