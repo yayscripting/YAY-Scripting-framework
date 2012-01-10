@@ -105,7 +105,7 @@ class YS_Environment extends YS_Singleton
 		
 		foreach ($this->config->environment as $name => $values) {
 			
-			if ($values->enabled == true && strtolower($_GET['a']) == strtolower($values->trigger)) {
+			if ($values->enabled == true && (isset($_GET['a']) && strtolower($_GET['a']) == strtolower($values->trigger))) {
 				
 				$this->cache = $name;
 				return $name;
