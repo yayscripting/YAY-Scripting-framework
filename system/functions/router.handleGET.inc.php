@@ -9,13 +9,13 @@
  */
  
 // set up special GET
-$_GET['a'] = $_GET['b'];
-$_GET['b'] = $_GET['c'];
-$_GET['c'] = $_GET['d'];
-$_GET['d'] = $_GET['e'];
-$_GET['e'] = $_GET['f'];
-$_GET['f'] = $_GET['g'];
-$_GET['g'] = $_GET['h'];
+$_GET['a'] = (isset($_GET['b'])) ? $_GET['b'] : null;
+$_GET['b'] = (isset($_GET['c'])) ? $_GET['c'] : null;
+$_GET['c'] = (isset($_GET['d'])) ? $_GET['d'] : null;
+$_GET['d'] = (isset($_GET['e'])) ? $_GET['e'] : null;
+$_GET['e'] = (isset($_GET['f'])) ? $_GET['f'] : null;
+$_GET['f'] = (isset($_GET['g'])) ? $_GET['g'] : null;
+$_GET['g'] = (isset($_GET['h'])) ? $_GET['h'] : null;
 $_GET['h'] = null;
 
 // delete empty values
