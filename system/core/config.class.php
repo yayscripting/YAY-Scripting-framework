@@ -23,6 +23,13 @@ class YS_Config extends YS_Singleton
 	 */
 	private $config = null;
 	
+	/** remember the CWD, because this will be reset after the script-flow has been finished.
+	 * 
+	 * @access private
+	 * @var string
+	 */
+	private $cwd;
+	 
 	/** Checks the singleton
 	 * 
 	 * @access public
@@ -32,7 +39,9 @@ class YS_Config extends YS_Singleton
 	{
 		
 		parent::__construct();
+		
 		$this->config = (object)array();// new stdClass()
+		$this->cwd    = getcwd();
 		
 	}
 	
@@ -50,13 +59,13 @@ class YS_Config extends YS_Singleton
 		
 		if (empty($this->config->{strtolower($name)})) {
 			
-			if (!file_Exists('application/config/'.strtolower($name).'.cfg.php')) {
+			if (!file_Exists($this->cwd . '/application/config/'.strtolower($name).'.cfg.php')) {
 				
 				throw (new ConfigException('Could not load config file: '.strtolower($name).'.'));
 				
 			}
 				
-			$this->config->$name = (object)require('application/config/'.strtolower($name).'.cfg.php');
+			$this->config->$name = (object)require($this->cwd . '/application/config/'.strtolower($name).'.cfg.php');
 			
 		}
 		
