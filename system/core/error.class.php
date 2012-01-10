@@ -14,6 +14,14 @@
  */
 class YS_Error extends YS_Singleton
 {
+	 	 				
+	
+	/** Config holder
+	 * 
+	 * @access private
+	 * @var object
+	 */
+ 	private $config;
 	
 	/** Constructor
 	 * 
@@ -28,23 +36,26 @@ class YS_Error extends YS_Singleton
 		// check singleton
 		parent::__construct();
 		
-		global $_config;
+		
+		// load config
+		$this->config = YS_Config::Load();
 		
 		// register error_handler
-		if ($_config->error->register_error_handler === true) {
+		if ($this->config->error->register_error_handler === true) {
 			
-			error_reporting($_config->error->error_handler_types);
-			set_error_handler(array($this, "errorHandler"), $_config->error->error_handler_types);
+			error_reporting($this->config->error->error_handler_types);
+			set_error_handler(array($this, "errorHandler"), $this->config->error->error_handler_types);
 			
 		}
 		
 			
 		// register exception_handler
-		if ($_config->error->register_exception_handler === true) {
+		if ($this->config->error->register_exception_handler === true) {
 			
 			set_Exception_handler(array($this, "exceptionHandler"));
 			
 		}
+		
 		
 		// register fatal errors
 		//if ($_config->error->fatal_error_handler === true) /* Unimplented function, errors at E_NOTICE also.
@@ -80,6 +91,7 @@ class YS_Error extends YS_Singleton
 		
 		// stacktrace
 		$this->stacktrace();
+		flush();
 		
 		// context
 		if ($context != null) {
@@ -87,12 +99,9 @@ class YS_Error extends YS_Singleton
 			// delete context variables
 			unset($context['_helpers'], $context['helpers'], $context['sql'], $context['config'], $context['_config']);
 			
-			// delete password-like things from the variable
-			$this->hidePassword($context);
-			
 			// echo
 			echo "<br />Variables: <br />\n<pre>";
-			echo htmlspecialchars(print_r($context, true));
+			echo htmlspecialchars(preg_replace('/[(pass(w|word)?|user(name)?)] => [a-zA-Z0-9\ \'\"]+/', '[\\1] => HIDDEN', print_r($context, true)));
 			echo '</pre>';
 			
 		}
@@ -123,44 +132,6 @@ class YS_Error extends YS_Singleton
 		}
 		
 	}
-	
-	/** Deletes the values of password-like strings.
-	 * 
-	 * @access private
-	 * @var &array Array to change
-	 * @return void
-	 */
-	public function hidePassword(&$array)
-	{
-		
-		foreach($array as $key => &$value) {
-			
-			if (is_object($value))
-				$value = (array)$value;
-			
-			if (is_array($value)) {
-				
-				$this->hidePassword(&$value);
-					
-			} else {
-				continue;
-				switch ($key) {
-					
-					case 'password':
-					case 'pass':
-					case 'passw':
-					case 'user':
-					case 'username':
-						$value = "HIDDEN";				
-					
-				}
-				
-			}
-			
-		}
-		
-	}
-	
 	/** Exception handler
 	 * 
 	 * Will be triggered when an uncaught exception occures. This function shows the error-message, and shuts down the script.
@@ -195,7 +166,7 @@ class YS_Error extends YS_Singleton
 	{
 		
 		// get backtrace
-		$backtrace = debug_backtrace(~ DEBUG_BACKTRACE_IGNORE_OBJECT & DEBUG_BACKTRACE_IGNORE_ARGS);
+		$backtrace = debug_backtrace(~ DEBUG_BACKTRACE_IGNORE_ARGS);
 		
 		// get names
 		foreach($backtrace as $tracePlace){
