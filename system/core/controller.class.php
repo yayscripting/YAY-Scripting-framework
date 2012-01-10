@@ -146,6 +146,29 @@ class YS_Controller
 		
 	}
 	
+	/** Loads a class-file
+	 * 
+	 * Class found in /application/classes/NAME.class.php. As a constructor-parameter this class has been given, to contact the helpers/config/models.
+	 * Class name should be the lowerstring version of the first parameter, but only with the first letter being capitalized.
+	 * 
+	 * @access public
+	 * @param string $className Name of the class(file)
+	 * @return object Created class
+	 */
+ 	public function loadClass($className)
+ 	{
+ 		
+ 		// include class
+ 		require 'application/classes/'.$className.'.class.php';
+ 		
+ 		
+ 		// create new object
+ 		$object = ucfirst(strtolower($className));
+ 		
+ 		return new $object($this);
+ 		
+	}
+	
 	/** Loads a core-file
 	 * 
 	 * This function accepts any number of parameters, which are the names of the model.
