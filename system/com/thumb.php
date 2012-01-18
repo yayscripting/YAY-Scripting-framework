@@ -66,8 +66,17 @@ chdir('system/external/thumb');
 /** Required by i.php(system/externa/thumb/i.php). */
 define('LOAD', true);
 
-/** Include the file that performs the thumbnailing */
+
+// headers
+header("Cache-control: max-age");
+header("Expires: max-age");
+ob_start();
+
+// include the blackbox
 require 'i.php';
+
+// send the checksum of the image.
+header("ETag: ".sha1(ob_get_contents()));
 
 /** Loads the error-page (404)
  * 
