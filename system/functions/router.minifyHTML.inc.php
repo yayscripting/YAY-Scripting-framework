@@ -24,7 +24,7 @@ try {
 				return;
 		
 			// other MIME-type	
-			if (preg_match('/Content\-type: (^text\/html)/', $header))
+			if (trim(preg_replace('/Content\-type: (.+?)/', '\\1', $header)) !== 'text/html')
 				return;
 				
 		}
