@@ -86,10 +86,6 @@ class YS_Core
 				
 		// save
 		$this->config = YS_Config::Load();
-		
-		// make it global. 
-		global $_config;
-		$_config = $this->config;
 	
 	}
 		

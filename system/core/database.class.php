@@ -61,8 +61,7 @@ class YS_Database
 	{
 		
 		// get config
-		global $_config;
-		$this->_config = $_config;
+		$this->_config = YS_Config::Load();
 		
 		// basic value
 		$this->transaction = false;
@@ -625,13 +624,13 @@ class DatabaseData
 	public function decrypt($colum, $parameters)
 	{
 		
-		global $_helpers;
+		$helper = YS_Helper::Load();
 		
 		foreach($this->rows as &$row) {
 			
 			if (!empty($row->$colum)) {
 				
-				$row->$colum = $_helpers->encryption->decrypt($row->$colum, 
+				$row->$colum = $helper->encryption->decrypt($row->$colum, 
 						$parameters['salt'],  
 						$parameters['key'], 
 						empty($parameters['algorithm']) 	? MCRYPT_RIJNDAEL_256	: $parameters['algorithm'], 

@@ -82,7 +82,9 @@ class YS_Error extends YS_Singleton
 		// check type
 		$name = self::getType($type);
 		
-	
+		// send headers
+		header("Content-type: text/html");
+		
 		// show error
 		echo '<strong>'.$name.'</strong>: '. $error . ' <br />'. "\n";
 		if ($errFile != null || $errLine != null)
@@ -143,6 +145,9 @@ class YS_Error extends YS_Singleton
 	 */
 	public function exceptionHandler($exception)
 	{
+		
+		// send headers
+		header("Content-type: text/html");
 		
 		echo "Uncaught exception of type '".get_class($exception)."': ".htmlspecialchars($exception->getMessage()).".<br /><br />\n";
 		
@@ -294,6 +299,7 @@ class YS_Error extends YS_Singleton
 		
 		// send header
 		header("HTTP/1.1 ".$type." ".$errorCodes[$type]);
+		header("Content-type: text/html");
 		
 		// load matching view & quit?
 		if ($view) {

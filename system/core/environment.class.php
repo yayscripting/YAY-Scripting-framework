@@ -40,9 +40,8 @@ class YS_Environment extends YS_Singleton
 	public function __construct()
 	{
 		
-		global $_config;
-		$this->config = $_config;
-		
+		// load config
+		$this->config = YS_Config::Load();
 		
 		// checks singleton
 		parent::__construct();

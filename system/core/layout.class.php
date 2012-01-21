@@ -80,11 +80,8 @@ class YS_Layout Extends Smarty
 		parent::__construct();
 		
 		// get config/helpers
-		global $_config;
-		global $_helpers;
-		
-		$this->config  = $_config;
-		$this->helpers = $_helpers;
+		$this->config  = YS_Config::Load();
+		$this->helpers = YS_Helpers::Load();
 		
 		// smarty debug
 		$this->debugging = (($this->config->script->debug_mode === true) ? ((!empty($_GET['debug'])) ? true : false) : false);

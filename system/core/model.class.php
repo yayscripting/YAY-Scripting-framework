@@ -80,10 +80,8 @@ class YS_ModelController
 		$this->sql = $sql;
 		
 		// helpers/config
-		global $_helpers, $_config;
-		
-		$this->helpers = $_helpers;
-		$this->config  = $_config;
+		$this->helpers = YS_Helpers::Load();
+		$this->config  = YS_Config::Load();
 		
 		// other parameters
 		$this->table		= $parameters['table'];

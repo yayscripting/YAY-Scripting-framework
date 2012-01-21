@@ -39,11 +39,7 @@ class YS_Helpers extends YS_Singleton
 	{
 		
 		// config
-		global $_config, $_helpers;
-		$this->config = $_config;
-		
-		// helper
-		$_helpers = $this;
+		$this->config = YS_Config::Load();
 		
 	}
 	
@@ -117,10 +113,8 @@ class YS_Helper
 	{
 		
 		// load config/helpers
-		global $_config, $_helpers;
-		
 		$this->config = YS_Config::Load();
-		$this->helpers = $_helpers;
+		$this->helpers = YS_Helpers::Load();
 		
 	}
 	
