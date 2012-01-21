@@ -313,15 +313,12 @@ class YS_Error extends YS_Singleton
 		// load matching view & quit?
 		if ($view) {
 			
-			global $_layout;
 			
 			// load new layout?
-			if (empty($_layout)) {
-				
+			if (!class_exists("YS_Layout"))
 				require_once 'system/core/layout.class.php';
-				$_layout = new YS_Layout();
 				
-			}
+			$layout = YS_Layout::Load();
 			
 			$_layout->assign('error', $errorMessage);
 			$_layout->view('errors/'.$type.'.tpl');

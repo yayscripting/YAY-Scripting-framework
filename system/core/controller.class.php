@@ -92,17 +92,14 @@ class YS_Controller
 		// load smarty
 		try {
 			
-			$this->load('layout');
+			require_once 'system/core/layout.class.php';
+			$this->layout = YS_Layout::Load();
 		
 		} catch (exception $ex) {
 			
 			die("De layout-parser kon niet geladen worden.<br /><br /><em>".$ex->errorMessage()."</em>");
 			
 		}
-		
-		// load layout-parser
-		global $_layout;
-		$_layout = $this->layout;
 		
 		// executes the runtime
 		if (file_exists('application/runtime.php'))

@@ -17,8 +17,15 @@ require_once('system/external/Smarty/Smarty.class.php');
  * @package core
  * @subpackage Controller
  */
-class YS_Layout Extends Smarty 
+class YS_Layout Extends YS_Singleton
 {
+	
+	/** Smarty
+	 * 
+	 * @access private
+	 * @var object
+	 */
+	private $smarty; 
 	
 	/** Config
 	 * 
@@ -76,18 +83,21 @@ class YS_Layout Extends Smarty
 	public function __construct()
 	{
 		
-		// call parent
+		// check singleton
 		parent::__construct();
 		
 		// get config/helpers
 		$this->config  = YS_Config::Load();
 		$this->helpers = YS_Helpers::Load();
 		
+		// get smarty
+		$this->smarty = new Smarty();
+		
 		// smarty debug
-		$this->debugging = (($this->config->script->debug_mode === true) ? ((!empty($_GET['debug'])) ? true : false) : false);
+		$this->smarty->debugging = (($this->config->script->debug_mode === true) ? ((!empty($_GET['debug'])) ? true : false) : false);
 		
 		// set compile dir
-		$this->compile_dir = $this->config->cache->directory;
+		$this->smarty->compile_dir = $this->config->cache->directory;
 	
 		// javascript use
 		$this->use_js	= false;
@@ -97,6 +107,21 @@ class YS_Layout Extends Smarty
 		$this->environment = YS_Environment::Load();
 		
 	}
+	
+	/** Catches all functions, and sending them through to smarty.
+	 * 
+	 * @access public
+	 * @param string $func Functionname
+	 * @param mixed $arguments Parameters
+	 * @return mixed Return value of the particulary function
+	 */
+	public function __call($func, $arguments = null)
+	{
+		
+		return call_user_func_array(array($this->smarty, $func), $arguments);
+		
+	}
+	
 	
 	/** Loads a view
 	 * 
@@ -110,10 +135,10 @@ class YS_Layout Extends Smarty
 	{
 		
 		// assign config
-		$this->assign('_config', $this->config );
+		$this->smarty->assign('_config', $this->config );
 		
 		// assign javascript
-		$this->assign('use_js', $this->use_js);
+		$this->smarty->assign('use_js', $this->use_js);
 	
 		// check view
 		if(!empty($view)){
@@ -133,7 +158,7 @@ class YS_Layout Extends Smarty
 			if(file_exists($path)){
 		
 				// fetch current view
-				$content = $this->fetch($path);
+				$content = $this->smarty->fetch($path);
 		
 			}else{
 				
@@ -144,18 +169,18 @@ class YS_Layout Extends Smarty
 		}
 		
 		// assign content to smarty
-		$this->assign('title', $this->pageTitle);
-		$this->assign('headers', $this->build_headers());
-		$this->assign('content', $content);
+		$this->smarty->assign('title', $this->pageTitle);
+		$this->smarty->assign('headers', $this->build_headers());
+		$this->smarty->assign('content', $content);
 		
 		// display layout
 		if ($this->environment->get() !== false) {
 			
-			$this->display('application/views/molds/'.$this->environment->folder.'.tpl');
+			$this->smarty->display('application/views/molds/'.$this->environment->folder.'.tpl');
 		
 		} else {
 			
-			$this->display('application/views/molds/'.$this->mold.'.tpl');
+			$this->smarty->display('application/views/molds/'.$this->mold.'.tpl');
 			
 		}
 	
@@ -478,9 +503,9 @@ class YS_Layout Extends Smarty
 		
 		ksort($buttons);
 		
-		$this->assign('pagination', $buttons);
-		$this->assign('total', $total);
-		$this->assign('page', $page);
+		$this->smarty->assign('pagination', $buttons);
+		$this->smarty->assign('total', $total);
+		$this->smarty->assign('page', $page);
 		
 	}
 	
@@ -499,16 +524,16 @@ class YS_Layout Extends Smarty
 	{
 	
 		// assign box content
-		$this->assign('_box_type', $type);
+		$this->smarty->assign('_box_type', $type);
 	
 		// assign box content
-		$this->assign('_box_title', $title);
+		$this->smarty->assign('_box_title', $title);
 	
 		// assign box content
-		$this->assign('_box_content', $description);
+		$this->smarty->assign('_box_content', $description);
 		
 		// fetch box into _box
-		$this->assign('_box', $this->fetch('application/views/elements/box.tpl'));
+		$this->smarty->assign('_box', $this->smarty->fetch('application/views/elements/box.tpl'));
 		
 	
 	}

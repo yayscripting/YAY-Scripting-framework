@@ -36,6 +36,8 @@ class Home Extends YS_Controller
 	public function index()
 	{
 		
+		$this->layout->assign('test', 'value');
+			
 		/* 
 			Example of loading a form.
 			The form being loaded right here is described in /forms/login.php
