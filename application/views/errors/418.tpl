@@ -1,7 +1,7 @@
-<h1>410 Gone</h1>
+<h1>418 I'm a teapot</h1>
 
 <p>
-The resource you requested is gone.
+Yes, I really am.
 </p>
 {if $error != ''}
 <p><em>{$error}</em></p>

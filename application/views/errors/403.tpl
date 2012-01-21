@@ -1,5 +1,8 @@
-<h1>Toegang geweigerd</h1>
+<h1>403 Forbidden</h1>
 
 <p>
-U heeft niet voldoende rechten om deze pagina te bezoeken.
+The server cannot fulfill your request due you are unauthorized.
 </p>
+{if $error != ''}
+<p><em>{$error}</em></p>
+{/if}

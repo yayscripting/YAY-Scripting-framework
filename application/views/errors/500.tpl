@@ -1,7 +1,7 @@
 <h1>Internal server error</h1>
 
 <p>
-Helaas is er een fout opgetreden bij de server, probeert u het over enkele ogenblikken opnieuw.
+We encountered an internal server error. Please try again later.
 </p>
 {if $error != ''}
 <p><em>{$error}</em></p>
