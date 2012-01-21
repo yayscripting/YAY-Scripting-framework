@@ -15,8 +15,11 @@
 	RewriteCond %{HTTP_HOST} !^www.
 	RewriteRule (.*) http://www.%{HTTP_HOST}%{REQUEST_URI} [R=301,L,QSA]
 	
-	# minifier
+	# CSS minifier
 	RewriteRule (.+)\.css$ /system/com/compressCSS.php?file=$1.css [L,QSA]
+	
+	# JS minifier (excluding libaries)
+	RewriteCond %{REQUEST_URI} !^(.+)/lib/(.+)\.js$
 	RewriteRule (.+)\.js$ /system/com/compressJS.php?file=$1.js [L,QSA]
 	
 	# thumbs
