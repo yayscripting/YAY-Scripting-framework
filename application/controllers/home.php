@@ -31,13 +31,11 @@ class Home Extends YS_Controller
 	
 	/* 
 		This is the default method to be called, if there is no specific method given in the url.
-		This controller is called by visiting /home.html or /home/index.html ór the homepage itself(/).
+		This controller is called by visiting /home.html or /home/index.html ï¿½r the homepage itself(/).
 	*/
 	public function index()
 	{
 		
-		$this->layout->assign('test', 'value');
-			
 		/* 
 			Example of loading a form.
 			The form being loaded right here is described in /forms/login.php
