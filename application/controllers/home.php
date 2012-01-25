@@ -19,7 +19,7 @@ class Home Extends YS_Controller
 	
 	/*
 		 The constructor isn't really neccesary in this case. 
-		 But using this function could be usefull if you've got multiple functions which all require a specific model by loading that specific model.
+		 But using this function could be usefull if you've got multiple functions which all require a specific model by loading that specific model and saving it as a object variable.
  	*/
 	public function __construct()
 	{
@@ -49,13 +49,13 @@ class Home Extends YS_Controller
 		if ($form->validate('Something went wrong.')) {
 			
 			/* Loads a model (/model/admin.class.php) */
-			$this->model('admin');
+			$admin = $this->models->admin;
 			
 			/* Get the filled in values, this only contains the values which were defined in the form-file. */
 			$values = $form->values();
 			
 			/* Selects the row with the login credentials */
-			$selection = $this->admin->select(array('username', 'password'), array('username' => $values['username']));
+			$selection = $admin->select(array('username', 'password'), array('username' => $values['username']));
 			
 			/* checks if there is a row selected. */
 			if ($selection->num_rows > 0) {
@@ -135,8 +135,7 @@ class Home Extends YS_Controller
 		$username = 'admin';
 		$password = 'password';
 		
-		$this->model('admin');
-		$this->admin->insert(array(
+		$this->models->admin->insert(array(
 		
 			'username' => $username, 
 			'password' => $this->helpers->encryption->pbkdf2($password, 'aSecr3tKeyToHashWith(usually 128/256 bytes long)', 256, 2000, 'sha512')

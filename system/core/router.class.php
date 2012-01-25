@@ -71,6 +71,9 @@ class YS_Router Extends YS_Core
 	public function __destruct()
 	{
 		
+		// fire event
+		YS_Events::Load()->fire('shutdown');
+		
 		// call timer
 		if ($this->config->script->show_render_time === true)
 			echo '<!-- RENDER TIME: ' . substr((STRING) abs(microtime(true) - $this->_timer), 0, 6) . ' seconds-->';
@@ -83,6 +86,9 @@ class YS_Router Extends YS_Core
 	 * 
 	 * This function does also catch all exceptions described in errors.class.php
 	 * 
+	 * Calling this function triggers the event 'runtime' before it loads a controller.
+	 * At script shutdown the event 'shutdown' will be called.
+	 * 
 	 * @access private
 	 * @return void
 	 */
@@ -92,6 +98,9 @@ class YS_Router Extends YS_Core
 		// get environment
 		$env = YS_Environment::Load();
 		$environment = $env->get();
+		
+		// fire event
+		YS_Events::Load()->fire('runtime');
 		
 		// check for error-'controller'
 		if (isset($_GET['a']) && $_GET['a'] == 'error') {

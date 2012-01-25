@@ -23,6 +23,13 @@ class YS_Controller
 	 */
 	public $helpers;
 	
+	/** Models
+	 * 
+	 * @access public
+	 * @var YS_Models $models
+	 */
+	public $models;
+	
 	/** Config
 	 * 
 	 * @access public
@@ -60,9 +67,16 @@ class YS_Controller
 	 */
  	protected $error;
  	
+	/** Event handler
+	 * 
+	 * @access protected
+	 * @var YS_Event
+	 */
+ 	protected $event;
+ 	
 	/** Constructor
 	 * 
-	 * Loads layout, helpers and config. And includes runtime.php
+	 * Loads layout, helpers and config.
 	 * 
 	 * @access public
 	 * @return YS_Controller
@@ -71,7 +85,8 @@ class YS_Controller
 	{
 		
 		$this->helpers = YS_Helpers::Load();
-		$this->config  = YS_Config::Load();;
+		$this->config  = YS_Config::Load();
+		$this->models  = YS_Models::Load();
 		
 		// environment
 		$this->environment = YS_Environment::Load();
@@ -92,7 +107,6 @@ class YS_Controller
 		// load smarty
 		try {
 			
-			require_once 'system/core/layout.class.php';
 			$this->layout = YS_Layout::Load();
 		
 		} catch (exception $ex) {
@@ -101,42 +115,8 @@ class YS_Controller
 			
 		}
 		
-		// executes the runtime
-		if (file_exists('application/runtime.php'))
-			require 'application/runtime.php';
-		
-		
-	}
-	
-	/** Loads a model
-	 * 
-	 * This function accepts any number of parameters, which are the names of the model.
-	 * If a model is loaded, automatically the coreFile database will be loaded under the name of "sql"
-	 * Example in a controller:
-	 * <code>
-	 * // load 2 models
-	 * $this->model('client', 'money');
-	 * 
-	 * // the models can be reached using '$this->' in a controller.
-	 * $this->client->delete(1);
-	 * $this->money->book(1500);
-	 * </code>
-	 * 
-	 * @access public
-	 * @param string Modelname (multiple times)
-	 * @return void
-	 */
-	public function model()
-	{
-		
-		// model-controller
-		require_once('system/core/model.class.php');
-		
-		// require database
-		$this->load(array('database', 'sql'));
-		
-		// model
-		$this->load_real(func_get_args(), 'model');
+		// loads the event module
+		$this->event = YS_Events::Load();
 		
 	}
 	
@@ -145,12 +125,17 @@ class YS_Controller
 	 * Class found in /application/classes/NAME.class.php. As a constructor-parameter this class has been given, to contact the helpers/config/models.
 	 * Class name should be the lowerstring version of the first parameter, but only with the first letter being capitalized.
 	 * 
+	 * Calling this function triggers the event 'loadClass'.
+	 * 
 	 * @access public
 	 * @param string $className Name of the class(file)
 	 * @return object Created class
 	 */
  	public function loadClass($className)
  	{
+ 		
+ 		// fire event
+ 		$this->event->fire('loadClass', $className);
  		
  		// include class
  		require 'application/classes/'.$className.'.class.php';
@@ -207,6 +192,8 @@ class YS_Controller
 	
 	/** Loads a form
 	 * 
+	 * Calling this function triggers the event 'loadForm'.
+	 * 
 	 * @access public
 	 * @param string $title FormFile title.
 	 * @return HTML_Form Form
@@ -214,6 +201,9 @@ class YS_Controller
 	 */
 	public function form($title)
 	{
+		
+		// fire event
+		$this->event->fire('loadForm', $title);
 		
 		try {
 			

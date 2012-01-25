@@ -13,7 +13,7 @@
  * @package core
  * @subpackage Database
  */
-class YS_Database
+class YS_Database extends YS_Singleton
 {
 	
 	/** MySQL link identifier
@@ -71,7 +71,6 @@ class YS_Database
 		$username	= (!is_null($username)) ? $username : $this->_config->database->username;
 		$password	= (!is_null($password)) ? $password : $this->_config->database->password;
 		$database	= (!is_null($database)) ? $database : $this->_config->database->database;
-		
 		
 		$this->db_connection = @mysql_connect($server, $username, $password, true);
 			

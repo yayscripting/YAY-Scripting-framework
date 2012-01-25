@@ -64,6 +64,13 @@ class YS_Core
 		require_once 'system/core/environment.class.php';
 		require_once 'system/core/controller.class.php';
 		require_once 'system/core/helpers.class.php';
+		require_once 'system/core/models.class.php';
+		
+		// layout
+		require_once 'system/core/layout.class.php';
+		
+		// event handler
+		require_once 'system/core/event.class.php';
 		
 		// load config
 		$this->load_config();

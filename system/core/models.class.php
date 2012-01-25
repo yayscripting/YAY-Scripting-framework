@@ -5,6 +5,113 @@
  */
 
 
+/** Models
+ * 
+ * This class loads all models
+ * 
+ */
+class YS_Models extends YS_Singleton
+{
+	
+	/**
+	 * @access private
+	 * @var array $config Config
+	 */
+	private $config;
+			
+	/** 
+	 * @access private	 
+	 * @var array $models All models
+	 */
+ 	private $models = null;
+ 	
+ 	/** Database-pointer
+ 	 * 
+ 	 * @access private
+ 	 * @var object
+ 	 */
+ 	 private $sql;
+ 	
+	/** Constructor
+	 * 
+	 * load config and helpers
+	 * 
+	 * @access public
+	 * @return void
+	 */
+	public function __construct()
+	{
+		
+		// config
+		$this->config = YS_Config::Load();
+		
+	}
+	
+	/** Magic function - selects an model
+	 * 
+	 * If the class still needs to be created, the event 'loadModel' will be called.
+	 * 
+	 * @access public
+	 * @param string $model Name of the model.
+	 * @throws ModelException with errorcode 1 when the model is not loaded.
+	 * @return YS_ModelController(or child)
+	 */
+	public function __get($model)
+	{
+	
+		if (empty($this->sql)) {
+			
+			require_once 'system/core/database.class.php';
+			$this->sql = YS_Database::Load();
+			
+		}
+		
+		$model = strtolower($model);
+		
+		// load helper
+		if (empty($this->models->$model)) {
+			
+			YS_Events::Load()->fire('loadModel', $model);
+			
+			require_once('application/models/'.strtolower($model).'.class.php');
+			
+			$class = 'YS_'.ucfirst(strtolower($model));
+			$this->models->{strtolower($model)} = new $class ($this->sql);	
+			
+		}
+		
+		// call helper
+		if (is_object($this->models->$model))
+			return $this->models->$model;
+			
+			
+		throw new ModelException(1, 'Couldn\'t load the model: '.$model.'.');
+		
+	}
+	
+	/** Acces the DB-object
+	 * 
+	 * Returns the database-object, without a model interface.
+	 * 
+	 * @access public
+	 * @return YS_Database
+	 */
+ 	public function getSQL()
+ 	{
+ 		
+ 		if (empty($this->sql)) {
+			
+			require_once 'system/core/database.class.php';
+			$this->sql = YS_Database::Load();
+			
+		}
+		
+		return $this->sql;
+ 		
+	}
+	
+}					
+
 /** ModelController
  * 
  * This class is the parent of every model.

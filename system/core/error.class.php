@@ -320,8 +320,8 @@ class YS_Error extends YS_Singleton
 				
 			$layout = YS_Layout::Load();
 			
-			$_layout->assign('error', $errorMessage);
-			$_layout->view('errors/'.$type.'.tpl');
+			$layout->assign('error', $errorMessage);
+			$layout->view('errors/'.$type.'.tpl');
 			die();			
 			
 		}
