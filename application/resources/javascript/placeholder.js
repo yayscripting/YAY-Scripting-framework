@@ -1,3 +1,9 @@
+/**
+ * 
+ * If this file is beeing included into a project, all placeholder-attributes will be replaced by a javascript alternative. This is for backwards compatibility with older browsers.
+ *  
+ */
+
 window.addEvent('domready', function() {
 	
     	if(('placeholder' in document.createElement('input')) === false) {

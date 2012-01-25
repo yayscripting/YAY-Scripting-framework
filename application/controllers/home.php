@@ -31,7 +31,7 @@ class Home Extends YS_Controller
 	
 	/* 
 		This is the default method to be called, if there is no specific method given in the url.
-		This controller is called by visiting /home.html or /home/index.html �r the homepage itself(/).
+		This controller is called by visiting /home.html or /home/index.html or the homepage itself(/).
 	*/
 	public function index()
 	{
