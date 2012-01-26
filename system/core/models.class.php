@@ -412,8 +412,6 @@ class YS_ModelController
 			
 		}
 		
-		echo $query . PHP_EOL;
-		
 		// reference to DATABASE-class
 		$data = $this->sql->select($query);
 		
