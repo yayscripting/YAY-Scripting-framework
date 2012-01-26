@@ -293,6 +293,9 @@ class YS_ModelController
 	 * $this->client->select("SELECT * FROM clients"); // works
 	 * $this->client->select(array('id', 'name'), array('id' => '5'), array('id', '-name'), 1);
 	 * // selects id and name, where id=5, orders by id DESC, name ASC, limit 1
+	 * 
+	 * // if you want to select a row with the id NOT being 5, it works this way:
+	 * $this->client->select(array('id', 'name'), array('!id' => '5'));
 	 * </code>
 	 * 
 	 * @access public
@@ -345,10 +348,17 @@ class YS_ModelController
 				
 				foreach($where as $key => $value) {
 					
+					// check for comparison prefix
+					$command = substr($key, 0, 1);
+					if ($command == '!')
+						$key = substr($key, 1);
+						
+					$type = ($command == '!' ? '<>' : '=');
+					
 					if (!empty($this->encryption[$key]))
 						$value = $this->encode($key, $value);
 					
-					$string .= (($string == "WHERE ") ? "" : " AND ") . "`".$this->safe($key)."`='".$this->safe($value)."'";
+					$string .= (($string == "WHERE ") ? "" : " AND ") . "`".$this->safe($key)."`".$type."'".$this->safe($value)."'";
 					
 				}
 					
@@ -401,6 +411,8 @@ class YS_ModelController
 			$query = $fields;
 			
 		}
+		
+		echo $query . PHP_EOL;
 		
 		// reference to DATABASE-class
 		$data = $this->sql->select($query);
