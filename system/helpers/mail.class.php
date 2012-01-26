@@ -189,8 +189,8 @@ class YSH_Mail extends YS_Helper
 	public function send($template, $subject, $to, $from, $variables = array(), $header = 'default', $footer = 'default')
 	{	
 
-		// globals
-		global $_layout;
+		// layout
+		$layout = YS_Layout::Load();
 		
 		// assign variables
 		foreach ($variables as $key => $replacement) 
@@ -198,9 +198,9 @@ class YSH_Mail extends YS_Helper
 			
 		
 		// get content
-		if(!empty($header)){ $tpl_header = $_layout->fetch('application/views/mails/headers/' . $header . '.tpl'); }
-		if(!empty($footer)){ $tpl_footer = $_layout->fetch('application/views/mails/footers/' . $footer . '.tpl'); }
-		$this->message = $_layout->fetch('application/views/mails/content/'.$template.'.tpl');
+		if(!empty($header)){ $tpl_header = $layout->fetch('application/views/mails/headers/' . $header . '.tpl'); }
+		if(!empty($footer)){ $tpl_footer = $layout->fetch('application/views/mails/footers/' . $footer . '.tpl'); }
+		$this->message = $layout->fetch('application/views/mails/content/'.$template.'.tpl');
 		
 		// glue
 		$this->message = $tpl_header."<!-- start content -->".$this->message."<!-- end content -->".$tpl_footer;

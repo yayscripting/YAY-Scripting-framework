@@ -76,6 +76,9 @@ class YS_Environment extends YS_Singleton
  			case 'login':
  			case 'login_controller':
  			
+ 				if (empty($this->config->environment->{$this->cache}) || empty ($this->config->environment->{$this->cache}->$name))
+ 					return null;
+ 			
  				$a = $this->config->environment->{$this->cache}->$name;
  			
  				if (!empty($a)){

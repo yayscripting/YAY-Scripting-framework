@@ -55,11 +55,9 @@ class YSH_Debug extends YS_Helper
  	 * @param bool $print_r Use print_r instead of var_dump
  	 * @return void
  	 */
-	private function dump($variable, $print_r = false){
-		
-		// use global
-		global $_layout;
-		
+	private function dump($variable, $print_r = false)
+	{
+				
 		// remember old
 		$prev = ob_get_clean();
 		ob_start();
@@ -78,10 +76,10 @@ class YSH_Debug extends YS_Helper
 		echo $prev;
 		
 		// get debug var
-		$all_tpl_vars = $_layout->getTemplateVars();
+		$all_tpl_vars = YS_Layout::Load()->getTemplateVars();
 		
 		// assign dump
-		$_layout->assign('debug', $all_tpl_vars['debug'].$dump);
+		YS_Layout::Load()->assign('debug', $all_tpl_vars['debug'].$dump);
 	
 	}
 }

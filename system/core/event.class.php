@@ -108,6 +108,13 @@ class YS_Event_Data
 	 */
 	protected $layout;
 	
+	/** Environments
+	 * 
+	 * @access protected
+	 * @var object
+	 */
+	protected $environment;
+	
 	/** Constructor, loads all data and assigns them to object variables.
 	 * 
 	 * @access public
@@ -120,6 +127,7 @@ class YS_Event_Data
 		$this->models = YS_Models::Load();
 		$this->config = YS_Config::Load();
 		$this->layout = YS_Layout::Load();
+		$this->environment = YS_Environment::Load();
 		
 	}
 

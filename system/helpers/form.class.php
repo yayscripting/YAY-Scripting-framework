@@ -714,8 +714,7 @@ class HTML_Form extends HTML_Element
 	{
 		
 		// get layout-engine
-		global $_layout;
-		$this->layout = $_layout;
+		$this->layout = YS_Layout::Load();
 		
 		// get form_ID
 		$this->form_ID = sha1($name . $instance . $method);

@@ -17,7 +17,7 @@ window.addEvent('domready', function() {
 				
 					'focus': function() {
 						
-						if (this.value == this.getAttribute('placeholder')) {
+						if (this.value == this.getAttribute('data-placeholder')) {
 							
 							this.style.color = 'black',
 							this.value = ''
@@ -30,7 +30,7 @@ window.addEvent('domready', function() {
 						if (this.value == '') {
 							
 							this.style.color = '#6d6d6d',
-							this.value = this.getAttribute('placeholder')
+							this.value = this.getAttribute('data-placeholder')
 							
 						}
 						
@@ -41,40 +41,49 @@ window.addEvent('domready', function() {
 				// append default status
 				item.style.color = '#6d6d6d';
 				item.value = item.getAttribute('placeholder');
+				item.setAttribute('data-placeholder', item.getAttribute('placeholder'));
+				item.setAttribute('placeholder', '');
 				
 			} else {
 				
-				item.addEvents( {
 				
-					'focus': function() {
-						
-						if (this.value == this.getAttribute('placeholder')) {
+				if (navigator.userAgent.indexOf('MSIE 8.0') == -1) {
+				
+					item.addEvents( {
+					
+						'focus': function() {
 							
-							this.setAttribute('type', 'password');
-							this.style.color = 'black',
-							this.value = ''
+							if (this.value == this.getAttribute('data-placeholder')) {
+								
+								this.setAttribute('type', 'password');
+								this.style.color = 'black',
+								this.value = ''
+								
+							}
+							
+						},
+						'blur': function() {
+							
+							if (this.value == '') {
+								
+								this.setAttribute('type', 'text');
+								this.style.color = '#6d6d6d',
+								this.value = this.getAttribute('data-placeholder')
+								
+							}
 							
 						}
-						
-					},
-					'blur': function() {
-						
-						if (this.value == '') {
-							
-							this.setAttribute('type', 'text');
-							this.style.color = '#6d6d6d',
-							this.value = this.getAttribute('placeholder')
-							
-						}
-						
-					}
-				
-				} );
-				
-				// append default settings
-				item.setAttribute('type', 'text');
-				item.style.color = '#6d6d6d',
-				item.value = item.getAttribute('placeholder')
+					
+					} );
+					
+					// append default settings
+					item.setAttribute('type', 'text');
+					item.style.color = '#6d6d6d',
+					item.setAttribute('data-placeholder', item.getAttribute('placeholder'));
+					item.value = item.getAttribute('placeholder')
+					item.setAttribute('placeholder', '');
+					
+				}
 				
 			}
 			

@@ -623,7 +623,7 @@ class DatabaseData
 	public function decrypt($colum, $parameters)
 	{
 		
-		$helper = YS_Helper::Load();
+		$helper = YS_Helpers::Load();
 		
 		foreach($this->rows as &$row) {
 			
