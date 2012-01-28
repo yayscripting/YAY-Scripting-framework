@@ -86,7 +86,7 @@ class YS_Router Extends YS_Core
 	 * 
 	 * This function does also catch all exceptions described in errors.class.php
 	 * 
-	 * Calling this function triggers the event 'runtime' before it loads a controller.
+	 * Calling this function triggers the event 'router' before it loads a controller.
 	 * At script shutdown the event 'shutdown' will be called.
 	 * 
 	 * @access private
@@ -100,7 +100,7 @@ class YS_Router Extends YS_Core
 		$environment = $env->get();
 		
 		// fire event
-		YS_Events::Load()->fire('runtime');
+		YS_Events::Load()->fire('router');
 		
 		// check for error-'controller'
 		if (isset($_GET['a']) && $_GET['a'] == 'error') {

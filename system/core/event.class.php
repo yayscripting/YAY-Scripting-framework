@@ -65,7 +65,19 @@ class YS_Events extends YS_Singleton
 		
 		
 	}
-
+	
+	/** Passes the controller to the actual event
+	 * 
+	 * @access public
+	 * @param object $controller The actual controller
+	 * @return void
+	 */
+	public function injectController($controller)
+	{
+		
+		$this->event->injectController($controller);
+		
+	}
 
 }
 
@@ -115,6 +127,13 @@ class YS_Event_Data
 	 */
 	protected $environment;
 	
+	/** Controller
+	 * 
+	 * @access protected
+	 * @var object
+	 */
+	protected $controller = null;
+	
 	/** Constructor, loads all data and assigns them to object variables.
 	 * 
 	 * @access public
@@ -128,6 +147,28 @@ class YS_Event_Data
 		$this->config = YS_Config::Load();
 		$this->layout = YS_Layout::Load();
 		$this->environment = YS_Environment::Load();
+		
+		$this->controller = (object) array();
+		
+	}
+	
+	/** Adds the controller to the container, for setting variable purposes
+	 * 
+	 * @access public
+	 * @param object $controller The controller
+	 * @return void
+	 * @final
+	 */
+	final public function injectController($controller)
+	{
+		
+		$values = $this->controller;
+		$this->controller = $controller;
+		
+		if (!empty($values))
+			foreach ($values as $key => $value)
+				$this->controller->$key = $value;
+		
 		
 	}
 

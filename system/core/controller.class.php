@@ -77,6 +77,7 @@ class YS_Controller
 	/** Constructor
 	 * 
 	 * Loads layout, helpers and config.
+	 * This function calls the 'runtime' event
 	 * 
 	 * @access public
 	 * @return YS_Controller
@@ -117,6 +118,8 @@ class YS_Controller
 		
 		// loads the event module
 		$this->event = YS_Events::Load();
+		$this->event->injectController($this);
+		YS_Events::Load()->fire('runtime');
 		
 	}
 	
@@ -201,6 +204,9 @@ class YS_Controller
 	 */
 	public function form($title)
 	{
+		
+		// load form helper
+		require_once 'system/helpers/form.class.php';
 		
 		// fire event
 		$this->event->fire('loadForm', $title);
