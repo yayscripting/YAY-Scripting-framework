@@ -189,12 +189,12 @@ class YSH_Mail extends YS_Helper
 	public function send($template, $subject, $to, $from, $variables = array(), $header = 'default', $footer = 'default')
 	{	
 
-		// layout
+		// globals
 		$layout = YS_Layout::Load();
 		
 		// assign variables
 		foreach ($variables as $key => $replacement) 
-			$_layout->assign($key, $replacement);
+			$layout->assign($key, $replacement);
 			
 		
 		// get content
