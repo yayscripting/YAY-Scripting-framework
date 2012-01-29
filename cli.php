@@ -27,8 +27,6 @@ if(is_array($argv)){
 	
 }
 
-echo $_SERVER['REQUEST_URI'];
-
 // set correct cwd
 chdir(dirname(__FILE__));
 
