@@ -132,6 +132,22 @@ class YS_Router Extends YS_Core
 		$controller = (!empty($_GET['a'])) ? $_GET['a'] : (($environment === false) ? $this->config->script->default_controller : $env->default_controller);
 		$controller = strtolower($this->helpers->string->url_safe($controller));
 		
+		// check SEO
+		if($this->config->script->force_seo === true && $controller == $this->config->script->default_controller && $_GET['a'] == $controller && empty($_GET['b'])){
+		
+			// check postdata
+			if($_SERVER['REQUEST_METHOD'] != "POST"){
+		
+				// permanent redirect
+				header("HTTP/1.1 301 Moved Permanently");
+				header("Location: /");
+				exit();
+				
+			}
+		
+		}
+		
+		// get controller folder
 		$folder = $this->getControllerFolder();
 		
 		// admin?
