@@ -102,8 +102,7 @@ class YSH_Http extends YS_Helper
 			$url = empty($_SESSION['HTTP_REFERER']) ? "/" : $_SESSION['HTTP_REFERER'];
 		
 		// save referrer
-		if (substr(strtolower($_SERVER['REQUEST_URI']), strlen($_SERVER['REQUEST_URI']) - 13) != 'inloggen.html' && substr(strtolower($_SERVER['REQUEST_URI']), strlen($_SERVER['REQUEST_URI']) - 14) != 'uitloggen.html')
-			$_SESSION['HTTP_REFERER'] = $_SERVER['REQUEST_URI'];
+		$_SESSION['HTTP_REFERER'] = $_SERVER['REQUEST_URI'];
 		
 		// statuscodes
 		$statuscodes = array();

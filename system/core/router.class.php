@@ -138,10 +138,8 @@ class YS_Router Extends YS_Core
 			// check postdata
 			if($_SERVER['REQUEST_METHOD'] != "POST"){
 		
-				// permanent redirect
-				header("HTTP/1.1 301 Moved Permanently");
-				header("Location: /");
-				exit();
+				// redirect
+				$this->helpers->http->redirect('/', 301);
 				
 			}
 		
