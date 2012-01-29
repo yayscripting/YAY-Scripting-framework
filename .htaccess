@@ -62,7 +62,7 @@
 	RewriteCond %{REQUEST_URI} !^/application/com/(.*?)$
 	RewriteCond %{REQUEST_URI} !^/application/resources/(.*?)$
 	RewriteRule ^/?(.*?)$ /index.php?a=error&b=403 [QSA]
-	
+	 
 	RewriteCond %{REQUEST_URI} ^/application/com/(cronjob|cli)(.*?)$
 	RewriteRule ^/?(.*?)$ /index.php?a=error&b=403 [QSA]
 	
