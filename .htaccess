@@ -55,6 +55,19 @@
 	RewriteRule ^/?([^./]+)/([^./]+)/([^./]+)/([^./]+)/([^./]+)/([^./]+)/([^./]+).html$ /index.php?a=$1&b=$2&c=$3&d=$4&e=$5&f=$6&g=$7 [QSA]
 	RewriteRule ^/?([^./]+)/([^./]+)/([^./]+)/([^./]+)/([^./]+)/([^./]+)/([^./]+)/([^./]+).html$ /index.php?a=$1&b=$2&c=$3&d=$4&e=$5&f=$6&g=$7&h=$8 [QSA]
 	
+	# Other possibility
+	#
+	# We recommend to rewrite urls like /a/b.html but the following lines add support for urls like /a/b or /a/b/.
+	# TIP: Be consequent. Do not mix methods up.
+	#
+	#RewriteRule ^/?([^./]+)/?$ /index.php?a=$1 [QSA]
+	#RewriteRule ^/?([^./]+)/([^./]+)/?$ /index.php?a=$1&b=$2 [QSA]
+	#RewriteRule ^/?([^./]+)/([^./]+)/([^./]+)/?$ /index.php?a=$1&b=$2&c=$3 [QSA]
+	#RewriteRule ^/?([^./]+)/([^./]+)/([^./]+)/([^./]+)/?$ /index.php?a=$1&b=$2&c=$3&d=$4 [QSA]
+	#RewriteRule ^/?([^./]+)/([^./]+)/([^./]+)/([^./]+)/([^./]+)/?$ /index.php?a=$1&b=$2&c=$3&d=$4&e=$5 [QSA]
+	#RewriteRule ^/?([^./]+)/([^./]+)/([^./]+)/([^./]+)/([^./]+)/([^./]+)/?$ /index.php?a=$1&b=$2&c=$3&d=$4&e=$5&f=$6 [QSA]
+	#RewriteRule ^/?([^./]+)/([^./]+)/([^./]+)/([^./]+)/([^./]+)/([^./]+)/([^./]+)/?$ /index.php?a=$1&b=$2&c=$3&d=$4&e=$5&f=$6&g=$7 [QSA]
+	#RewriteRule ^/?([^./]+)/([^./]+)/([^./]+)/([^./]+)/([^./]+)/([^./]+)/([^./]+)/([^./]+)/?$ /index.php?a=$1&b=$2&c=$3&d=$4&e=$5&f=$6&g=$7&h=$8 [QSA]
 
 # /* == File restriction */
 
