@@ -24,22 +24,22 @@
 	
 	# thumbs
 	RewriteCond %{QUERY_STRING} thumb
-	RewriteRule ^/(.+?)\.(png|jpg|jpeg|gif|bmp)$ /system/com/thumb.php?src=$1.$2 [L,QSA,NC]
+	RewriteRule ^(.+?)\.(png|jpg|jpeg|gif|bmp)$ /system/com/thumb.php?src=$1.$2 [L,QSA,NC]
 	
 	# force download
 	RewriteCond %{QUERY_STRING} download
-	RewriteRule ^/(.+?)\.(png|jpg|jpeg|gif|bmp)$ /system/com/download.php?src=$1.$2 [L,QSA,NC]
+	RewriteRule ^(.+?)\.(png|jpg|jpeg|gif|bmp)$ /system/com/download.php?src=$1.$2 [L,QSA,NC]
 	
 	# image cache
 	RewriteRule (.+)\.(png|jpg|jpeg|gif|bmp)$ /system/com/imagecache.php?file=$1&ext=$2 [L,QSA]
 	
 	# favicon
-	RewriteRule ^/favicon\.ico$ /system/com/imagecache.php?file=application/resources/image/favicon&ext=ico [L]
-	RewriteRule ^/appicon\.ico$ /system/com/imagecache.php?file=application/resources/image/appicon&ext=png [L]
+	RewriteRule ^favicon\.ico$ /system/com/imagecache.php?file=application/resources/image/favicon&ext=ico [L]
+	RewriteRule ^appicon\.ico$ /system/com/imagecache.php?file=application/resources/image/appicon&ext=png [L]
 	
 	# com
-	RewriteRule ^/com/([^./]+)\.json$ /index.php?com=true&a=$1 [QSA]
-	RewriteRule ^/com/([^./]+)/([^./]+)\.json$ /index.php?com=true&a=$1&b=$2 [QSA]
+	RewriteRule ^com/([^./]+)\.json$ /index.php?ys_mode=com&a=$1 [QSA]
+	RewriteRule ^com/([^./]+)/([^./]+)\.json$ /index.php?ys_mode=com&a=$1&b=$2 [QSA]
 
 	# Dont rewrite external .html-files, these can be used as documentation.
 	RewriteCond %{REQUEST_URI} ^/system/external/(.+?)\.html
@@ -61,18 +61,18 @@
 	RewriteCond %{REQUEST_URI} ^/application/(.*?)$
 	RewriteCond %{REQUEST_URI} !^/application/com/(.*?)$
 	RewriteCond %{REQUEST_URI} !^/application/resources/(.*?)$
-	RewriteRule ^/(.*?)$ /index.php?a=error&b=403 [QSA]
+	RewriteRule ^/?(.*?)$ /index.php?a=error&b=403 [QSA]
 	
-	RewriteCond %{REQUEST_URI} ^/application/com/cronjob(.*?)$
-	RewriteRule ^/(.*?)$ /index.php?a=error&b=403 [QSA]
+	RewriteCond %{REQUEST_URI} ^/application/com/(cronjob|cli)(.*?)$
+	RewriteRule ^/?(.*?)$ /index.php?a=error&b=403 [QSA]
 	
 	RewriteCond %{REQUEST_URI} ^/system/(.*?)$
 	RewriteCond %{REQUEST_URI} !^/system/com/(.*?)$
 	RewriteCond %{REQUEST_URI} !^/system/external/(.*?)$
-	RewriteRule ^/(.*?)$ /index.php?a=error&b=403 [QSA]
+	RewriteRule ^/?(.*?)$ /index.php?a=error&b=403 [QSA]
 	
 	RewriteCond %{REQUEST_URI} ^/cache/(.*?)$
-	#RewriteRule ^/(.*?)$ /index.php?a=error&b=403 [QSA]
+	RewriteRule ^/?(.*?)$ /index.php?a=error&b=403 [QSA]
 	
-	RewriteCond %{REQUEST_URI} ^/cronjob.php$
-	RewriteRule ^/(.*?)$ /index.php?a=error&b=403 [QSA]
+	RewriteCond %{REQUEST_URI} ^/cli.php(.*?)$
+	RewriteRule ^/?(.*?)$ /index.php?a=error&b=403 [QSA]

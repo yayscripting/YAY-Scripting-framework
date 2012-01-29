@@ -4,6 +4,9 @@
  * @package files
  * @subpackage loader
  */
+ 
+/** Prevent CLI usage */
+$_GET['ys_mode'] = 'browser';
 
 /** Loading the core-class */
 require_once('system/core/core.class.php');

@@ -25,6 +25,15 @@ class YS_Router Extends YS_Core
 	 */
 	public $_timer;
 	
+	/** Mode
+	 * 
+	 * CLI, Cronjob, COM or Browser
+	 * 
+	 * @access public
+	 * @var string $mode
+	 */
+	public $mode;
+	
 	/** Working directory, is deleted on shutdown
 	 * 
 	 * @access private
@@ -56,6 +65,9 @@ class YS_Router Extends YS_Core
 		// load errorhandler
 		$this->error = YS_Error::Load();
 		
+		// set mode
+		$this->setMode();
+		
 		// load the right controller
 		$this->load_controller();
 		
@@ -75,7 +87,7 @@ class YS_Router Extends YS_Core
 		YS_Events::Load()->fire('shutdown');
 		
 		// call timer
-		if ($this->config->script->show_render_time === true)
+		if ($this->config->script->show_render_time === true && $this->mode == 'browser')
 			echo '<!-- RENDER TIME: ' . substr((STRING) abs(microtime(true) - $this->_timer), 0, 6) . ' seconds-->';
 		
 		// minify HTML
@@ -119,7 +131,8 @@ class YS_Router Extends YS_Core
 		// determine controller name/position
 		$controller = (!empty($_GET['a'])) ? $_GET['a'] : (($environment === false) ? $this->config->script->default_controller : $env->default_controller);
 		$controller = strtolower($this->helpers->string->url_safe($controller));
-		$folder = (!empty($_GET['com'])) ? (!empty($_GET['cronjob']) ? 'com/cronjob/' : 'com/') : 'controllers/';
+		
+		$folder = $this->getControllerFolder();
 		
 		// admin?
 		if($environment !== false) {
@@ -188,6 +201,65 @@ class YS_Router Extends YS_Core
 			$this->error->http_error(500, true, $ex->errorMessage().'<br /><br /><small>'.$ex->fullMessage().'</small>');
 		
 		
+	}
+	
+	/** Sets the core in the right mode
+	 * 
+	 * @access private
+	 * @return void
+	 */
+	private function setMode()
+	{
+	
+		// modes
+		$modes = array('cli', 'com', 'cronjob', 'browser');
+	
+		// com check
+		if(in_array($_GET['ys_mode'], $modes)){
+		
+			// set mode
+			$this->mode = $_GET['ys_mode'];
+			
+			// check cli
+			if(PHP_SAPI == 'cli' && ($this->mode != 'cli' && $this->mode != 'cronjob')){
+			
+				exit("Invalid PHP mode. [0]");
+			
+			}else
+			if(PHP_SAPI != 'cli' && ($this->mode == 'cli' || $this->mode == 'cronjob')){
+			
+				exit("Invalid PHP mode. [1]");
+			
+			}
+		
+		}else{
+		
+			// set
+			$this->mode = 'browser';
+		
+		}
+	
+	}
+	
+	/** Gets the controller folder
+	 * 
+	 * @access private
+	 * @return string
+	 */
+	private function getControllerFolder()
+	{
+	
+		// set folders
+		$folders = array(
+			'cli'		=> 'com/cli/',
+			'com'		=> 'com/',
+			'cronjob'	=> 'com/cronjob/',
+			'browser'	=> 'controllers/'	
+		);
+	
+		// return
+		return (!empty($folders[$this->mode])) ? $folders[$this->mode] : $folders['browser'];
+	
 	}
 	
 }
