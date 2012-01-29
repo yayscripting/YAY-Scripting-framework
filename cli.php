@@ -19,8 +19,18 @@ if(is_array($argv)){
 			continue;
 			
 		// parameters
-		if (strpos($command, "=") !== false && substr($command, 0, 2) == '--')
-			$_GET[substr($command, 2, strpos($command, "=") - 2)] = substr($command, strpos($command, "=") + 1);	
+		if(strpos($command, "=") !== false && substr($command, 0, 2) == '--'){
+		
+			// set parameter
+			$_GET[substr($command, 2, strpos($command, "=") - 2)] = substr($command, strpos($command, "=") + 1);
+			
+		}else
+		if(strpos($command, "=") === false && substr($command, 0, 2) == '--'){
+		
+			// set parameter true
+			$_GET[substr($command, 2)] = true;
+		
+		}
 		
 		
 	}
