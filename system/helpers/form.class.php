@@ -1489,8 +1489,7 @@ class HTML_Upload extends HTML_Element
 			if ($this->validator !== null) {
 				
 				// get MIME-type
-				global $_helpers;
-				$mime = $_helpers->file->getMimeType($_FILES[$name]['tmp_name'], substr($_FILES[$name]['name'], strrpos($_FILES[$name]['name'], '.') + 1));
+				$mime = YS_Helpers::Load()->file->getMimeType($_FILES[$name]['tmp_name'], substr($_FILES[$name]['name'], strrpos($_FILES[$name]['name'], '.') + 1));
 	
 				// unknown mime-type, lets trust the client :+)
 				if ($mime == 'application/octet-stream')
