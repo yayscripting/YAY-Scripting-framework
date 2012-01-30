@@ -1389,18 +1389,18 @@ class HTML_Upload extends HTML_Element
 	 * 	));
 	 * 
 	 * // using single array validator
-	 * $element->setValidator(array(array("image/jpg") => "You can upload JPG's"));
+	 * $element->setValidator(array("You can upload JPG's" => array("image/jpg")));
 	 * 
 	 * // using single string validator
-	 * $element->setValidator(array("image/jpg" => "You can upload JPG's"));
+	 * $element->setValidator(array("You can upload JPG's" => "image/jpg"));
 	 * 
 	 * // using multiple array validators
-	 * $element->setValidator(array(array("image/jpg", "image/bmp") => "You can only upload JPG's or BMP's"));
+	 * $element->setValidator(array("You can only upload JPG's or BMP's" => array("image/jpg", "image/bmp")));
 	 * 
 	 * // using multiple string validators
 	 * $element->setValidator(array(
-	 * 	"image/jpg" => "You can only upload JPG's or BMP's",
-	 * 	"image/bmp" => "You can only upload JPG's or BMP's"
+	 * 	"You can only upload JPG's or BMP's" => "image/jpg",
+	 * 	"You can only upload JPG's or BMP's" => "image/bmp"
 	 * ));
 	 * </code>
 	 * 
@@ -1413,7 +1413,7 @@ class HTML_Upload extends HTML_Element
 	 */
 	public function setValidator($validator, $noUpload = "You do need to upload a file.", $toBig = "This file is to big.", $unknownError = "An error has occured, please try again later.", $hacker = "Please stop trying to find vurnabilities on this website.")
 	{
-		
+				
 		// fool-proof
 		if (empty($this->attributes['name']))
 			throw new FormException("You have to set a 'name' before you set the validator");
@@ -1435,10 +1435,10 @@ class HTML_Upload extends HTML_Element
 			
 			foreach($validator as $key => $val) {
 				
-				if (is_string($key))
-					$key = array($key);
+				if (is_string($val))
+					$val = array($val);
 				
-				$this->validator[] = (is_array($key) && is_string($val)) ? new UPLOAD_Validator($key, $val) : $val;
+				$this->validator[] = (is_string($key) && is_array($val)) ? new UPLOAD_Validator($val, $key) : $val;
 				
 			}
 			
