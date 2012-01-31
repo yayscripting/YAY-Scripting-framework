@@ -7,7 +7,7 @@
  */
  
 /** Prevent CLI usage */
-$_GET['ys_mode'] = 'browser';
+$_GET['ys_mode'] = ($_GET['ys_mode'] == 'com') ? 'com' : 'browser';
 
 /** Loading the core-class */
 require_once('system/core/core.class.php');
