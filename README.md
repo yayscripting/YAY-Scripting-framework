@@ -1,4 +1,4 @@
-*This framework is being developed and used by YAY!Scripting <http://yayscripting.nl (dutch)>.*
+*This framework is being developed and used by YAY!Scripting http://yayscripting.nl.*
 
 ### License
 The copyright of this framework can be found here: http://creativecommons.org/licenses/by-nc/3.0/
