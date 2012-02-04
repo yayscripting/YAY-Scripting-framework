@@ -64,7 +64,7 @@ class YSH_File extends YS_Helper
 	
 		if (!$type || $type == 'application/octet-stream') {
 	        	
-	        	if (function_exists('xif_imagetype'))
+	        	if (function_exists('exif_imagetype'))
 				$exifImageType = exif_imagetype($file);
 	        
 			if ($exifImageType !== false) {
@@ -117,7 +117,7 @@ class YSH_File extends YS_Helper
 				/* IMAGE */
 				case 'png':	return 'image/png';
 				case 'bmp':	return 'image/bmp';
-				case 'jpeg':
+				case 'jpeg':	return 'image/jpeg';
 				case 'jpg':	return 'image/jpg';
 				case 'gif':	return 'image/gif';
 				
@@ -133,9 +133,68 @@ class YSH_File extends YS_Helper
 			
 		}
 	
-		return $type;
+		return strtolower($type);
 	    
 	}
+	
+	/** Gets the EXIF-information of an image.
+	 * 
+	 * Cache the output of this function, this is a time consuming proces. Please note that the imagic-implementation is not funtional yet.
+	 * 
+	 * @access public
+	 * @param string $src Path to image
+	 * @return mixed Array on success, false if the file is not an JPEG-image or no EXIF-data is present.
+	 * @throws HelperException with errorType 1: When neither the exif-module nor the ImageMagick-module is installed.
+	 */
+	public function getEXIF($src)
+	{
+		
+		$mime = $this->getMimeType($src);
+		if ($mime != 'image/jpg' && $mime != 'image/jpeg')
+			return false;
+		
+		// exif- function
+		if (function_exists('exif_read_data')) {
+			
+			return exif_read_data($src, 'IFD0,EXIF', false);
+			
+		}
+		
+		/* Not implented yet 
+		// imagick
+		if (class_exists('imagick', false)) {
+			
+			$imagick = new imagick($src);
+			var_dump($imagick);
+			return $imagick->getImageProperties( "exif:*" );
+			
+		}
+		*/
+		
+		// nothing is supported
+		throw new HelperException(1, 'Neither the exif-module nor the ImageMagick-module is installed');
+		
+	}
+	
+	/** Gets the Dimensions of an image.
+	 * 
+	 * @access public
+	 * @param string $src Path to image
+	 * @return object object(['width']=>width,['height']=>height) on success, false on failure.
+	 * @throws HelperException with errorType 1: when file is not an image.
+	 */
+	public function getDimensions($src)
+	{
+		
+		if (!$this->isImage($src))
+			throw new HelperException(1, 'Given file('.$src.') is not an image.');
+		
+		$sizes = getimagesize($src);
+		
+		return (object)array('width' => $sizes[0], 'height' => $sizes[1]);
+		
+	}
+	 
 	
 	/** Check if a file is an image.
 	 * 
@@ -146,7 +205,7 @@ class YSH_File extends YS_Helper
 	 * @return bool
 	 * @see getMimeType
 	 */
-	function isImage($file)
+	public function isImage($file)
 	{
 		
 		// base on MIME-type
