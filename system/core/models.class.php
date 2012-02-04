@@ -502,9 +502,6 @@ class YS_ModelController
 	public function getBy($colum, $value)
 	{
 		
-		if (!empty($this->encryption[$key]))
-			$value = $this->encode($key, $value);
-		
 		return ($this->select(null, array($colum => $value), null));
 		
 	}
