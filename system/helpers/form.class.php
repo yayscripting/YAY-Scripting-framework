@@ -1298,7 +1298,7 @@ class HTML_Select extends HTML_Element
 		if (!empty($this->options)) 
 			foreach($this->options as $option) {
 				
-				$html .= '<option'.(($option->value !== null) ? ' value="'.htmlspecialchars($option->value).'"' : '').(($option->value !== null && $option->value == $this->getAttribute('innerHTML')) ? ' selected="selected"' : '').'>'.$option->name."</option>\n";
+				$html .= '<option'.(($option->value !== null) ? ' value="'.htmlspecialchars($option->value).'"' : '').((($option->value !== null && $option->value == $this->getAttribute('value')) || $option->name == $this->getAttribute('value')) ? ' selected="selected"' : '').'>'.$option->name."</option>\n";
 				
 			}
 		
