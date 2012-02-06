@@ -775,16 +775,16 @@ class HTML_Form extends HTML_Element
 	 * 
 	 * @access public
 	 * @param string $name Name of the element
-	 * @param string $errorMessage Errormessage to show on error
+	 * @param string $default Default message to show on error
 	 * @return HTML_Select
 	 */
-	public function select($name, $errorMessage)
+	public function select($name, $default)
 	{
 		
 		// new upload-element
 		$element = new HTML_Select('select', $this, false);
 		$element->setAttribute('name', $name);
-		$element->setError($errorMessage);
+		$element->setDefault($default);
 		
 		// save element
 		$this->elements[] = $element;
@@ -1148,6 +1148,12 @@ class HTML_Select extends HTML_Element
 	 */
 	protected $options;
 	
+	/** contains the default option
+	 * 
+	 * @access protected
+	 */
+	protected $default = null;
+	
 	/** Sets a new option
 	 * 
 	 * @access public
@@ -1160,6 +1166,21 @@ class HTML_Select extends HTML_Element
 		
 		$this->options[] = (object) array('name' => $name, 'value' => $value);
 		return $this;
+		
+	}
+	
+	/** Sets the default value
+	 * 
+	 * if $name equals null, the default will be unset.
+	 * 
+	 * @access public
+	 * @param string $name Name of the option
+	 * @return HTML_Select this
+	 */
+	public function setDefault($name = null)
+	{
+		
+		$this->default = $name;
 		
 	}
 	
@@ -1176,8 +1197,14 @@ class HTML_Select extends HTML_Element
 	public function validate($containing)
 	{
 		
+		if (!$this->required)
+			return true;
+		
 		// get value value
 		$value = ($this->isEmpty($containing) ? '' : $this->getPostValue($containing));
+		
+		if ($value == sha1($this->default))
+			return $this->errorMessage;
 		
 		// check values
 		foreach($this->options as $option) {
@@ -1203,30 +1230,15 @@ class HTML_Select extends HTML_Element
 		
 	}
 	
-	/** sets the new error-message
-	 * 
-	 * @access public
-	 * @param string $errorMessage Message to show on error
-	 * @return void
+	/** 
+	 * mule-function, should not be working at this element
 	 */
-	public function setError($errorMessage)
+	public function setValidator() 
 	{
 		
-		$this->errorMessage = $errorMessage;	
+		throw new FormException(1, 'You can not use the setValidator()-function, this does not work.');
 		
 	}
- 	
-	
-	/** 
-	 * mule-function, should not be working @ this element
-	 */
-	public function setRequired() {}
-	
-	
-	/** 
-	 * mule-function, should not be working @ this element
-	 */
-	public function setValidator() {}
 	
 	/** Builds the HTML-code
 	 * 
@@ -1278,6 +1290,9 @@ class HTML_Select extends HTML_Element
 		
 		// close tag
 		$html .=  ">\n";
+		
+		if ($this->default !== null)
+			$html .= '<option value="'.sha1($this->default).'">'.(htmlspecialchars($this->default)).'</option>'."\n";
 		
 		// options
 		if (!empty($this->options)) 
