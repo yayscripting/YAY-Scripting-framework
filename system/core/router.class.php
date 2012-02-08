@@ -133,7 +133,7 @@ class YS_Router Extends YS_Core
 		$controller = strtolower($this->helpers->string->url_safe($controller));
 		
 		// check SEO
-		if($this->config->script->force_seo === true && $controller == $this->config->script->default_controller && $_GET['a'] == $controller && empty($_GET['b'])){
+		if($this->config->script->force_seo === true && $controller == $this->config->script->default_controller && empty($_GET['a']) == false && $_GET['a'] == $controller && empty($_GET['b'])){
 		
 			// check postdata
 			if($_SERVER['REQUEST_METHOD'] != "POST"){
