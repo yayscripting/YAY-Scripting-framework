@@ -474,6 +474,10 @@ class HTML_Element
 					
 				}
 				
+			} else if ($this->getType() == 'select') {
+				
+				$this->setAttribute('value', $value);
+				
 			} else if (!$this->close) {
 				
 				$this->setAttribute('innerHTML', $value);
@@ -1293,7 +1297,7 @@ class HTML_Select extends HTML_Element
 		
 		if ($this->default !== null)
 			$html .= '<option value="'.sha1($this->default).'">'.(htmlspecialchars($this->default)).'</option>'."\n";
-		
+
 		// options
 		if (!empty($this->options)) 
 			foreach($this->options as $option) {
