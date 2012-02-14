@@ -1423,6 +1423,13 @@ class HTML_Upload extends HTML_Element
 	 * ));
 	 * </code>
 	 * 
+	 * If the second parameter($noUpload) is equal to null, than is not uploading allowed.
+	 * Example:
+	 * <code>
+	 * $element->setValidator(array('You can only upload JPG-images' => 'image/jpg'), null);
+	 * // This element will validate if you upload a JPG-image, or if you do not upload at all.
+	 * </code>
+	 * 
 	 * @access public
 	 * @param mixed $validator Validators
 	 * @param string $noUpload ErrorMessage to show when no file is uploaded.
@@ -1488,8 +1495,15 @@ class HTML_Upload extends HTML_Element
 			$name = $this->getAttribute('name');
 			
 			// validate upload
-			if (empty($_FILES[$name]['name']))
-				return $this->errors['noUpload'];
+			if (empty($_FILES[$name]['name'])) {
+				
+				if (!is_null($this->errors['noUpload']))
+					return $this->errors['noUpload'];
+				
+				// validated
+				return true;
+				
+			}
 				
 			// check size
 			if ($_FILES[$name]['size'] > $this->maxSize)
@@ -1542,6 +1556,9 @@ class HTML_Upload extends HTML_Element
 	 */
 	public function value()
 	{
+		
+		if (empty($_FILES[$this->getAttribute('name')]))
+			return array();
 		
 		return $_FILES[$this->getAttribute('name')];
 		
