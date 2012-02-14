@@ -1557,7 +1557,7 @@ class HTML_Upload extends HTML_Element
 	public function value()
 	{
 		
-		if (empty($_FILES[$this->getAttribute('name')]))
+		if (empty($_FILES[$this->getAttribute('name')]) || empty($_FILES[$this->getAttribute('name')]['tmp_name']))
 			return array();
 		
 		return $_FILES[$this->getAttribute('name')];
