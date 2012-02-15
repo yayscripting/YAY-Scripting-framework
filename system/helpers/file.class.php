@@ -117,7 +117,7 @@ class YSH_File extends YS_Helper
 				/* IMAGE */
 				case 'png':	return 'image/png';
 				case 'bmp':	return 'image/bmp';
-				case 'jpeg':	return 'image/jpeg';
+				case 'jpeg':	
 				case 'jpg':	return 'image/jpg';
 				case 'gif':	return 'image/gif';
 				
@@ -129,7 +129,19 @@ class YSH_File extends YS_Helper
 				case 'au':
 				case 'snd':	return 'audio/basic';
 				
+				/* COMPRESSED FILES */
+				case 'zip':	return 'application/zip';
+				
 			}
+			
+		}
+		
+		// mime replacements
+		switch (strtolower($ext)) {
+			
+			case 'application/x-zip':	
+			case 'application/x-compressed':
+			case 'application/compressed':	return 'application/zip';
 			
 		}
 	
