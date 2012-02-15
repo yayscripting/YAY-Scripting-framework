@@ -58,9 +58,6 @@ class YS_Events extends YS_Singleton
 		unset($args[0]);
 		sort($args);
 		if (empty($args))
-			$args = null;
-		
-		if (is_null($args))
 			$args = array();
 		
 		if (method_exists($this->event, $event))
