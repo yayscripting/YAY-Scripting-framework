@@ -116,8 +116,8 @@ class YS_Language extends YS_Singleton
 		if (is_null($language))
 			$language = $this->getLang();
 		
-		// return_keyword_on_given check
-		if (true == $this->config->language->return_keyword_on_given && $language == $this->config->language->default_language)
+		// return_keyword_on_error check
+		if (true == $this->config->language->return_keyword_on_error && $language == $this->config->language->default_language)
 			return $keyword;
 		
 		// fool-proof
@@ -134,8 +134,8 @@ class YS_Language extends YS_Singleton
 		// check if translation exists
 		if (empty($this->cache[$language][$keyword])) {
 			
-			// return_keyword_on_error-check
-			if ($this->config->language->return_keyword_on_error && $language != $this->config->language->default_language)
+			// return_default_on_error-check
+			if ($this->config->language->return_default_on_error && $language != $this->config->language->default_language)
 				return $this->translate($keyword, $this->config->language->default_language);
 				
 			
