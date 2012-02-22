@@ -85,8 +85,7 @@ header("ETag: ".sha1(ob_get_contents()));
 function throwError()
 {
 	
-	$_GET['a'] = 'error';
-	$_GET['b'] = 'trigger_404';
+	$_GET['ys_route'] = 'error/trigger_404';
 	include 'index.php';
 	
 }

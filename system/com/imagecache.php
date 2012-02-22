@@ -9,6 +9,9 @@
  * @subpackage loading
  */
 
+// set correct working directory
+chdir('../../');
+	
 // both variables set?
 if (empty($_GET['file']) || empty($_GET['ext']))
 	throwError();
@@ -41,7 +44,7 @@ if (!in_array($ext, $exts))
 	throwError();
 	
 // file exists?
-if (!file_exists('../../'.$dir.$file.'.'.$ext))
+if (!file_exists($dir.$file.'.'.$ext))
 	throwError();
 
 // load MIMES
@@ -62,7 +65,7 @@ header("Expires: max-age");
 header("ETag: ".sha1($content));
 
 // read file
-readfile('../../'.$dir.$file.'.'.$ext);
+readfile($dir.$file.'.'.$ext);
 
 /** Loads the error-page (404)
  * 
@@ -71,9 +74,7 @@ readfile('../../'.$dir.$file.'.'.$ext);
 function throwError()
 {
 	
-	$_GET['a'] = 'error';
-	$_GET['b'] = 'trigger_404';
-	chdir('../../');
+	$_GET['ys_route'] = 'error/trigger_404';
 	include 'index.php';
 	
 }

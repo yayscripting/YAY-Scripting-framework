@@ -206,7 +206,7 @@ class YS_ModelController
 	 * @return object Fetched_result.
 	 * @see getBy
 	 */
-	public function getById($id, array $fields = null)
+	final public function getById($id, array $fields = null)
 	{
 		
 		// reference to DATABASE-class
@@ -228,7 +228,7 @@ class YS_ModelController
 	 * @param string $sql Query
 	 * @return Resource Mysql Resource
 	 */
-	public function query($sql)
+	final public function query($sql)
 	{
 		
 		return $this->sql->query($sql);
@@ -252,7 +252,7 @@ class YS_ModelController
 	 * @param mixed $id ID to delete.
 	 * @return bool Success
 	 */
-	public function delete($id)
+	final public function delete($id)
 	{
 		
 		if (is_numeric($id) == false && is_array($id) == false) {
@@ -306,7 +306,7 @@ class YS_ModelController
 	 * @param string $prefix A Prefix, this string is pasted behind the select-statement
 	 * @return DatabaseData Data-object
 	 */
-	public function select($fields = null, $where = null, $order = null, $limit = null, $prefix = null)
+	final public function select($fields = null, $where = null, $order = null, $limit = null, $prefix = null)
 	{
 		
 		$avarage = ($where == null && $order == null && $limit == null && $prefix == null && is_string($fields)) == false;
@@ -445,7 +445,7 @@ class YS_ModelController
 	 * @param mixed $limit Limit.
 	 * @return int Affected rows.
 	 */
-	public function update($values = null, $where = null, $limit = null)
+	final public function update($values = null, $where = null, $limit = null)
 	{
 		
 		// avarage?
@@ -499,7 +499,7 @@ class YS_ModelController
 	 * @return DatabaseData Data-object.
 	 * @see getById
 	 */
-	public function getBy($colum, $value)
+	final public function getBy($colum, $value)
 	{
 		
 		return ($this->select(null, array($colum => $value), null));
@@ -520,7 +520,7 @@ class YS_ModelController
 	 * @param mixed $where Values to insert.
 	 * @return int Amount of rows.
 	 */
- 	public function count($where) 
+ 	final public function count($where) 
  	{
  		
  		// encryption?
@@ -567,7 +567,7 @@ class YS_ModelController
 	 * @param mixed $values Values to insert.
 	 * @return int Inserted ID, false on error.
 	 */
-	public function insert($values)
+	final public function insert($values)
 	{
 		
 		// avarage?
@@ -606,7 +606,7 @@ class YS_ModelController
 	 * @param string $string String to escape.
 	 * @return string Escaped string.
 	 */
-	protected function safe($string)
+	final protected function safe($string)
 	{
 		
 		// reference to DATABASE-class
@@ -622,7 +622,7 @@ class YS_ModelController
 	 * @return Encoded data.
 	 * @see decode
 	 */
-	protected function encode($key, $value) 
+	final protected function encode($key, $value) 
 	{
 		
 		// no need to encrypt
@@ -650,7 +650,7 @@ class YS_ModelController
 	 * @return Decoded data.
 	 * @see encode
 	 */
-	protected function decode($key, $value) 
+	final protected function decode($key, $value) 
 	{
 		
 		// no need to encrypt

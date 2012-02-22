@@ -60,6 +60,12 @@ class YS_Events extends YS_Singleton
 		if (empty($args))
 			$args = array();
 		
+		// system functions:
+		if (method_exists($this->event, '__'.$event))
+			call_user_func_array(array($this->event, '__'.$event), $args);
+		
+		
+		// user functions
 		if (method_exists($this->event, $event))
 			call_user_func_array(array($this->event, $event), $args);
 		
@@ -169,6 +175,14 @@ class YS_Event_Data
 			foreach ($values as $key => $value)
 				$this->controller->$key = $value;
 		
+		
+	}
+	
+	final public function __runtime()
+	{
+		
+		$this->layout->assign('lang', YS_Language::Load()->getLang());
+		$this->layout->assign('language', YS_Language::Load()->getLang());
 		
 	}
 

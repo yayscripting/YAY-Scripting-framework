@@ -55,8 +55,7 @@ echo file_get_contents($file . '.' . $ext);
 function throwError()
 {
 	
-	$_GET['a'] = 'error';
-	$_GET['b'] = 'trigger_404';
+	$_GET['ys_route'] = 'error/trigger_404';
 	include 'index.php';
 	
 }

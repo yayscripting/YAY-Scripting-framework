@@ -124,7 +124,7 @@ class YS_Helper
 	 * @throws HelperException with errorcode 1 when the class is loaded for the second time.
 	 * @return void
 	 */
-	protected function singleton()
+	final protected function singleton()
 	{
 		
 		if (empty(self::$instance[get_class($this)])) {

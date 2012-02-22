@@ -380,3 +380,39 @@ class HelperException extends Exception
 	}
 	
 }
+
+/** Translate error
+ *
+ * @package core
+ * @subpackage Error
+ */
+class TranslateException extends Exception
+{
+	
+	/** Show error-message
+	 * 
+	 * @access public
+	 * @return string ErrorMessage
+	 */
+	public function errorMessage()
+	{
+		
+		// error
+		return $this->getMessage();
+		
+	}
+	
+	/** Shows full errorMessage, inclusive linenumber and filename.
+	 * 
+	 * @access public
+	 * @return string Full errorMessage.
+	 */
+	public function fullMessage()
+	{
+		
+		// error
+		return 'Error on line '.$this->getLine().' in '.$this->getFile().'.<br /> <b>'.$this->getMessage().'</b>';
+		
+	}
+
+}

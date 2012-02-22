@@ -38,54 +38,40 @@
 	RewriteRule ^appicon\.ico$ /system/com/imagecache.php?file=application/resources/image/appicon&ext=png [L]
 	
 	# com
-	RewriteRule ^com/([^./]+)\.json$ /index.php?ys_mode=com&a=$1 [QSA]
-	RewriteRule ^com/([^./]+)/([^./]+)\.json$ /index.php?ys_mode=com&a=$1&b=$2 [QSA]
+	RewriteRule ^com/([^./]+)\.json$ /index.php?ys_mode=com&ys_route=$1 [QSA]
+	RewriteRule ^com/([^./]+)/([^./]+)\.json$ /index.php?ys_mode=com&ys_route=$1/$2 [QSA]
 
 	# Dont rewrite external .html-files, these can be used as documentation.
 	RewriteCond %{REQUEST_URI} ^/system/external/(.+?)\.html
 	RewriteRule .* - [S=8]
 	
 	# Apache + IIS(/?) will accept this line of code.
-	RewriteRule ^/?([^./]+).html$ /index.php?a=$1 [QSA]
-	RewriteRule ^/?([^./]+)/([^./]+).html$ /index.php?a=$1&b=$2 [QSA]
-	RewriteRule ^/?([^./]+)/([^./]+)/([^./]+).html$ /index.php?a=$1&b=$2&c=$3 [QSA]
-	RewriteRule ^/?([^./]+)/([^./]+)/([^./]+)/([^./]+).html$ /index.php?a=$1&b=$2&c=$3&d=$4 [QSA]
-	RewriteRule ^/?([^./]+)/([^./]+)/([^./]+)/([^./]+)/([^./]+).html$ /index.php?a=$1&b=$2&c=$3&d=$4&e=$5 [QSA]
-	RewriteRule ^/?([^./]+)/([^./]+)/([^./]+)/([^./]+)/([^./]+)/([^./]+).html$ /index.php?a=$1&b=$2&c=$3&d=$4&e=$5&f=$6 [QSA]
-	RewriteRule ^/?([^./]+)/([^./]+)/([^./]+)/([^./]+)/([^./]+)/([^./]+)/([^./]+).html$ /index.php?a=$1&b=$2&c=$3&d=$4&e=$5&f=$6&g=$7 [QSA]
-	RewriteRule ^/?([^./]+)/([^./]+)/([^./]+)/([^./]+)/([^./]+)/([^./]+)/([^./]+)/([^./]+).html$ /index.php?a=$1&b=$2&c=$3&d=$4&e=$5&f=$6&g=$7&h=$8 [QSA]
+	RewriteRule ^/?(.+).html$ /index.php?ys_route=$1 [QSA]
 	
 	# Other possibility
 	#
 	# We recommend to rewrite urls like /a/b.html but the following lines add support for urls like /a/b or /a/b/.
 	# TIP: Be consequent. Do not mix methods up.
 	#
-	#RewriteRule ^/?([^./]+)/?$ /index.php?a=$1 [QSA]
-	#RewriteRule ^/?([^./]+)/([^./]+)/?$ /index.php?a=$1&b=$2 [QSA]
-	#RewriteRule ^/?([^./]+)/([^./]+)/([^./]+)/?$ /index.php?a=$1&b=$2&c=$3 [QSA]
-	#RewriteRule ^/?([^./]+)/([^./]+)/([^./]+)/([^./]+)/?$ /index.php?a=$1&b=$2&c=$3&d=$4 [QSA]
-	#RewriteRule ^/?([^./]+)/([^./]+)/([^./]+)/([^./]+)/([^./]+)/?$ /index.php?a=$1&b=$2&c=$3&d=$4&e=$5 [QSA]
-	#RewriteRule ^/?([^./]+)/([^./]+)/([^./]+)/([^./]+)/([^./]+)/([^./]+)/?$ /index.php?a=$1&b=$2&c=$3&d=$4&e=$5&f=$6 [QSA]
-	#RewriteRule ^/?([^./]+)/([^./]+)/([^./]+)/([^./]+)/([^./]+)/([^./]+)/([^./]+)/?$ /index.php?a=$1&b=$2&c=$3&d=$4&e=$5&f=$6&g=$7 [QSA]
-	#RewriteRule ^/?([^./]+)/([^./]+)/([^./]+)/([^./]+)/([^./]+)/([^./]+)/([^./]+)/([^./]+)/?$ /index.php?a=$1&b=$2&c=$3&d=$4&e=$5&f=$6&g=$7&h=$8 [QSA]
-
+	#RewriteRule ^/?(.+)/?$ /index.php?ys_route=$1 [QSA]
+	
 # /* == File restriction */
 
 	RewriteCond %{REQUEST_URI} ^/application/(.*?)$
 	RewriteCond %{REQUEST_URI} !^/application/com/(.*?)$
 	RewriteCond %{REQUEST_URI} !^/application/resources/(.*?)$
-	RewriteRule ^/?(.*?)$ /index.php?a=error&b=403 [QSA]
+	RewriteRule ^/?(.*?)$ /index.php?ys_route=error/403 [QSA]
 	 
 	RewriteCond %{REQUEST_URI} ^/application/com/(cronjob|cli)(.*?)$
-	RewriteRule ^/?(.*?)$ /index.php?a=error&b=403 [QSA]
+	RewriteRule ^/?(.*?)$ /index.php?ys_route=error/403 [QSA]
 	
 	RewriteCond %{REQUEST_URI} ^/system/(.*?)$
 	RewriteCond %{REQUEST_URI} !^/system/com/(.*?)$
 	RewriteCond %{REQUEST_URI} !^/system/external/(.*?)$
-	RewriteRule ^/?(.*?)$ /index.php?a=error&b=403 [QSA]
+	RewriteRule ^/?(.*?)$ /index.php?ys_route=error/403 [QSA]
 	
 	RewriteCond %{REQUEST_URI} ^/cache/(.*?)$
-	RewriteRule ^/?(.*?)$ /index.php?a=error&b=403 [QSA]
+	RewriteRule ^/?(.*?)$ /index.php?ys_route=error/403 [QSA]
 	
 	RewriteCond %{REQUEST_URI} ^/cli.php(.*?)$
-	RewriteRule ^/?(.*?)$ /index.php?a=error&b=403 [QSA]
+	RewriteRule ^/?(.*?)$ /index.php?ys_route=error/403 [QSA]

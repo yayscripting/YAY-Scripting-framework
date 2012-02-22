@@ -29,7 +29,7 @@ class YS_Singleton
 	 * @static
 	 * @return YS_Singleton-childclass
 	 */
-	static public function Load()
+	final static public function Load()
 	{
 		
 		$class = self::_get_called_class();
@@ -53,7 +53,7 @@ class YS_Singleton
  	 * @static
  	 * @return string Classname, or false on error.
  	 */
-	private static function _get_called_class()
+	final private static function _get_called_class()
 	{
 		
 		// < PHP 5.3.0

@@ -74,6 +74,13 @@ class YS_Controller
 	 */
  	protected $event;
  	
+ 	/** The route
+ 	 * 
+ 	 * @access protected
+ 	 * @var array
+ 	 */
+ 	protected $route;
+ 	
 	/** Constructor
 	 * 
 	 * Loads layout, helpers and config.
@@ -91,11 +98,8 @@ class YS_Controller
 		
 		// environment
 		$this->environment = YS_Environment::Load();
-		
-		// switch all GET-(location-)vars 1 spot. (a/b/d/f/e/f/g/h)
-		if ($this->environment->get() !== false)
-			require_once 'system/functions/router.handleGET.inc.php';
 			
+		// escape POST
 		require_once 'system/functions/controller.handlePOST.inc.php';
 			
 		// set 
@@ -123,6 +127,19 @@ class YS_Controller
 		
 	}
 	
+	/** Injects the route into the controller
+	 * 
+	 * @access public
+	 * @param array $route The route
+	 * @return void
+	 */
+	final public function injectRoute(array $route)
+	{
+		
+		$this->route = $route;
+		
+	}
+	
 	/** Loads a class-file
 	 * 
 	 * Class found in /application/classes/NAME.class.php. As a constructor-parameter this class has been given, to contact the helpers/config/models.
@@ -134,7 +151,7 @@ class YS_Controller
 	 * @param string $className Name of the class(file)
 	 * @return object Created class
 	 */
- 	public function loadClass($className)
+ 	final public function loadClass($className)
  	{
  		
  		// fire event
@@ -186,7 +203,7 @@ class YS_Controller
 	 * @param mixed $input [input]
 	 * @return void
 	 */
-	public function load()
+	final public function load()
 	{
 	
 		$this->load_real(func_get_args(), 'load');
@@ -202,7 +219,7 @@ class YS_Controller
 	 * @return HTML_Form Form
 	 * @throws FormException when $form does not exists or could not be loaded.
 	 */
-	public function form($title)
+	final public function form($title)
 	{
 		
 		// load form helper
@@ -239,7 +256,7 @@ class YS_Controller
 	 * @param string $type Type of file.
 	 * @return bool Success
 	 */
-	private function load_real($array, $type = 'load')
+	final private function load_real($array, $type = 'load')
 	{
 	
 		// generate prefix path

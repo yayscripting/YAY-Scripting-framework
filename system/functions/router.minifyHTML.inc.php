@@ -30,7 +30,7 @@ try {
 		}
 	
 		// Thanks mwwaygoo @ http://www.php.net/manual/en/function.php-strip-whitespace.php#65245, 
-		// I stole his textarea-proof function, and edited it.
+		// I stole his textarea-proof function, and used a modified version of it.
 		$exceptions = array('textarea', 'pre');
 		
 		$string = '';
@@ -45,7 +45,7 @@ try {
 		
 		echo $html;
 		
-	}			
+	}
 
 } catch (ConfigException $ex) {
 	

@@ -18,12 +18,12 @@ $form = $this->helpers->form->newForm();
 			
 			The function on the next line is making sure that there will be thrown an error if they leave this input blank.
 		*/
-		->setRequired(true, 'Filling in an username is required.');
+		->setRequired(true, __('RequireUsername'));
 		
 	/* Creating the password-input */
 	$form->input('password', 'password')
 		/* Using a regex to validate the input. (multiple are allowed, see documentation)*/
-		->setValidator(array('/^[a-zA-Z0-9]+$/' => 'Filling in a valid(a-z,A-Z,0-9) password is required.'));
+		->setValidator(array('/^[a-zA-Z0-9]+$/' => __('RequirePassword')));
 		
 
 /* Returns the form, so it will be send correctly to the controller. */

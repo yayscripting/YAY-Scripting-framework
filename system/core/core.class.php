@@ -41,7 +41,7 @@ class YS_Core
 	public function __construct() 
 	{
 		
-		// set correct headers, prevention showing vurnable information
+		// set correct headers, prevent showing vurnable information
 		header('Server: YAY!Scripting/Apache');
 		header('X-Powered-By: YAY!Scripting_Framework');
 		header("Content-type: text/html; charset=utf-8");
@@ -61,10 +61,15 @@ class YS_Core
 		require_once 'system/core/error.class.php';
 		
 		// load real core files
-		require_once 'system/core/environment.class.php';
 		require_once 'system/core/controller.class.php';
 		require_once 'system/core/helpers.class.php';
 		require_once 'system/core/models.class.php';
+		
+		// environment
+		require_once 'system/core/environment.class.php';
+		
+		// language
+		require_once 'system/core/language.class.php';
 		
 		// layout
 		require_once 'system/core/layout.class.php';
@@ -75,7 +80,7 @@ class YS_Core
 		// load config
 		$this->load_config();
 		
-		// load controller basic-class
+		// load helpers
 		$this->helpers = YS_Helpers::Load();
 		
 	}

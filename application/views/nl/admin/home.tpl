@@ -1,0 +1,1 @@
+Dit is een beheerderspagina. Je kunt <a href="/admin/logout.html">hier</a> uitloggen.

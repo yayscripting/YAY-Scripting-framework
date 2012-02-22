@@ -134,6 +134,12 @@ class YS_Layout Extends YS_Singleton
 	public function view($view)
 	{
 		
+		// get lang folder
+		$langFolder = YS_Language::Load()->getDir();
+		
+		if (!is_null($langFolder))
+			$langFolder .= '/';
+		
 		// assign config
 		$this->smarty->assign('_config', $this->config );
 		
@@ -146,11 +152,11 @@ class YS_Layout Extends YS_Singleton
 			// get path
 			if (substr($view, 0, 7) != 'errors/') {
 				
-				$path = ($this->environment->get() !== false ? 'application/views/'.$this->environment->folder.'/' : 'application/views/pages/').$view.'.tpl';
+				$path = ($this->environment->get() !== false ? 'application/views/'.$langFolder.$this->environment->folder.'/' : 'application/views/'.$langFolder.'pages/').$view.'.tpl';
 			
 			} else {
 				
-				$path = 'application/views/'.$view;
+				$path = 'application/views/'.$langFolder.$view;
 			
 			}
 	
@@ -176,11 +182,11 @@ class YS_Layout Extends YS_Singleton
 		// display layout
 		if ($this->environment->get() !== false) {
 			
-			$this->smarty->display('application/views/molds/'.$this->environment->folder.'.tpl');
+			$this->smarty->display('application/views/'.$langFolder.'molds/'.$this->environment->folder.'.tpl');
 		
 		} else {
 			
-			$this->smarty->display('application/views/molds/'.$this->mold.'.tpl');
+			$this->smarty->display('application/views/'.$langFolder.'molds/'.$this->mold.'.tpl');
 			
 		}
 	
@@ -523,6 +529,12 @@ class YS_Layout Extends YS_Singleton
 	private function display_box($type, $title, $description)
 	{
 	
+		// get lang folder
+		$langFolder = YS_Language::Load()->getDir();
+		
+		if (!is_null($langFolder))
+			$langFolder .= '/';
+			
 		// assign box content
 		$this->smarty->assign('_box_type', $type);
 	
@@ -533,7 +545,7 @@ class YS_Layout Extends YS_Singleton
 		$this->smarty->assign('_box_content', $description);
 		
 		// fetch box into _box
-		$this->smarty->assign('_box', $this->smarty->fetch('application/views/elements/box.tpl'));
+		$this->smarty->assign('_box', $this->smarty->fetch('application/views/'.$langFolder.'elements/box.tpl'));
 		
 	
 	}

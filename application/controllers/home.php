@@ -46,7 +46,7 @@ class Home Extends YS_Controller
 			Checks if someone has filled in the form correctly.
 			The given parameter is the title of the error-message to show if anything went wrong.
 		*/
-		if ($form->validate('Something went wrong.')) {
+		if ($form->validate(__('error'))) {
 			
 			/* Loads a model (/model/admin.class.php) */
 			$admin = $this->models->admin;
@@ -76,7 +76,7 @@ class Home Extends YS_Controller
 				
 					while ($selection->fetch()) {
 						
-						echo $selection->data->row;
+						echo $selection->data->row . '<br />';
 						
 					}
 				*/
@@ -94,14 +94,14 @@ class Home Extends YS_Controller
 				} else {
 					
 					/* Wrong password */
-					$this->layout->show_error('Something went wrong', "You've entered the wrong password");
+					$this->layout->show_error(__('error'), __('noPW'));
 					
 				}
 				
 			} else {
 				
 				/* The username was nog found in the database */
-				$this->layout->show_error('Something went wrong.', 'That username does not exist.');
+				$this->layout->show_error(__('error'), __('noUSER'));
 				
 			}
 			
@@ -115,6 +115,19 @@ class Home Extends YS_Controller
 		
 	}
 	
+	/** You should visit the dutch version of this website. /dutch.html
+	 * 
+	 * This function redirects to /nl.html.
+	 * nl is the language prefix, you can set more in the folder /application/language, or change the settings at /application/config/language.cfg.php
+	 * 
+	 */
+	public function dutch()
+	{
+		
+		$this->helpers->http->redirect('/nl.html');
+		
+	}
+	
 	/*
 		This method is being called if the url /home/information.html has been called.
 	*/
@@ -123,7 +136,7 @@ class Home Extends YS_Controller
 		
 		echo 'loaded /home/information.html<br /><br />';
 		echo '$this->get[\'a\'] = \'home\', and $this->get[\'b\'] = \'information\'<br />';
-		echo 'The maximum of the GET-parameters given as a path is 8.';
+		echo 'The maximum of the GET-parameters given as a path is now infinite.';
 		
 	}
 	

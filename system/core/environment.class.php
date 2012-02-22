@@ -16,6 +16,13 @@
 class YS_Environment extends YS_Singleton
 {
 	
+	/** The route to use while determining the environment
+	 * 
+	 * @access private
+	 * @var array
+	 */
+	private $route = null;
+	
 	/** All config-data
 	 * 
 	 * @access public
@@ -45,6 +52,19 @@ class YS_Environment extends YS_Singleton
 		
 		// checks singleton
 		parent::__construct();
+		
+	}
+	
+	/** Sets the route
+	 * 
+	 * @access public
+	 * @param array $route The route
+	 * @return void
+	 */
+	public function setRoute(array $route)
+	{
+		
+		$this->route = $route;
 		
 	}
 	
@@ -107,7 +127,7 @@ class YS_Environment extends YS_Singleton
 		
 		foreach ($this->config->environment as $name => $values) {
 			
-			if ($values->enabled == true && (isset($_GET['a']) && strtolower($_GET['a']) == strtolower($values->trigger))) {
+			if ($values->enabled == true && (isset($this->route[0]) && strtolower($this->route[0]) == strtolower($values->trigger))) {
 				
 				$this->cache = $name;
 				return $name;

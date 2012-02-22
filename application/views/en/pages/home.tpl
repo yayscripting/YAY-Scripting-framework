@@ -8,7 +8,7 @@
 <p>Via the form below you are enabled to access the adminstrator environment.</p>
 
 <p><small>Since the Home controller is the default controller (see applicatoin/config/script.cfg.php) and the option 'force_seo' is enabled the Router won't accept /home.html as GET request. You can still send POST requests but we recommend not to.</small></p>
-<form method="post" action="/">
+<form method="post" action="/{$lang}.html">
 
 {* This line is required, because it makes sure that the form-parser always picks the right form when there are more than 1 form on one page. *}
 {$form.form}
