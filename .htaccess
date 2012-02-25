@@ -55,6 +55,10 @@
 	#
 	#RewriteRule ^/?(.+)/?$ /index.php?ys_route=$1 [QSA]
 	
+	# language-notation.
+	RewriteRule ^/?(.[^./]+)/$ /index.php?ys_lang=$1
+	
+	
 # /* == File restriction */
 
 	RewriteCond %{REQUEST_URI} ^/application/(.*?)$

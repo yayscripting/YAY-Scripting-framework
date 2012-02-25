@@ -99,7 +99,7 @@ class YS_Language extends YS_Singleton
 			return $this->config->language->default_language;
 		
 		if (is_null($this->route))
-			return null;
+			return $this->config->language->default_language;
 			
 		return preg_replace('/[^a-zA-Z]/s', '', $this->route[0]);
 		

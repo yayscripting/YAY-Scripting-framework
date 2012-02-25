@@ -213,7 +213,7 @@ class YSH_Encryption extends YS_Helper
 	 * @param int		int	$loop		number of times to loop (the stronger, the better and slower).
 	 * @param string	string	$algorithm	algorithm-type(e.g. 'sha256').
 	 * @throws HelperException with errorType 2.
-	 * 	If $loop is higher than zero.
+	 * 	If $loop is not higher than zero.
 	 * @throws HelperException with errorType 1
 	 * 	If the $length is to high.
 	 * @return binary encrypted password (save in BLOB or base64-encode this).
@@ -221,13 +221,14 @@ class YSH_Encryption extends YS_Helper
 	public function pbkdf2($password, $salt, $length, $loop = 2000, $algorithm = null)
 	{
 		
+		// default hash-type
+		if (is_null($algorithm))
+			$algorithm = $this->config->encryption->hash_algorithm;
+		
 		// get hashlength
 		$Hlength = strlen(hash($algorithm, null, true));
 		$blockC  = ceil($length / $Hlength);
 		$key	 = "";
-		
-		if (is_null($algorithm))
-			$algorithm = $this->config->encryption->hash_algorithm;
 		
 		// verify input
 		if ($length / $Hlength > pow(2, 32) - 1)
