@@ -429,6 +429,19 @@ class YS_ModelController
 		
 	}
 	
+	/** Checks if a ID exists
+	 * 
+	 * @access public
+	 * @param int $id
+	 * @return bool
+	 */
+	final public function exists($id)
+	{
+		
+		return ($this->getById($id, array('id')) !== false);
+		
+	}
+	
 	/** Updates a table
 	 * 
 	 * If $values is a string, and Where is null and $limit is null, $value is imprented as a query.
