@@ -11,7 +11,7 @@ class Login Extends YS_Controller
 	{
 		
 		// redirect to /home.html, because there is where you need to login
-		$this->helpers->http->redirect('/home.html');
+		$this->helpers->http->redirect($this->language->getLang().'/home.html');
 		
 	}
 	

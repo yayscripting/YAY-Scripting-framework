@@ -255,6 +255,8 @@ class YS_ModelController
 	final public function delete($id)
 	{
 		
+		if (is_object($id)) $id = (array) $id;
+		
 		if (is_numeric($id) == false && is_array($id) == false) {
 			
 			return ($this->sql->query($id) !== false);
@@ -303,13 +305,18 @@ class YS_ModelController
 	 * @param mixed $where What parameters are required
 	 * @param mixed $order Order by what?
 	 * @param mixed $limit What limit
-	 * @param string $prefix A Prefix, this string is pasted behind the select-statement
+	 * @param string $suffix A Suffix, this string is pasted behind the select-statement
 	 * @return DatabaseData Data-object
 	 */
-	final public function select($fields = null, $where = null, $order = null, $limit = null, $prefix = null)
+	final public function select($fields = null, $where = null, $order = null, $limit = null, $suffix = null)
 	{
 		
-		$avarage = ($where == null && $order == null && $limit == null && $prefix == null && is_string($fields)) == false;
+		$avarage = ($where == null && $order == null && $limit == null && $suffix == null && is_string($fields)) == false;
+		
+		if (is_object($fields)) $fields = (array)$fields;
+		if (is_object($where)) $where = (array)$where;
+		if (is_object($order)) $order = (array)$order;
+		if (is_object($limit)) $limit = (array)$limit;
 		
 		// avarage query?
 		if ($avarage) {
@@ -403,7 +410,7 @@ class YS_ModelController
 			$limit = ($limit == null) ? "" : " LIMIT " . $limit;
 				
 			// build query
-			$query = "SELECT " . $select . " FROM `" . $this->sql->safe($this->table) . "`" . $where . $order . $limit . (($prefix === null) ? '' : $prefix);
+			$query = "SELECT " . $select . " FROM `" . $this->sql->safe($this->table) . "`" . $where . $order . $limit . (($suffix === null) ? '' : $suffix);
 		
 		// string given
 		} else {
@@ -463,6 +470,9 @@ class YS_ModelController
 		
 		// avarage?
 		$avarage = ($where == null && $limit == null && is_string($values)) == false;
+		
+		if (is_object($values)) $values = (array)$values;
+		if (is_object($where)) $where = (array)$where;
 		
 		if ($avarage) {
 			
@@ -536,6 +546,8 @@ class YS_ModelController
  	final public function count($where) 
  	{
  		
+ 		if (is_object($where)) $where = (array)$where;
+ 		
  		// encryption?
  		if (is_array($where)) {
 				
@@ -582,6 +594,8 @@ class YS_ModelController
 	 */
 	final public function insert($values)
 	{
+		
+		if (is_object($values)) $values = (array)$values;
 		
 		// avarage?
 		if (is_array($values)) {

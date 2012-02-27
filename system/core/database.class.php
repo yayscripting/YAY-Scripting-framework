@@ -79,7 +79,7 @@ class YS_Database extends YS_Singleton
 			if(mysql_select_db($database)) {
 			
 				// set connection charset
-				mysql_set_charset('utf8'); 
+				mysql_set_charset($this->_config->database->default_charset); 
 				return;
 			
 			}

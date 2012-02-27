@@ -53,10 +53,13 @@
 	# We recommend to rewrite urls like /a/b.html but the following lines add support for urls like /a/b or /a/b/.
 	# TIP: Be consequent. Do not mix methods up.
 	#
-	#RewriteRule ^/?(.+)/?$ /index.php?ys_route=$1 [QSA]
+	#RewriteRule ^/?(.+)/$ /index.php?ys_route=$1 [QSA]
 	
 	# language-notation.
-	RewriteRule ^/?(.[^./]+)/$ /index.php?ys_lang=$1
+	RewriteRule ^/?(.[^./]+)/$ /index.php?ys_lang=$1 [QSA]
+	
+	# Single slash-directory notation
+	RewriteRule ^/?(.[^./]+)$ /$1/ [QSA,R=303]
 	
 	
 # /* == File restriction */

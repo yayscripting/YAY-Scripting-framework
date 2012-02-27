@@ -74,6 +74,13 @@ class YS_Controller
 	 */
  	protected $event;
  	
+	/** Lanugage handler
+	 * 
+	 * @access protected
+	 * @var YS_Language
+	 */
+ 	protected $language;
+ 	
  	/** The route
  	 * 
  	 * @access protected
@@ -98,6 +105,9 @@ class YS_Controller
 		
 		// environment
 		$this->environment = YS_Environment::Load();
+		
+		// language
+		$this->language = YS_Language::Load();
 			
 		// escape POST
 		require_once 'system/functions/controller.handlePOST.inc.php';

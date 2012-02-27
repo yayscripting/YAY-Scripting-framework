@@ -9,6 +9,11 @@
  */
 define('FILTER_ALPHA', '/^[a-zA-Z]+$/');
 
+/**
+ * @global regex FILTER_NUMBERS FORM_Validator-constant, numbers only.
+ */
+define('FILTER_NUMBERS', '/^[0-9]+$/');
+
 /** 
  * @global regex FILTER_LOWER FORM_Validator-constant, lowercase characters only.
  */
@@ -53,6 +58,7 @@ define('FILTER_DATE_SYSTEM', '/^(2[0-9]{3}|19[0-9]{2})\-([0][1-9]|[1][012])\-(0[
  * @global regex FILTER_URL FORM_Validator-constant, for Links, http:// is required
  */
 define('FILTER_URL', '/^http:\/\/([a-zA-Z0-9\-_]{1,}\.){1,}\.[a-zA-Z]{2,4}$/');
+
 
 /** Form-helper
  * 
@@ -1073,7 +1079,7 @@ class HTML_Form extends HTML_Element
 	/** Gets all relevant POST-data.
 	 * 
 	 * @access public
-	 * @return array Relevant POST-data
+	 * @return object Relevant POST-data
 	 */
 	public function values()
 	{
@@ -1127,7 +1133,7 @@ class HTML_Form extends HTML_Element
 			
 		}
 		
-		return $values;
+		return (object)$values;
 		
 	}
 	

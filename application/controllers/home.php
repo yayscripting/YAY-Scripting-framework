@@ -51,17 +51,17 @@ class Home Extends YS_Controller
 			/* Loads a model (/model/admin.class.php) */
 			$admin = $this->models->admin;
 			
-			/* Get the filled in values, this only contains the values which were defined in the form-file. */
+			/* Get the filled-in values, this only contains the values which were defined in the form-file. */
 			$values = $form->values();
 			
 			/* Selects the row with the login credentials */
-			$selection = $admin->select(array('username', 'password'), array('username' => $values['username']));
+			$selection = $admin->select(array('username', 'password'), array('username' => $values->username));
 			
 			/* checks if there is a row selected. */
 			if ($selection->num_rows > 0) {
 				
 				/* hash the password with PBKDF2 to match it against the one found in the database. */
-				$values['password'] = $this->helpers->encryption->pbkdf2($values['password'], 'aSecr3tKeyToHashWith(usually 128/256 bytes long)', 256, 2000, 'sha512');
+				$values->password = $this->helpers->encryption->pbkdf2($values->password, 'aSecr3tKeyToHashWith(usually 128/256 bytes long)', 256, 2000, 'sha512');
 				/*
 					Some more comment on the above line:
 					The part of the code $this->helpers->encryption->pbkdf2 loads the class YSH_Encryption in the file /system/helpers/encryption.class.php.
@@ -83,13 +83,13 @@ class Home Extends YS_Controller
 				$selection->fetch();
 				
 				/* Match data against hashed password */
-				if ($selection->data->password == $values['password']) {
+				if ($selection->data->password == $values->password) {
 					
 					// log in into the environment
 					$this->environment->login('admin');
 					
 					// redirect to admin
-					$this->helpers->http->redirect('/admin.html');
+					$this->helpers->http->redirect($this->getLang().'/admin.html');
 					
 				} else {
 					

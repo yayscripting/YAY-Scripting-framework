@@ -11,7 +11,7 @@ class Logout extends YS_Controller
 		$this->environment->logout('admin');
 		
 		// redirect to login
-		$this->helpers->http->redirect('/home.html');
+		$this->helpers->http->redirect($this->language->getLang().'/home.html');
 		
 	}
 	

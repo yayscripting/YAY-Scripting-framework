@@ -83,6 +83,20 @@ class YS_Core
 		// load helpers
 		$this->helpers = YS_Helpers::Load();
 		
+		// system check
+		$this->systemCheck();
+		
+	}
+	
+	/** checks if permissions are set correctly.
+	 * 
+	 * 
+	 */
+ 	public function systemCheck()
+ 	{
+ 		if (substr(decoct(fileperms('cache')),1) != '0777')
+ 			die("CHMOD 'cache/' to 0777");
+ 		
 	}
 	
 	/** Loads config

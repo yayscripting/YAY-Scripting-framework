@@ -107,7 +107,9 @@ class YS_Language extends YS_Singleton
 	
 	/** Gets the translation of a specific amount of text.
 	 * 
-	 * 
+	 * @access public
+	 * @param string $keyword Word to translate
+	 * @param string $language Language to translate to
 	 */
 	public function translate($keyword, $language = null)
 	{
