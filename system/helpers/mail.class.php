@@ -184,9 +184,10 @@ class YSH_Mail extends YS_Helper
 	 * @param mixed $from Sender, single string or array(email => name)-format
 	 * @param string $header Header name, located in views/mails/headers/%NAME%.tpl.
 	 * @param string $footer Footer name, located in views/mails/footers/%NAME%.tpl.
+	 * @param string $langDir Language directory to use.
 	 * @return void
 	 */
-	public function send($template, $subject, $to, $from, $variables = array(), $header = 'default', $footer = 'default')
+	public function send($template, $subject, $to, $from, $variables = array(), $header = 'default', $footer = 'default', $langDir = null)
 	{	
 
 		// globals
@@ -196,11 +197,13 @@ class YSH_Mail extends YS_Helper
 		foreach ($variables as $key => $replacement) 
 			$layout->assign($key, $replacement);
 			
+		if (is_null ($langDir)) $langDir = YS_Language::getDir();
+		if (!is_null($langDir)) $langDir .= '/';
 		
 		// get content
-		if(!empty($header)){ $tpl_header = $layout->fetch('application/views/mails/headers/' . $header . '.tpl'); }
-		if(!empty($footer)){ $tpl_footer = $layout->fetch('application/views/mails/footers/' . $footer . '.tpl'); }
-		$this->message = $layout->fetch('application/views/mails/content/'.$template.'.tpl');
+		if(!empty($header)){ $tpl_header = $layout->fetch('application/views/'.$langDir.'mails/headers/' . $header . '.tpl'); }
+		if(!empty($footer)){ $tpl_footer = $layout->fetch('application/views/'.$langDir.'mails/footers/' . $footer . '.tpl'); }
+		$this->message = $layout->fetch('application/views/'.$langDir.'mails/content/'.$template.'.tpl');
 		
 		// glue
 		$this->message = $tpl_header."<!-- start content -->".$this->message."<!-- end content -->".$tpl_footer;
