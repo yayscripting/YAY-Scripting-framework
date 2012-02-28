@@ -183,6 +183,7 @@ class YS_Event_Data
 		
 		$this->layout->assign('lang', YS_Language::Load()->getLang());
 		$this->layout->assign('language', YS_Language::Load()->getLang());
+		$this->layout->assign('langURL', YS_Language::Load()->getURL());
 		
 	}
 
