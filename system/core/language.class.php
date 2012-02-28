@@ -87,6 +87,25 @@ class YS_Language extends YS_Singleton
 	}
 	
 	
+	/** Gets the current language URL-prefix ( with leading / )
+	 * 
+	 * @access public
+	 * @return mixed (String: url; null on error)
+	 */
+	public function getURL()
+	{
+		
+		if (is_null($this->route))
+			return null;
+			
+		if (!$this->config->language->language_on)
+			return null;
+			
+		return '/'.preg_replace('/[^a-zA-Z]/s', '', $this->route[0]);
+		
+	}
+	
+	
 	/** Gets the current language-directory (even when language_mode is off)
 	 * 
 	 * @access public

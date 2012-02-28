@@ -159,7 +159,7 @@ class YS_Router Extends YS_Core
 				$route[1] = 'index';
 				
 				// save referrer
-				if (substr(strtolower($_SERVER['REQUEST_URI']), strlen($_SERVER['REQUEST_URI']) - strlen($controller) - 5) != $controller . '.html' && substr(strtolower($_SERVER['REQUEST_URI']), strlen($_SERVER['REQUEST_URI']) - 14) != 'uitloggen.html')
+				if ($route[0] != 'error')
 					$_SESSION['HTTP_REFERER'] = $_SERVER['REQUEST_URI'];
 					
 			}
