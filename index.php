@@ -3,7 +3,7 @@
  * @author YAY!Scripting
  * @package files
  * @subpackage loader
- * @version v1.3.4
+ * @version v1.3.5
  */
  
 /** Prevent CLI usage */
