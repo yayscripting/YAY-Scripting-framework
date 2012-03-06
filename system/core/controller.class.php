@@ -250,7 +250,7 @@ class YS_Controller
 				throw $ex;
 			
 			// ordinair exception
-			if (!file_exists('forms/'.$title.'.php'))
+			if (!file_exists('application/forms/'.$title.'.php'))
 				throw new FormException("Form '".'application/forms/'.$title.'.php'."' doesn't exist.");
 			else
 				throw new FormException("Form '".'application/forms/'.$title.'.php'."' could not be loaded: <br />".$ex->fullMessage());
