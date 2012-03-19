@@ -272,12 +272,16 @@ class YS_Router Extends YS_Core
 			}
 							
 			
-			// inform the language-class
-			$lang = YS_Language::Load();
-			$lang->setRoute($route);
-			
-			// delete language-prefix
-			array_shift($route);
+			if ($this->config->language->language_on) {		
+				
+				// inform the language-class
+				$lang = YS_Language::Load();
+				$lang->setRoute($route);
+				
+				// delete language-prefix
+				array_shift($route);
+				
+			}
 			
 		}
 		
