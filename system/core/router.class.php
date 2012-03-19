@@ -265,7 +265,7 @@ class YS_Router Extends YS_Core
 				$route[1] = 'error';
 				$route[2] = '500';
 				
-			} else if (empty($_GET['ys_lang']) && count($route) == 1 && $this->config->language->use_slash) {
+			} else if ($this->config->language->language_on && empty($_GET['ys_lang']) && count($route) == 1 && $this->config->language->use_slash) {
 				
 				$this->helpers->http->redirect('/'.$route[0].'/');
 				
