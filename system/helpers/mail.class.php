@@ -93,6 +93,25 @@ class YSH_Mail extends YS_Helper
 		
 	}
 	
+	/** Creates the email-object.
+	 * 
+	 * @access public
+	 * @throws HelperException with errorType 1
+	 * 	If the connection has not been made.
+	 * @return void
+	 */
+	public function prepare_message()
+	{
+		
+		// check transport
+		if(is_null($this->transport) || is_null($this->mailer))
+			throw new HelperException(1, 'No SMTP-connection.');
+	
+		// create message
+		$this->message = Swift_Message::newInstance();
+		
+	}
+	
 	/** Prepares a e-mail to get send.
 	 * 
 	 * @access public
@@ -101,26 +120,23 @@ class YSH_Mail extends YS_Helper
 	 * @param array $to Receivers, (mail => name[, mail => name;...]).
 	 * @param array $from Sender, (mail => name).
 	 * @return void
-	 * @throws HelperException with errorType 1
-	 * 	If the connection has not been made.
 	 * @throws HelperException with errorType 2
 	 * 	If no sender has been given
 	 */
-	public function prepare_message($content, $subject, array $to, array $from)
+	public function prepare_details($content, $subject, array $to, array $from)
 	{
 	
 		// check transport
-		if(is_null($this->transport) || is_null($this->mailer))
-			throw new HelperException(1, 'No SMTP-connection.');
-	
+		if(is_null($this->message))
+			$this->prepare_message();
 		
-		// create message
-		$this->message = Swift_Message::newInstance($subject);
-			
+		// set subject
+		$this->message->setSubject($subject);
+		
 		// check from
 		if(!is_array($from))
 			throw new HelperException(2, 'No sender has been selected.');
-				
+		
 		// set sender
 		$this->message->setFrom($from);
 		
@@ -135,7 +151,7 @@ class YSH_Mail extends YS_Helper
 		$type->setParameter('charset', 'utf-8');
 		
 		// set message
-		$this->message->setBody($content);
+		$this->message->addPart($content, 'text/html');
 		  
 	}
 	
@@ -155,7 +171,7 @@ class YSH_Mail extends YS_Helper
 		if (is_object($this->mailer) && is_object($this->message)) {
 			
 			try {
-			
+				echo $this->message->getHeaders()->toString();
 				// send
 				return $this->mailer->batchSend($this->message);
 			
@@ -184,10 +200,10 @@ class YSH_Mail extends YS_Helper
 	 * @param mixed $from Sender, single string or array(email => name)-format
 	 * @param string $header Header name, located in views/mails/headers/%NAME%.tpl.
 	 * @param string $footer Footer name, located in views/mails/footers/%NAME%.tpl.
-	 * @param string $langDir Language directory to use.
+	 * @param array $attachment Attachments, format: array(array(src=>,name=>), array())
 	 * @return void
 	 */
-	public function send($template, $subject, $to, $from, $variables = array(), $header = 'default', $footer = 'default', $langDir = null)
+	public function send($template, $subject, $to, $from, $variables = array(), $header = 'default', $footer = 'default', $attachments = array())
 	{	
 
 		// globals
@@ -197,28 +213,44 @@ class YSH_Mail extends YS_Helper
 		foreach ($variables as $key => $replacement) 
 			$layout->assign($key, $replacement);
 			
-		if (is_null ($langDir)) $langDir = YS_Language::getDir();
-		if (!is_null($langDir)) $langDir .= '/';
 		
 		// get content
-		if(!empty($header)){ $tpl_header = $layout->fetch('application/views/'.$langDir.'mails/headers/' . $header . '.tpl'); }
-		if(!empty($footer)){ $tpl_footer = $layout->fetch('application/views/'.$langDir.'mails/footers/' . $footer . '.tpl'); }
-		$this->message = $layout->fetch('application/views/'.$langDir.'mails/content/'.$template.'.tpl');
+		if(!empty($header)){ $tpl_header = $layout->fetch('application/views/mails/headers/' . $header . '.tpl'); }
+		if(!empty($footer)){ $tpl_footer = $layout->fetch('application/views/mails/footers/' . $footer . '.tpl'); }
+		$content = $layout->fetch('application/views/mails/content/'.$template.'.tpl');
 		
 		// glue
-		$this->message = $tpl_header."<!-- start content -->".$this->message."<!-- end content -->".$tpl_footer;
+		$content = $tpl_header."<!-- start content -->".$content."<!-- end content -->".$tpl_footer;
 			
 		// fetch to
 		if(!is_array($to))
 			$to = array($to => $to);
 		
-		
 	 	// fetch from
 		if(!is_array($from))
 			$from = array($from => $from);
+		
+		// create mail-object
+		$this->prepare_message();
+		
+		// attachments
+		if (!empty($attachments)) {
+			
+			foreach ($attachments as $attachment) {
+		
+				$this->message->attach(
+				
+					Swift_Attachment::fromPath($attachment['src'])
+						->setFileName($attachment['name'])
+					
+				);
+				
+			}
+			
+		}
 					
 		// prepare mail
-		$this->prepare_message($this->message, $subject, $to, $from);
+		$this->prepare_details($content, $subject, $to, $from);
 		
 		// send
 		return $this->smtp_send();

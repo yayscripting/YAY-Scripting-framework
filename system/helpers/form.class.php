@@ -89,7 +89,7 @@ class YSH_Form extends YS_Helper
 	{
 		$this->forms++;
 		
-		return new HTML_Form($this->forms, $title, $method, $upload);
+		return new HTML_Form(0/*$this->forms*/,, $title, $method, $upload);
 		
 	}
 	

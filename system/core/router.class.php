@@ -88,7 +88,7 @@ class YS_Router Extends YS_Core
 		
 		// call timer
 		if ($this->config->script->show_render_time === true && $this->mode == 'browser')
-			echo '<!-- RENDER TIME: ' . substr((STRING) abs(microtime(true) - $this->_timer), 0, 6) . ' seconds -->';
+			echo '<!-- RENDER TIME: ' . substr((STRING) abs(microtime(true) - $this->_timer), 0, 6) . ' seconds-->';
 		
 		// minify HTML
 		require $this->cwd . '/system/functions/router.minifyHTML.inc.php';
@@ -107,32 +107,33 @@ class YS_Router Extends YS_Core
 	private function load_controller() 
 	{
 		
+		// get environment
+		$env = YS_Environment::Load();
+		$environment = $env->get();
+		
 		// fire event
 		YS_Events::Load()->fire('router');
 		
-		// get route
-		$route = $this->parseRoute();
-		
 		// check for error-'controller'
-		if (isset($route[0]) && $route[0] == 'error') {
+		if (isset($_GET['a']) && $_GET['a'] == 'error') {
 			
-			$error = intval((substr($route[1], 0, 8) == 'trigger_') ? substr($route[1], 8) : $route[1]);
+			$error = intval((substr($_GET['b'], 0, 8) == 'trigger_') ? substr($_GET['b'], 8) : $_GET['b']);
 			
 			$this->error->http_error($error, true);
 			return;
 			
 		}
 		
-		// get env
-		$env = YS_Environment::Load();
-		$environment = $env->get();
+		// switch all GET-(location-)vars 1 spot. (a/b/d/f/e/f/g/h)
+		if ($environment !== false)
+			require_once 'system/functions/router.handleGET.inc.php';
 		
 		// determine controller name/position
-		$controller = (!empty($route[0])) ? $route[0] : (($environment === false) ? $this->config->script->default_controller : $env->default_controller);
+		$controller = (!empty($_GET['a'])) ? $_GET['a'] : (($environment === false) ? $this->config->script->default_controller : $env->default_controller);
 		$controller = strtolower($this->helpers->string->url_safe($controller));
 		
 		// check SEO
-		if($this->config->script->force_seo === true && $controller == $this->config->script->default_controller && empty($route[0]) == false && $route[0] == $controller && empty($route[1])){
+		if($this->config->script->force_seo === true && $controller == $this->config->script->default_controller && empty($_GET['a']) == false && $_GET['a'] == $controller && empty($_GET['b'])){
 		
 			// check postdata
 			if($_SERVER['REQUEST_METHOD'] != "POST"){
@@ -155,11 +156,11 @@ class YS_Router Extends YS_Core
 			// check if he's not logged in.
 			if ($env->login && $env->loggedin() == false) {
 				
-				$controller = $route[0] = $env->login_controller;
-				$route[1] = 'index';
+				$controller = $_GET['a'] = $env->login_controller;
+				$_GET['b'] = 'index';
 				
 				// save referrer
-				if ($route[0] != 'error')
+				if (substr(strtolower($_SERVER['REQUEST_URI']), strlen($_SERVER['REQUEST_URI']) - strlen($controller) - 5) != $controller . '.html' && substr(strtolower($_SERVER['REQUEST_URI']), strlen($_SERVER['REQUEST_URI']) - 14) != 'uitloggen.html')
 					$_SESSION['HTTP_REFERER'] = $_SERVER['REQUEST_URI'];
 					
 			}
@@ -176,7 +177,7 @@ class YS_Router Extends YS_Core
 			// load			
 			require_once('application/' . $folder.$prefix.$controller.'.php');
 						
-			$method = (!empty($route[1])) ? $route[1] : 'index';
+			$method = (!empty($_GET['b'])) ? $_GET['b'] : 'index';
 			$method = strtolower($this->helpers->string->url_safe($method));
 			
 			// verify
@@ -196,8 +197,11 @@ class YS_Router Extends YS_Core
 		try {
 			
 			eval('$class = new '.ucfirst($controller).'();');
-			$class->injectRoute($route);
-			$class->$method();
+			
+			if (method_exists(ucfirst($controller), $method) === false)
+				eval('$class->__call("'.$method.'", null);');
+			else
+				eval('$class->'.$method.'();');
 			
 		}
 		
@@ -214,95 +218,6 @@ class YS_Router Extends YS_Core
 		if (isset($ex))
 			$this->error->http_error(500, true, $ex->errorMessage().'<br /><br /><small>'.$ex->fullMessage().'</small>');
 		
-		
-	}
-	
-	/** Parses the route into segments, and handles the environment/language system
-	 * 
-	 * @access private
-	 * @return array Routesegments
-	 */
-	private function parseRoute()
-	{
-		
-		// cut into segments
-		$route = (empty($_GET['ys_route'])) ? array() : $routes = explode('/', $_GET['ys_route']);
-		
-		// parse language
-		if ($this->config->language->language_on || $this->config->language->default_language != null) {
-			
-			// parse use_slash
-			if ($this->config->language->use_slash && empty($_GET['ys_lang']) == false) {
-				
-				if (file_exists('application/language/'.preg_replace('/[^a-zA-Z]/s', '', $_GET['ys_lang']).'.lang.php'))
-					$route = array($_GET['ys_lang']);
-				
-				else
-					$this->error->http_error(404);
-				
-				
-			}
-			else if ($this->config->language->use_slash == false && isset($_GET['ys_lang'])) {
-				
-				$this->error->http_error(404);
-				
-			}
-  			
-			// non-existing language
-			if ($this->config->language->language_on && false === file_Exists('application/language/'.preg_replace('/[^a-zA-Z]/s', '', $route[0]).'.lang.php')) {
-				
-				if ($route[0] != $this->config->language->default_language && false == is_null($this->config->language->default_language)) {
-					
-					if (empty($route))
-						$this->helpers->http->redirect('/'.$this->config->language->default_language . ($this->config->language->use_slash ? '/' : '.html'));
-						
-					$this->helpers->http->redirect('/'.$this->config->language->default_language.implode('/', array_merge(array(''), $route)).'.html');
-				
-				}
-				
-				// 500-error
-				$route[0] = null;
-				$route[1] = 'error';
-				$route[2] = '500';
-				
-			} else if ($this->config->language->language_on && empty($_GET['ys_lang']) && count($route) == 1 && $this->config->language->use_slash) {
-				
-				$this->helpers->http->redirect('/'.$route[0].'/');
-				
-			}
-							
-			
-			if ($this->config->language->language_on) {		
-				
-				// inform the language-class
-				$lang = YS_Language::Load();
-				$lang->setRoute($route);
-				
-				// delete language-prefix
-				array_shift($route);
-				
-			}
-			
-		}
-		
-		// get environment
-		$env = YS_Environment::Load();
-		$env->setRoute($route);
-		$environment = $env->get();
-		
-		if ($environment !== false)
-			array_shift($route);
-		
-		if (empty($route[0])) {
-			
-			$route[0] = ($environment === false) ? $this->config->script->default_controller : $environment->default_controller;
-			
-		}
-		
-		if (empty($route[1]))
-			$route[1] = 'index';
-		
-		return $route;
 		
 	}
 	

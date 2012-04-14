@@ -143,6 +143,8 @@ class YSH_File extends YS_Helper
 			case 'application/x-compressed':
 			case 'application/compressed':	return 'application/zip';
 			
+			case 'image/jpeg': return 'image/jpg';
+			
 		}
 	
 		return strtolower($type);
