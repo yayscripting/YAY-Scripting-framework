@@ -171,7 +171,7 @@ class YSH_Mail extends YS_Helper
 		if (is_object($this->mailer) && is_object($this->message)) {
 			
 			try {
-				echo $this->message->getHeaders()->toString();
+				
 				// send
 				return $this->mailer->batchSend($this->message);
 			

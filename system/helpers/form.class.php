@@ -37,7 +37,7 @@ define('FILTER_PHONE', '/^([0-9]{10}|00[0-9]{2}[0-9]{9})$/');
 /** 
  * @global regex FILTER_EMAIL FORM_Validator-constant, email-addresses only.
  */
-define('FILTER_EMAIL', '/^[a-zA-Z0-9_\.\-]{3,255}@[a-zA-Z0-9\.\-]{3,255}\.[a-z]{2,4}$/');
+define('FILTER_EMAIL', '/^[a-zA-Z0-9_\.\-]{1,255}@[a-zA-Z0-9\.\-]{1,255}\.[a-z]{2,}$/');
 
 /** 
  * @global regex FILTER_IP FORM_Validator-constant, ip-addresses only.
