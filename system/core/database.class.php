@@ -370,7 +370,7 @@ class YS_Database extends YS_Singleton
 	 * @param mixed $limit Limit.
 	 * @return int Affected_rows.
 	 */
-	public function update($table, array $values, $where = null, $limit = null)
+	public function update($table, $values, $where = null, $limit = null)
 	{
 		
 		// build limit
@@ -378,9 +378,17 @@ class YS_Database extends YS_Singleton
 		
 		// build values
 		$string = "";
-		foreach($values as $key => $value)
-			$string .= (($string != "") ? "," : "") . "`".$this->safe($key)."`='".$this->safe($value)."'";
+		if (is_array($values)) {
 			
+			foreach($values as $key => $value)
+				$string .= (($string != "") ? "," : "") . "`".$this->safe($key)."`='".$this->safe($value)."'";
+			
+		} else {
+			
+			$string = $values;
+			
+		}
+		
 		// where
 		$clause = "";
 		if (is_array($where) && empty($where) == false) {

@@ -37,7 +37,7 @@ define('FILTER_PHONE', '/^([0-9]{10}|00[0-9]{2}[0-9]{9})$/');
 /** 
  * @global regex FILTER_EMAIL FORM_Validator-constant, email-addresses only.
  */
-define('FILTER_EMAIL', '/^[a-zA-Z0-9_\.\-]{1,255}@[a-zA-Z0-9\.\-]{1,255}\.[a-z]{2,}$/');
+define('FILTER_EMAIL', '/^[a-zA-Z0-9_\.\-]{3,255}@[a-zA-Z0-9\.\-]{3,255}\.[a-z]{2,4}$/');
 
 /** 
  * @global regex FILTER_IP FORM_Validator-constant, ip-addresses only.
@@ -89,7 +89,7 @@ class YSH_Form extends YS_Helper
 	{
 		$this->forms++;
 		
-		return new HTML_Form(0/*$this->forms*/,, $title, $method, $upload);
+		return new HTML_Form($this->forms, $title, $method, $upload);
 		
 	}
 	
@@ -1089,6 +1089,7 @@ class HTML_Form extends HTML_Element
 		
 		// prepare
 		$values = array();
+		$ignore = array();
 		$container = (strtolower($this->attributes['method']) == 'post') ? $_POST : $_GET;
 		
 		foreach($this->elements as $element) {
@@ -1349,6 +1350,14 @@ class HTML_Upload extends HTML_Element
 	 */
 	private $errors;
 	
+	/** Is multiple?
+	 * 
+	 * @access private
+	 * @var bool
+	 */
+	private $multiple = false;
+	
+	
 	/** Constructor
 	 * 
 	 * @access public
@@ -1394,6 +1403,25 @@ class HTML_Upload extends HTML_Element
 				"toBig"	   => $toBig,
 				"unknown"  => $unknownError
 			);
+		
+		return $this;
+		
+	}
+	
+	/** Changes the multiupload status.
+	 * 
+	 * This function needs javascript support in order to work for older browsers.
+	 * Assigns the javascript-file 'multiupload.js' automatically.
+	 * 
+	 * @access public
+	 * @param bool $bool
+	 * @return HTML_Element $this
+	 */
+	public function setMultiple($bool = true)
+	{
+		
+		$this->multiple = (bool)$bool;
+		YS_Layout::Load()->javascript('multiupload');
 		
 		return $this;
 		
@@ -1502,51 +1530,107 @@ class HTML_Upload extends HTML_Element
 			
 			// validate upload
 			if (empty($_FILES[$name]['name'])) {
-				
+					
 				if (!is_null($this->errors['noUpload']))
 					return $this->errors['noUpload'];
-				
+					
 				// validated
 				return true;
 				
 			}
-				
-			// check size
-			if ($_FILES[$name]['size'] > $this->maxSize)
-				return $this->errors['toBig'];
-				
-			// check error-code
-			if ($_FILES[$name]['error'] != UPLOAD_ERR_OK)
-				return $this->errors['unknown'];
-				
-			// 0x00-byte exploit
-			if (stristr($_FILES[$name]['name'], "\0") !== false)
-				return $this->errors['hacker'];
 			
+			$duplicates = array();
+			$deleted = array();
 			
-			// need to validate?	
-			if ($this->validator !== null) {
+			foreach ($_FILES[$name]['name'] as $index => $ignore) {
 				
-				// get MIME-type
-				$mime = YS_Helpers::Load()->file->getMimeType($_FILES[$name]['tmp_name'], substr($_FILES[$name]['name'], strrpos($_FILES[$name]['name'], '.') + 1));
-	
-				// unknown mime-type, lets trust the client :+)
-				if ($mime == 'application/octet-stream')
-					$mime = $_FILES[$name]['type'];
-				
-				// remember new MIME-type
-				else
-					$_FILES[$name]['type'] = $mime;
-				
-				foreach ($this->validator as $validator) {
-				
-					// use validator
-					$val = $validator->validate($name, $mime);
-					if ($val !== true)
-						return $val;
+				// empty upload
+				if (empty($_FILES[$name]['name'][$index])) {
+					
+					// first upload?
+					if ($index == 0) {
 						
+						if (!is_null($this->errors['noUpload']))
+							return $this->errors['noUpload'];
+							
+						// validated
+						return true;
+						
+					}
+					
+					continue;
+					
+				}
+				
+				// check if ignored
+				if (
+					empty($_POST[$name][str_replace('.', '_', $_FILES[$name]['name'][$index]).'_'.$_FILES[$name]['size'][$index]]) == false
+					||
+					empty($_POST[$name][str_replace('.', '_', $_FILES[$name]['name'][$index]).'_0']) == false
+				) {
+					
+					if (empty($deleted[str_replace('.', '_', $_FILES[$name]['name'][$index]).'_'.$_FILES[$name]['size'][$index]])) {
+						
+						$deleted[str_replace('.', '_', $_FILES[$name]['name'][$index]).'_'.$_FILES[$name]['size'][$index]] = true;
+						continue;
+					}
+					
 				}
 					
+				// check size
+				if ($_FILES[$name]['size'][$index] > $this->maxSize)
+					return $this->errors['toBig'];
+					
+				// check error-code
+				if ($_FILES[$name]['error'][$index] != UPLOAD_ERR_OK) {
+					
+					return $this->errors['unknown'];
+					
+				}
+					
+				// 0x00-byte exploit
+				if (stristr($_FILES[$name]['name'][$index], "\0") !== false)
+					return $this->errors['hacker'];
+				
+				
+				
+				// already had this one?
+				if (!empty($duplicates[$_FILES[$name]['name'][$index].'_'.$_FILES[$name]['size'][$index]]))
+					continue;
+					
+				$duplicates[$_FILES[$name]['name'][$index].'_'.$_FILES[$name]['size'][$index]] = true;
+				
+				
+				// need to validate?	
+				if ($this->validator !== null) {
+				
+					// get MIME-type
+					$mime = YS_Helpers::Load()->file->getMimeType($_FILES[$name]['tmp_name'][$index], substr($_FILES[$name]['name'][$index], strrpos($_FILES[$name]['name'][$index], '.') + 1));
+		
+					// unknown mime-type, lets trust the client :+)
+					if ($mime == 'application/octet-stream')
+						$mime = $_FILES[$name]['type'][$index];
+					
+					// remember new MIME-type
+					else
+						$_FILES[$name]['type'][$index] = $mime;
+					
+					foreach ($this->validator as $validator) {
+					
+						// use validator
+						$val = $validator->validate($name, $mime);
+						if ($val !== true)
+							return $val;
+							
+					}
+					
+				}
+				
+				// break if it is a single-file upload.	
+				if ($this->multiple === false)
+					break;	
+				
+				
 			}
 			
 		}
@@ -1558,15 +1642,56 @@ class HTML_Upload extends HTML_Element
 	/** Returns the right part of the $_FILES-array
 	 * 
 	 * @access public
-	 * @return array
+	 * @return mixed (array with multiple-upload; if not: object)
 	 */
 	public function value()
 	{
 		
-		if (empty($_FILES[$this->getAttribute('name')]) || empty($_FILES[$this->getAttribute('name')]['tmp_name']))
+		// initialize
+		$name  = $this->getAttribute('name');
+		$files = array();
+		$duplicates = array();
+		
+		if (empty($_FILES[$name]) || empty($_FILES[$name]['tmp_name']))
 			return array();
 		
-		return $_FILES[$this->getAttribute('name')];
+		// loop through all files
+		foreach ($_FILES[$name]['name'] as $index => $ignore) {
+			
+			// check if ignored
+			if (
+				empty($_POST[$name][str_replace('.', '_', $_FILES[$name]['name'][$index]).'_'.$_FILES[$name]['size'][$index]]) == false
+				||
+				empty($_POST[$name][str_replace('.', '_', $_FILES[$name]['name'][$index]).'_0']) == false
+			)
+				continue;
+				
+			// empty input?
+			if (empty($_FILES[$name]['name'][$index]))
+				continue;
+				
+			// already had this one?
+			if (!empty($duplicates[$_FILES[$name]['name'][$index].'_'.$_FILES[$name]['size'][$index]]))
+				continue;
+				
+			$duplicates[$_FILES[$name]['name'][$index].'_'.$_FILES[$name]['size'][$index]] = true;
+			
+				
+			// add
+			$files[] = (object)array(
+				'name'	   => $_FILES[$name]['name'][$index],
+				'type'	   => $_FILES[$name]['type'][$index],
+				'tmp_name'	   => $_FILES[$name]['tmp_name'][$index],
+				'size'	   => $_FILES[$name]['size'][$index],
+				'error'	   => $_FILES[$name]['error'][$index]
+			);
+			
+		}
+		
+		if (!$this->multiple)
+			$files = $files[0];
+		
+		return $files;
 		
 	}
 	
@@ -1579,9 +1704,22 @@ class HTML_Upload extends HTML_Element
 	public function build($tabs = "")
 	{
 		
+		$html = '';
+		$this->attributes['name'] = $this->attributes['name'] . '[]';
+				
+		// multiple-upload changements
+		if ($this->multiple) {
+			
+			$this->attributes['multiple'] = 'multiple';
+			
+			$html .= '<input type="hidden" name="'.htmlspecialchars(substr($this->attributes['name'], 0, -2)).'[info]" />';
+			
+		}
+		
 		// opening tag
-		//$html  = $tabs . '<input type="hidden" name="MAX_FILE_SIZE" value="'.htmlspecialchars($this->maxSize).'" />' . "\n";
-		$html = $tabs . '<' . $this->type;
+		$html .= $tabs . '<input type="hidden" name="MAX_FILE_SIZE" value="'.htmlspecialchars($this->maxSize).'" />' . "\n";
+		$html .= $tabs . '<' . $this->type;
+		
 		
 		if (!empty($this->attributes))
 			foreach($this->attributes as $key => $value)

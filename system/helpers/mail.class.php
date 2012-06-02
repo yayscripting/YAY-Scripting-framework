@@ -203,7 +203,7 @@ class YSH_Mail extends YS_Helper
 	 * @param array $attachment Attachments, format: array(array(src=>,name=>), array())
 	 * @return void
 	 */
-	public function send($template, $subject, $to, $from, $variables = array(), $header = 'default', $footer = 'default', $attachments = array())
+	public function send($template, $subject, $to, $from, $variables = array(), $header = 'default', $footer = 'default', $attachments = array(), $langDir = null)
 	{	
 
 		// globals
@@ -213,11 +213,13 @@ class YSH_Mail extends YS_Helper
 		foreach ($variables as $key => $replacement) 
 			$layout->assign($key, $replacement);
 			
+		if (is_null ($langDir)) $langDir = YS_Language::getDir();
+		if (is_null($langDir) == false && substr($langDir, -1, 1) != '/') $langDir .= '/';
 		
 		// get content
-		if(!empty($header)){ $tpl_header = $layout->fetch('application/views/mails/headers/' . $header . '.tpl'); }
-		if(!empty($footer)){ $tpl_footer = $layout->fetch('application/views/mails/footers/' . $footer . '.tpl'); }
-		$content = $layout->fetch('application/views/mails/content/'.$template.'.tpl');
+		if(!empty($header)){ $tpl_header = $layout->fetch('application/views/'.$langDir.'mails/headers/' . $header . '.tpl'); }
+		if(!empty($footer)){ $tpl_footer = $layout->fetch('application/views/'.$langDir.'mails/footers/' . $footer . '.tpl'); }
+		$this->message = $layout->fetch('application/views/'.$langDir.'mails/content/'.$template.'.tpl');
 		
 		// glue
 		$content = $tpl_header."<!-- start content -->".$content."<!-- end content -->".$tpl_footer;

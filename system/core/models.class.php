@@ -477,7 +477,8 @@ class YS_ModelController
 		if ($avarage) {
 			
 			// need encryption?
-			if (!empty($values))
+			if (is_array ($values) && !empty($values)) {
+				
 				foreach($values as $key => &$value) {
 					
 					if (!empty($this->encryption[$key]))
@@ -485,6 +486,8 @@ class YS_ModelController
 						
 					
 				};
+				
+			}
 			
 			if (is_array($where) && empty($where) == false) {
 				
