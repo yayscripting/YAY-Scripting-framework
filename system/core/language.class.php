@@ -136,11 +136,7 @@ class YS_Language extends YS_Singleton
 		// determine language
 		if (is_null($language))
 			$language = $this->getLang();
-		
-		// return_keyword_on_error check
-		if (true == $this->config->language->return_keyword_on_error && $language == $this->config->language->default_language)
-			return $keyword;
-		
+				
 		// fool-proof
 		if (is_null($language))
 			throw new TranslateException('The language system is inavailable right now.');
@@ -158,7 +154,10 @@ class YS_Language extends YS_Singleton
 			// return_default_on_error-check
 			if ($this->config->language->return_default_on_error && $language != $this->config->language->default_language)
 				return $this->translate($keyword, $this->config->language->default_language);
-				
+			
+			// return_keyword_on_error check
+			if (true == $this->config->language->return_keyword_on_error && $language == $this->config->language->default_language)
+				return $keyword;
 			
 			throw new TranslateException('The translate-system is unable to translate the language \''.htmlspecialchars($language).'\' with the following keyword: \''.htmlspecialchars(substr($keyword, 0, 100)).'\'');
 			
