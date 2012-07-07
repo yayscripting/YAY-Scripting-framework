@@ -67,7 +67,7 @@ class YS_Events extends YS_Singleton
 		
 		// user functions
 		if (method_exists($this->event, $event))
-			call_user_func_array(array($this->event, $event), $args);
+			return call_user_func_array(array($this->event, $event), $args);
 		
 		
 	}
