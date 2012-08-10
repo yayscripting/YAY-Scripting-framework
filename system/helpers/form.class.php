@@ -37,7 +37,7 @@ define('FILTER_PHONE', '/^([0-9]{10}|00[0-9]{2}[0-9]{9})$/');
 /** 
  * @global regex FILTER_EMAIL FORM_Validator-constant, email-addresses only.
  */
-define('FILTER_EMAIL', '/^[a-zA-Z0-9_\.\-]{3,255}@[a-zA-Z0-9\.\-]{3,255}\.[a-z]{2,4}$/');
+define('FILTER_EMAIL', '/^[a-zA-Z0-9_.-]{1,255}@[a-zA-Z0-9.-]{1,255}\.[a-z]+$/');
 
 /** 
  * @global regex FILTER_IP FORM_Validator-constant, ip-addresses only.
@@ -57,7 +57,7 @@ define('FILTER_DATE_SYSTEM', '/^(2[0-9]{3}|19[0-9]{2})\-([0][1-9]|[1][012])\-(0[
 /** 
  * @global regex FILTER_URL FORM_Validator-constant, for Links, http:// is required
  */
-define('FILTER_URL', '/^http:\/\/([a-zA-Z0-9\-_]{1,}\.){1,}\.[a-zA-Z]{2,4}$/');
+define('FILTER_URL', '/^http:\/\/([a-zA-Z0-9\-_]{1,}\.){1,}\.[a-zA-Z]$/');
 
 
 /** Form-helper
@@ -540,7 +540,9 @@ class HTML_Element
 		
 		if ($this->nameIndex === null) {
 			
-			return empty($container[preg_replace('/[^a-zA-Z0-9_]/', '', $this->getAttribute('name'))]);
+			$a = $container[preg_replace('/[^a-zA-Z0-9_]/', '', $this->getAttribute('name'))];
+			
+			return (empty($a) && $a !== "0");
 			
 		}
 		
@@ -597,7 +599,7 @@ class HTML_Element
 		$html .= ($this->close) ? " />\n" : ">";
 		
 		if (empty($this->attributes['innerHTML']) == false && $this->close == false)
-			$html .= $this->attributes['innerHTML'];
+			$html .= htmlspecialchars($this->attributes['innerHTML']);
 		
 		// close tag?
 		if (!$this->close)
@@ -1247,7 +1249,7 @@ class HTML_Select extends HTML_Element
 	public function setValidator() 
 	{
 		
-		throw new FormException(1, 'You can not use the setValidator()-function, this does not work.');
+		throw new FormException('You can not use the setValidator()-function, this does not work.', 1);
 		
 	}
 	
@@ -1681,7 +1683,7 @@ class HTML_Upload extends HTML_Element
 			$files[] = (object)array(
 				'name'	   => $_FILES[$name]['name'][$index],
 				'type'	   => $_FILES[$name]['type'][$index],
-				'tmp_name'	   => $_FILES[$name]['tmp_name'][$index],
+				'tmp_name' => $_FILES[$name]['tmp_name'][$index],
 				'size'	   => $_FILES[$name]['size'][$index],
 				'error'	   => $_FILES[$name]['error'][$index]
 			);

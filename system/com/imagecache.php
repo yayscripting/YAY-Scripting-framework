@@ -15,7 +15,7 @@ chdir('../../');
 // both variables set?
 if (empty($_GET['file']) || empty($_GET['ext']))
 	throwError();
-	
+
 // strip dir
 $file = $_GET['file'];
 $ext  = strtolower($_GET['ext']);
@@ -46,6 +46,7 @@ if (!in_array($ext, $exts))
 // file exists?
 if (!file_exists($dir.$file.'.'.$ext))
 	throwError();
+	
 
 // load MIMES
 $mime = array (

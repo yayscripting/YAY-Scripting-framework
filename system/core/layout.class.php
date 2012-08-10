@@ -145,6 +145,10 @@ class YS_Layout Extends YS_Singleton
 		
 		// assign javascript
 		$this->smarty->assign('use_js', $this->use_js);
+		
+		// box
+		$this->smarty->assign('_box', $_SESSION['system']['_box']);
+		unset($_SESSION['system']['_box']);
 	
 		// check view
 		if(!empty($view)){
@@ -159,7 +163,7 @@ class YS_Layout Extends YS_Singleton
 				$path = 'application/views/'.$langFolder.$view;
 			
 			}
-	
+			
 			// check exists
 			if(file_exists($path)){
 		
@@ -535,6 +539,8 @@ class YS_Layout Extends YS_Singleton
 		if (!is_null($langFolder))
 			$langFolder .= '/';
 			
+			
+			
 		// assign box content
 		$this->smarty->assign('_box_type', $type);
 	
@@ -545,8 +551,7 @@ class YS_Layout Extends YS_Singleton
 		$this->smarty->assign('_box_content', $description);
 		
 		// fetch box into _box
-		$this->smarty->assign('_box', $this->smarty->fetch('application/views/'.$langFolder.'elements/box.tpl'));
-		
+		$_SESSION['system']['_box'] = $this->smarty->fetch('application/views/'.$langFolder.'elements/box.tpl');
 	
 	}
 

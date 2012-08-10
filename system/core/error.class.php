@@ -152,11 +152,14 @@ class YS_Error extends YS_Singleton
 		echo "Uncaught exception of type '".get_class($exception)."': ".htmlspecialchars($exception->getMessage()).".<br /><br />\n";
 		
 		echo '<pre>';
-		
 		$temp = htmlspecialchars(print_r((array)$exception, true));
 		echo preg_replace('/\[(password|pass|passw|user|username)\] =&gt; (.+?)['."\r\n".']{1,2}/i', '[\1] => HIDDEN'."\n", $temp);
+		echo '</pre>';
 		
-		die('</pre>');
+		$this->stacktrace();
+		flush();
+		
+		die();
 		
 	}
 	
@@ -318,9 +321,17 @@ class YS_Error extends YS_Singleton
 			if (!class_exists("YS_Layout"))
 				require_once 'system/core/layout.class.php';
 				
+			if (!class_exists("YS_Controller"))
+				require_once 'system/core/controller.class.php';
+				
+			if (!class_exists("YS_Events"))
+				require_once 'system/core/events.class.php';
+				
 			$layout = YS_Layout::Load();
 			
 			$layout->assign('error', $errorMessage);
+			YS_Events::Load()->injectController(new YS_Controller()); 
+			YS_Events::Load()->fire('runtime'); 
 			$layout->view('errors/'.$type.'.tpl');
 			die();			
 			

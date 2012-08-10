@@ -186,5 +186,12 @@ class YS_Event_Data
 		$this->layout->assign('langURL', YS_Language::Load()->getURL());
 		
 	}
+	
+	final public function __done()
+	{
+		
+		$_SESSION['LAST_LOADED'] = implode('/',$this->controller->route) . '.html';
+		
+	}
 
 }

@@ -41,6 +41,8 @@ class YSH_Mail extends YS_Helper
 	 */
 	private $mailer		= null;
 	
+	private $connected	= false;
+	
 	/** Connects with the SMTP-server 
 	 * 
 	 * null-values are picked out of the config-file
@@ -57,6 +59,13 @@ class YSH_Mail extends YS_Helper
 	 */
 	public function smtp_connect($server = null, $port = null, $username = null, $password = null, $security = '')
 	{
+	
+		// check connected
+		if($this->connected == false)
+			$this->connected = true;
+		else
+			return;
+			
 		
 		// default values
 		if (is_null($server))
@@ -71,23 +80,47 @@ class YSH_Mail extends YS_Helper
 		if (is_null($password))
 			$password = $this->config->mail->password;
 		
+		// check
+		if(is_null($server)){
 		
-		// connect
-		try {
+			// connect
+			try {
+					
+				// transport
+				$this->transport = Swift_SendmailTransport::newInstance('sendmail -bs');
 				
-			// transport
-			$this->transport = Swift_SmtpTransport::newInstance($server, $port, $security);
-							
-			// login
-			$this->transport->setUsername($username);
-			$this->transport->setPassword($password);
-			
-			// load mailer
-			$this->mailer = Swift_Mailer::newInstance($this->transport);
-			
-		} catch (Swift_Connection_Exception $ex) {
-			
-			throw new HelperException(1, 'Could not connect to the SMTP-server.');
+				// load mailer
+				$this->mailer = Swift_Mailer::newInstance($this->transport);
+				
+			} catch (Swift_Connection_Exception $ex) {
+				
+				throw new HelperException(1, 'Could not connect to the Sendmail-transport');
+				
+			}
+		
+		}else{
+		
+			// connect
+			try {
+					
+				// transport
+				$this->transport = Swift_SmtpTransport::newInstance($server, $port, $security);
+								
+				// login
+				if(!empty($username))
+					$this->transport->setUsername($username);
+					
+				if(!empty($password))	
+					$this->transport->setPassword($password);
+				
+				// load mailer
+				$this->mailer = Swift_Mailer::newInstance($this->transport);
+				
+			} catch (Swift_Connection_Exception $ex) {
+				
+				throw new HelperException(1, 'Could not connect to the SMTP-server: '.$ex);
+				
+			}
 			
 		}
 		
@@ -177,7 +210,7 @@ class YSH_Mail extends YS_Helper
 			
 			} catch (Swift_TransportException $ex) {
 				
-				throw new HelperException(2, 'Could not connect to the SMTP-server');
+				throw new HelperException(2, 'Could not connect to the SMTP-server (1001): <hr />'.nl2br($ex));
 				
 			}
 			
@@ -205,7 +238,6 @@ class YSH_Mail extends YS_Helper
 	 */
 	public function send($template, $subject, $to, $from, $variables = array(), $header = 'default', $footer = 'default', $attachments = array(), $langDir = null)
 	{	
-
 		// globals
 		$layout = YS_Layout::Load();
 		
@@ -216,10 +248,22 @@ class YSH_Mail extends YS_Helper
 		if (is_null ($langDir)) $langDir = YS_Language::getDir();
 		if (is_null($langDir) == false && substr($langDir, -1, 1) != '/') $langDir .= '/';
 		
+		// assign headers
+		$layout->assign('_headers', array(
+			'template' => $template,
+			'subject' => $subject,
+			'to' => $to,
+			'from' => $from,
+			'header' => $header,
+			'footer' => $footer,
+			'langDir' => $langDir,
+			'lang' => trim(str_replace('/', '', trim($langDir)))
+		));
+		
 		// get content
 		if(!empty($header)){ $tpl_header = $layout->fetch('application/views/'.$langDir.'mails/headers/' . $header . '.tpl'); }
 		if(!empty($footer)){ $tpl_footer = $layout->fetch('application/views/'.$langDir.'mails/footers/' . $footer . '.tpl'); }
-		$this->message = $layout->fetch('application/views/'.$langDir.'mails/content/'.$template.'.tpl');
+		$content = $layout->fetch('application/views/'.$langDir.'mails/content/'.$template.'.tpl');
 		
 		// glue
 		$content = $tpl_header."<!-- start content -->".$content."<!-- end content -->".$tpl_footer;

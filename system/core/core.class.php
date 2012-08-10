@@ -45,11 +45,13 @@ class YS_Core
 		header('Server: YAY!Scripting/Apache');
 		header('X-Powered-By: YAY!Scripting_Framework');
 		header("Content-type: text/html; charset=utf-8");
+		header('X-UA-Compatible: IE=Edge,chrome=1');
 		
 		// make sure not to quit if the user stops executing a page
 		ignore_user_abort(true);
 	
 		// start session, buffer
+		session_set_cookie_params(3600 * 4);
 		session_start();
 		ob_start();
 		
@@ -82,18 +84,18 @@ class YS_Core
 		
 		// license check
 		if (empty($this->config->license->license)) {
-			
-			header('X-YAY-License: unlicensed');
-			
+		
+		header('X-YAY-License: unlicensed');
+		
 		}
 		else if (!preg_match('/^([A-Z]{4}\-){3}[A-Z]{4}$/', $this->config->license->license)) {
-			
-			header('X-YAY-License: invalid license');
-			
+		
+		header('X-YAY-License: invalid license');
+		
 		} else {
-			
-			header('X-YAY-License: '.strtoupper(dechex(sprintf('%u',(crc32($this->config->license->license))))));
-
+		
+		header('X-YAY-License: '.strtoupper(dechex(sprintf('%u',(crc32($this->config->license->license))))));
+		
 		}
 		
 		// load helpers

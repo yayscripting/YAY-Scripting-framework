@@ -39,7 +39,7 @@ class YSH_Http extends YS_Helper
 	
 	    $ch = curl_init();
 	    curl_setopt_array($ch, ($options + $defaults));
-	    if( ! $result = curl_exec($ch))
+	    if( ! $result = @curl_exec($ch))
 	    	Throw new HelperException(1, curl_error($ch));
 	    
 	    curl_close($ch);
@@ -66,7 +66,7 @@ class YSH_Http extends YS_Helper
 	   
 	    $ch = curl_init();
 	    curl_setopt_array($ch, ($options + $defaults));
-	    if( ! $result = curl_exec($ch))
+	    if( ! $result = @curl_exec($ch))
 	    	Throw new HelperException(1, curl_error($ch));
 	        
 	    curl_close($ch);

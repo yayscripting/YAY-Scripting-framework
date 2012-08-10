@@ -29,6 +29,7 @@ class YS_Database extends YS_Singleton
 	 * @var int
 	 */
 	public $querycount;
+	public $queries;
 	
 	/** Is in transaction?
 	 * 
@@ -79,7 +80,7 @@ class YS_Database extends YS_Singleton
 			if(mysql_select_db($database)) {
 			
 				// set connection charset
-				mysql_set_charset($this->_config->database->default_charset); 
+				mysql_set_charset($this->_config->database->default_charset, $this->db_connection); 
 				return;
 			
 			}
@@ -95,16 +96,31 @@ class YS_Database extends YS_Singleton
 	
 	/** Called on script shutdown
 	 * 
-	 * If transaction is still open, this function sends the COMMIT-statement.
+	 * If transaction is still open, this function sends the ROLLBACK-statement.
 	 * 
 	 * @access public
 	 * @return void
 	 */
 	public function __destruct()
 	{
+	
+		// show query count
+		/*echo $this->querycount .' queries:<hr />';
+		$t = 0;
+		foreach($this->queries as $q){
+		
+			echo "<hr />";
+			echo "<strong>(IN ".$q['time']." SECONDS)</strong>";
+			echo $q['sql'];
+			
+			$t += $q['time'];
+		
+		}
+		
+		echo "<hr /><strong>TOTAL TIME: ".$t." SECONDS";*/
 		
 		// commit
-		$this->commit();
+		$this->rollback();
 		
 	}
 	
@@ -134,7 +150,6 @@ class YS_Database extends YS_Singleton
 	
 	/** Ends a transaction
 	 * 
-	 * This function is automatically called on script shutdown.
 	 * This function does only work when you are using the InnoDB storage engine.
 	 * 
 	 * @access public
@@ -161,6 +176,7 @@ class YS_Database extends YS_Singleton
 	
 	/** Rollback query's which have been casted after a transaction.
 	 * 
+	 * This function is automatically called on script shutdown, in case an error occured and you could not cast rollback yourself.
 	 * This function does only work when you are using the InnoDB storage engine.
 	 * 
 	 * @access public
@@ -215,12 +231,20 @@ class YS_Database extends YS_Singleton
 	
 		// querycount
 		$this->querycount++;
+		$identifier = count($this->queries);
+		$this->queries[$identifier] = array(
+			'sql' => $sql,
+			'start' => microtime(true)
+		);
 		
 		// prepare queries
 		$sql = $this->prepare($sql, $parameters);
 		
 		// query
 		$result = mysql_query($sql, $this->db_connection);
+		
+		// querycount
+		$this->queries[$identifier]['time'] = microtime(true) - $this->queries[$identifier]['start'];
 		
 		// return if successfull
 		if (mysql_errno($this->db_connection) == 0)
@@ -380,22 +404,31 @@ class YS_Database extends YS_Singleton
 		$string = "";
 		if (is_array($values)) {
 			
-			foreach($values as $key => $value)
-				$string .= (($string != "") ? "," : "") . "`".$this->safe($key)."`='".$this->safe($value)."'";
+			foreach($values as $key => $value){
+			
+				if ($value === null)
+					$string .= (($string != "") ? "," : "") . "`".$this->safe($key)."`= NULL";
+				else
+					$string .= (($string != "") ? "," : "") . "`".$this->safe($key)."`='".$this->safe($value)."'";
+				
+			}
 			
 		} else {
 			
 			$string = $values;
-			
-		}
 		
+		}
 		// where
 		$clause = "";
 		if (is_array($where) && empty($where) == false) {
 			
-			foreach($where as $key => $value)
+			
+			foreach($where as $key => $value) {
+				
 				$clause .= (($clause != "") ? " AND " : "") . "`".$this->safe($key)."`";
 				$clause .= ($value === null) ? " IS NULL" : "='".$this->safe($value)."'";
+				
+			}
 				
 		}else{
 			

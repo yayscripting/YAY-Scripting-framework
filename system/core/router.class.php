@@ -70,6 +70,7 @@ class YS_Router Extends YS_Core
 
 		// load the right controller
 		$this->load_controller();
+		
 
 	}
 
@@ -106,7 +107,7 @@ class YS_Router Extends YS_Core
 	 */
 	private function load_controller() 
 	{
-
+		
 		// fire event
 		YS_Events::Load()->fire('router');
 
@@ -230,16 +231,24 @@ class YS_Router Extends YS_Core
 
 		// cut into segments
 		$route = (empty($_GET['ys_route'])) ? array() : $routes = explode('/', $_GET['ys_route']);
-
+		
+		
 		// parse language
-		if ($this->config->language->language_on || $this->config->language->default_language != null) {
-
+		if ($this->config->language->language_on && $this->config->language->default_language != null) {
+		
+			// lang exists?
+			if (isset($_GET['ys_lang']) && !file_exists('application/language/'.preg_replace('/[^a-zA-Z]/s', '', $_GET['ys_lang']).'.lang.php')) {
+				
+				YS_Language::Load()->setRoute(array($this->config->language->default_language));
+				$this->error->http_error(404);
+				
+			}
+			
 			// parse use_slash
 			if ($this->config->language->use_slash && empty($_GET['ys_lang']) == false) {
 
 				if (file_exists('application/language/'.preg_replace('/[^a-zA-Z]/s', '', $_GET['ys_lang']).'.lang.php'))
 					$route = array($_GET['ys_lang']);
-
 				else
 					$this->error->http_error(404);
 
@@ -252,31 +261,38 @@ class YS_Router Extends YS_Core
 			}
   			
 			// non-existing language
-			if ($this->config->language->language_on && false === file_Exists('application/language/'.preg_replace('/[^a-zA-Z]/s', '', $route[0]).'.lang.php')) {
+			if ($this->config->language->language_on && false === file_exists('application/language/'.preg_replace('/[^a-zA-Z]/s', '', $route[0]).'.lang.php')) {
 
 				if ($route[0] != $this->config->language->default_language && false == is_null($this->config->language->default_language)) {
 				
-					// detect default language
-					$browser_language = preg_replace('/[^a-zA-Z]/s', '', strtolower(substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2)));
+					if (YS_Events::Load()->fire('determineLanguage') === false)  {
 					
-					if(file_exists('application/language/'.$browser_language.'.lang.php'))
-						$default_language = $browser_language;
-					else					
-						$default_language = $this->config->language->default_language;
+						exit;
 					
-					// redirect
-					if (empty($route))
-						$this->helpers->http->redirect('/'.$default_language . ($this->config->language->use_slash ? '/' : '.html'));
-
-					$this->helpers->http->redirect('/'.$default_language.implode('/', array_merge(array(''), $route)).'.html');
-
+					} else {
+						
+						// detect default language
+						$browser_language = preg_replace('/[^a-zA-Z]/s', '', strtolower(substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2)));
+						
+						if(file_exists('application/language/'.$browser_language.'.lang.php'))
+							$default_language = $browser_language;
+						else					
+							$default_language = $this->config->language->default_language;
+						
+						// redirect
+						if (empty($route))
+							$this->helpers->http->redirect('/'.$default_language . ($this->config->language->use_slash ? '/' : '.html'));
+	
+						$this->helpers->http->redirect('/'.$default_language.implode('/', array_merge(array(''), $route)).'.html');
+					
+					}
+					
 				}
 
 				// 500-error
 				$route[0] = null;
 				$route[1] = 'error';
 				$route[2] = '500';
-
 
 			} else if ($this->config->language->language_on && empty($_GET['ys_lang']) && count($route) == 1 && $this->config->language->use_slash) {
 
@@ -313,7 +329,7 @@ class YS_Router Extends YS_Core
 		}
 
 		if (empty($route[1]))
-			$route[1] = 'index';
+			$route[1] = 'index';		
 
 		return $route;
 

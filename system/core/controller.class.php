@@ -55,10 +55,10 @@ class YS_Controller
 	
 	/** Environment
 	 * 
-	 * @access protected
+	 * @access protected => EDITED for 123c
 	 * @var YS_Environment
 	 */
- 	protected $environment;
+ 	public $environment;
  	
 	/** Error
 	 * 
@@ -76,17 +76,17 @@ class YS_Controller
  	
 	/** Lanugage handler
 	 * 
-	 * @access protected
+	 * @access protected => EDITED for 123c
 	 * @var YS_Language
 	 */
- 	protected $language;
+ 	public $language;
  	
  	/** The route
  	 * 
- 	 * @access protected
+ 	 * @access protected => EDITED for 123c
  	 * @var array
  	 */
- 	protected $route;
+ 	public $route;
  	
 	/** Constructor
 	 * 
@@ -250,10 +250,14 @@ class YS_Controller
 				throw $ex;
 			
 			// ordinair exception
-			if (!file_exists('application/forms/'.$title.'.php'))
+			if (!file_exists('application/forms/'.$title.'.php')) {
+				
 				throw new FormException("Form '".'application/forms/'.$title.'.php'."' doesn't exist.");
-			else
-				throw new FormException("Form '".'application/forms/'.$title.'.php'."' could not be loaded: <br />".$ex->fullMessage());
+				
+			}
+			
+			// thrown exception
+			throw new FormException("Form '".'application/forms/'.$title.'.php'."' could not be loaded: <br />".$ex->fullMessage());
 			
 		}
 		

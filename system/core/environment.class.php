@@ -223,6 +223,9 @@ class YS_Environment extends YS_Singleton
 		// warningless check
 		if (empty($_SESSION['environment'][$env]))
 			return false;
+			
+		if ($_SESSION['environment'][$env] != $_SERVER['REMOTE_ADDR'])
+			session_regenerate_id(false);
 		
 		// check
 		return ($_SESSION['environment'][$env] == $_SERVER['REMOTE_ADDR']);

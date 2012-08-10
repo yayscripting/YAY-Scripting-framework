@@ -206,7 +206,7 @@ class YS_ModelController
 	 * @return object Fetched_result.
 	 * @see getBy
 	 */
-	final public function getById($id, array $fields = null)
+	public function getById($id, array $fields = null)
 	{
 		
 		// reference to DATABASE-class
@@ -373,7 +373,7 @@ class YS_ModelController
 				
 			} else {
 				
-				$where = "WHERE ".$where;
+				$where = " WHERE ".$where;
 				
 			}
 			
@@ -477,8 +477,7 @@ class YS_ModelController
 		if ($avarage) {
 			
 			// need encryption?
-			if (is_array ($values) && !empty($values)) {
-				
+			if (!empty($values))
 				foreach($values as $key => &$value) {
 					
 					if (!empty($this->encryption[$key]))
@@ -486,8 +485,6 @@ class YS_ModelController
 						
 					
 				};
-				
-			}
 			
 			if (is_array($where) && empty($where) == false) {
 				
@@ -573,7 +570,7 @@ class YS_ModelController
 		}
 		
 		if ($where != "")
-			$where = " WHERE" . $where;
+			$where = " WHERE " . $where;
 		
 		$res = mysql_fetch_row($this->sql->query("SELECT COUNT(*) FROM `".$this->table."`".$where));
  		
@@ -652,7 +649,7 @@ class YS_ModelController
 	 * @return Encoded data.
 	 * @see decode
 	 */
-	final protected function encode($key, $value) 
+	final public function encode($key, $value) 
 	{
 		
 		// no need to encrypt
