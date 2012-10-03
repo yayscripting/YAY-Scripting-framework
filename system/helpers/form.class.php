@@ -482,6 +482,9 @@ class HTML_Element
 				
 			} else if ($this->getType() == 'select') {
 				
+				if (substr($value, 0, 1) == '_' || substr($value, 0, 1) == '0')
+					$value = '_'.$value;
+				
 				$this->setAttribute('value', $value);
 				
 			} else if (!$this->close) {
@@ -522,7 +525,21 @@ class HTML_Element
 		
 		$name = preg_replace('/[^a-zA-Z0-9_]/', '', $this->getAttribute("name"));
 		
-		return (eval('return $container[$name][$this->nameIndex];'));
+		return $container[$name][$this->nameIndex];
+		
+	}
+	
+	
+	/** Returns the posted value, works well with 1D dimension. This function can be edited in differend child-classes.
+	 * 
+	 * @access public
+	 * @param array $container Container, null = $_POST
+	 * @return mixed POST-data
+	 */
+	public function value($container = null)
+	{
+		
+		return ($this->getPostValue($container));
 		
 	}
 	
@@ -549,7 +566,7 @@ class HTML_Element
 		
 		$name = preg_replace('/[^a-zA-Z0-9_]/', '', $this->getAttribute("name"));
 		
-		return (eval('return empty($container[$name][$this->nameIndex]);'));
+		return empty($container[$name][$this->nameIndex]);
 		
 	}
 	
@@ -1101,7 +1118,7 @@ class HTML_Form extends HTML_Element
 				if (empty($this->uploads[$element->getAttribute('name')])) {
 					
 					// get value
-					$value = (!$element->isEmpty($container)) ? $element->getPostValue($container) : "";
+					$value = (!$element->isEmpty($container)) ? $element->value($container) : "";
 				
 					// assign value
 					if (is_null($element->nameIndex)) {
@@ -1110,7 +1127,7 @@ class HTML_Form extends HTML_Element
 						
 					} else {
 						
-						$values[str_replace('[]', '', $element->getAttribute('name'))][$element->nameIndex] = $value;
+						$values[preg_replace('/[^a-zA-Z0-9_]/', '', $element->getAttribute('name'))][$element->nameIndex] = $value;
 						
 					}
 					
@@ -1126,7 +1143,7 @@ class HTML_Form extends HTML_Element
 						
 					} else {
 						
-						$values[str_replace('[]', '', $element->getAttribute('name'))][$element->nameIndex] = $value;
+						$values[preg_replace('/[^a-zA-Z0-9_]/', '', $element->getAttribute('name'))][$element->nameIndex] = $value;
 						
 					}
 					
@@ -1176,6 +1193,18 @@ class HTML_Select extends HTML_Element
 	 */
 	public function option($name, $value = null)
 	{
+		
+		if ($value !== null) {
+			
+			if (substr($value, 0, 1) == '_' || substr($value, 0, 1) == '0')
+				$value = '_'.$value;
+			
+		} else {
+			
+			if (substr($name, 0, 1) == '_' || substr($name, 0, 1) == '0')
+				$name = '_'.$name;
+			
+		}
 		
 		$this->options[] = (object) array('name' => $name, 'value' => $value);
 		return $this;
@@ -1322,6 +1351,25 @@ class HTML_Select extends HTML_Element
 		
 	}
 	
+	/** Returns the posted value, works well with 1D dimension. This function can be edited in differend child-classes.
+	 * 
+	 * @access public
+	 * @param array $container Container, null = $_POST
+	 * @return mixed POST-data
+	 */
+	public function value($container = null)
+	{
+		
+		$value = $this->getPostValue($container);
+		if (substr($value, 0, 1) == '_')
+			return substr($value, 1);
+			
+		if ($value == sha1($this->default))
+			return '';
+			
+		return $value;
+		
+	}
 	
 }
 

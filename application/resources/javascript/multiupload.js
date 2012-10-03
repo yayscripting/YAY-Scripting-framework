@@ -52,6 +52,13 @@ window.addEvent('domready', function(){
 				for (var j = 0; j < length; j++) {
 					
 					var file = files[j];
+					
+					if (typeof(file.fileName) == 'undefined')
+						file.fileName = file.name;
+						
+					if (typeof(file.fileSize) == 'undefined')
+						file.fileSize = file.size;
+					
 					var tmp_id = el.getAttribute('name').replace('[]', '')+ '['+file.fileName.replace('.', '_')+'_'+file.fileSize+']';
 					
 					// deleted?
