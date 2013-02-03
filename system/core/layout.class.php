@@ -334,7 +334,7 @@ class YS_Layout Extends YS_Singleton
 	public function set_header($type, $options, $noshort = false)
 	{
 		
-		if (array_search(array('type' => $type, 'options' => $options, 'noshort' => $noshort), $this->headers, falsE) === false)
+		if (array_search(array('type' => $type, 'options' => $options, 'noshort' => $noshort), $this->headers, false) === false)
 			$this->headers[] = array('type' => $type, 'options' => $options, 'noshort' => $noshort);
 		
 	}
