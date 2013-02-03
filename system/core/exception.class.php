@@ -58,7 +58,15 @@ class DatabaseException extends Exception
 	public function errorMessage()
 	{
 		
-		return $this->getMessage();
+		if(YS_Config::Load()->script->debug_mode === true){
+		
+			return $this->getMessage();
+			
+		}else{
+		
+			return;
+		
+		}
 		
 	}
 	
@@ -70,8 +78,16 @@ class DatabaseException extends Exception
 	public function fullMessage()
 	{
 		
-		// error
-		return 'Error on line '.$this->getLine().' in '.$this->getFile().'.<br /> <b>'.$this->getMessage().'</b>';
+		if(YS_Config::Load()->script->debug_mode === true){
+		
+			// error
+			return 'Error on line '.$this->getLine().' in '.$this->getFile().'.<br /> <b>'.$this->getMessage().'</b>';
+			
+		}else{
+		
+			return;
+		
+		}
 		
 	}
 	
@@ -94,8 +110,15 @@ class QueryException extends Exception
 	public function errorMessage()
 	{
 		
-		// error
-		return $this->getMessage();
+		if(YS_Config::Load()->script->debug_mode === true){
+		
+			return $this->getMessage();
+			
+		}else{
+		
+			return;
+		
+		}
 		
 	}
 	
@@ -107,8 +130,16 @@ class QueryException extends Exception
 	public function fullMessage()
 	{
 		
-		// error
-		return 'Error on line '.$this->getLine().' in '.$this->getFile().'.<br /> <b>'.$this->getMessage().'</b>';
+		if(YS_Config::Load()->script->debug_mode === true){
+		
+			// error
+			return 'Error on line '.$this->getLine().' in '.$this->getFile().'.<br /> <b>'.$this->getMessage().'</b>';
+			
+		}else{
+		
+			return;
+		
+		}
 		
 	}
 	
