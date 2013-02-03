@@ -91,7 +91,7 @@ class YS_Router Extends YS_Core
 		require $this->cwd . '/system/functions/router.minifyHTML.inc.php';
 		
 		// call timer
-		if ($this->config->script->show_render_time === true && $this->mode == 'browser')
+		if ($this->config->script->show_render_time === true && $this->config->script->debug_mode === true && $this->mode == 'browser')
 			echo '<!-- RENDER TIME: ' . substr((STRING) abs(microtime(true) - $this->_timer), 0, 6) . ' seconds -->';
 
 	}
