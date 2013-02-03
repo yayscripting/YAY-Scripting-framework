@@ -8,7 +8,7 @@
 <p>Via het onderstaande formulier kunt u inloggen tot het beheerderspaneel.</p>
 
 <p><small>Omdat de hoofdcontroller 'home' is(zie: applicatoin/config/script.cfg.php) en de optie 'force_seo' aan staat, zal de router /home.html niet als een GET-request accepteren. POST-requests zullen nog steeds werken, maar dit raden wij af.</small></p>
-<form method="post" action="/{$lang}.html">
+<form method="post" action="">
 
 {* This line is required, because it makes sure that the form-parser always picks the right form when there are more than 1 form on one page. *}
 {$form.form}
