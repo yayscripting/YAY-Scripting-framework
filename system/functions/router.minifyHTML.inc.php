@@ -29,19 +29,18 @@ try {
 				
 		}
 	
-		// Thanks mwwaygoo @ http://www.php.net/manual/en/function.php-strip-whitespace.php#65245, 
-		// I stole his textarea-proof function, and used a modified version of it.
-		$exceptions = array('textarea', 'pre');
+		// get minify exceptions
+		$exceptions = array('textarea', 'pre', 'script');
 		
-		$string = '';
-		foreach($exceptions as $exception)
-			$string .= ($string != '') ? '|'.$exception : $exception;
+		// get current buffer
+		$html = ob_get_clean();
 		
-		$html = preg_replace_callback("/>[^<]*<\\/(".$string.")/i", "harden_characters", ob_get_clean());
-		$html = preg_replace("/(\t|\n|\r)/", "", $html);
+		// minify!
+		$html = preg_replace('#(?ix)(?>[\ ]{2,})(?=(?:(?:[^<]++|<(?!/?(?:'.implode('|', $exceptions).')\b))*+)(?:<(?>'.implode('|', $exceptions).')\b|\z))#', ' ', $html);
+		$html = preg_replace('#(?ix)(?>[^\S ]\s*|\s{2,})(?=(?:(?:[^<]++|<(?!/?(?:'.implode('|', $exceptions).')\b))*+)(?:<(?>'.implode('|', $exceptions).')\b|\z))#', '', $html);
+		
+		// last but not least, delete comments
 		$html = preg_replace("/<!--(.+?)-->/", "", $html);
-		$html = preg_replace("/[\ ]{2,}/", " ", $html);
-		$html = preg_replace_callback("/>[^<]*<\\/(".$string.")/i", "unharden_characters", $html);
 		
 		echo $html;
 		
@@ -52,37 +51,3 @@ try {
 	YS_Error::exceptionHandler($ex);
 	
 }
-
-	
-/** changes all newlines, tabs and spaces. Used in minifying HTML
- * 
- * @param array $array preg_replace_callback-array
- * @return string Hardened string.
- * @see unharden_characters
- */
-function harden_characters($array)
-{
-	
-	$safe=preg_replace("/\n/", "%0A", $array[0]);
-	$safe=preg_replace("/\t/", "%09", $safe);
-	
-	return preg_replace("/\s/", "&nbsp;", $safe);
-	
-}
-	
-
-/** Opposite of {@link harden_characters}. Used in minifying HTML .
- * 
- * @param array $array preg_replace_callback-array
- * @return string Unhardened string.
- * @see harden_characters
- */
-function unharden_characters($array)
-{
-	
-	$safe=preg_replace('/%0A/', "\n", $array[0]);
-	$safe=preg_replace('/%09/', "\t", $safe);
-	
-	return preg_replace('/&nbsp;/', " ", $safe);
-	
-}											
