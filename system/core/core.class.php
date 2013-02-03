@@ -85,16 +85,16 @@ class YS_Core
 		// license check
 		if (empty($this->config->license->license)) {
 		
-		header('X-YAY-License: unlicensed');
+			header('X-YAY-License: unlicensed');
 		
 		}
 		else if (!preg_match('/^([A-Z]{4}\-){3}[A-Z]{4}$/', $this->config->license->license)) {
 		
-		header('X-YAY-License: invalid license');
+			header('X-YAY-License: invalid license');
 		
 		} else {
 		
-		header('X-YAY-License: '.strtoupper(dechex(sprintf('%u',(crc32($this->config->license->license))))));
+			header('X-YAY-License: '.strtoupper(dechex(sprintf('%u',(crc32($this->config->license->license))))));
 		
 		}
 		

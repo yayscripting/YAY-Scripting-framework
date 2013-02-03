@@ -127,7 +127,7 @@ class YS_Router Extends YS_Core
 		// get env
 		$env = YS_Environment::Load();
 		$environment = $env->get();
-
+		
 		// determine controller name/position
 		$controller = (!empty($route[0])) ? $route[0] : (($environment === false) ? $this->config->script->default_controller : $env->default_controller);
 		$controller = strtolower($this->helpers->string->url_safe($controller));
@@ -146,8 +146,6 @@ class YS_Router Extends YS_Core
 		}
 
 		// get controller folder
-		$folder = $this->getControllerFolder();
-
 		// admin?
 		if($environment !== false) {
 
@@ -171,6 +169,8 @@ class YS_Router Extends YS_Core
 
 		}
 
+		$folder = $this->getControllerFolder();
+		
 		// verify
 		if (file_exists('application/' . $folder.$prefix.$controller.'.php')) {
 
@@ -192,7 +192,7 @@ class YS_Router Extends YS_Core
 			$this->error->routerError();
 
 		}
-
+		
 		// load controller
 		try {
 
@@ -231,7 +231,6 @@ class YS_Router Extends YS_Core
 
 		// cut into segments
 		$route = (empty($_GET['ys_route'])) ? array() : $routes = explode('/', $_GET['ys_route']);
-		
 		
 		// parse language
 		if ($this->config->language->language_on && $this->config->language->default_language != null) {
@@ -318,13 +317,13 @@ class YS_Router Extends YS_Core
 		$env = YS_Environment::Load();
 		$env->setRoute($route);
 		$environment = $env->get();
-
+		
 		if ($environment !== false)
 			array_shift($route);
 
 		if (empty($route[0])) {
 
-			$route[0] = ($environment === false) ? $this->config->script->default_controller : $environment->default_controller;
+			$route[0] = ($environment === false) ? $this->config->script->default_controller : $env->default_controller;
 
 		}
 
