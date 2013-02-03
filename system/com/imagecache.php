@@ -11,7 +11,7 @@
 
 // set correct working directory
 chdir('../../');
-	
+
 // both variables set?
 if (empty($_GET['file']) || empty($_GET['ext']))
 	throwError();
@@ -33,10 +33,7 @@ while (strpos($file, '/') !== false) {
 	$file = substr($file, $pos + 1);
 	
 }		
-
-// unsafe characters?
-if (strpos($file, '.') !== false)
-	throwError();		
+	
 		
 // check extension
 $exts = array('png', 'jpg', 'jpeg', 'gif', 'bmp', 'ico');

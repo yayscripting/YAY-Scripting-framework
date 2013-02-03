@@ -95,6 +95,8 @@
 
 </IfModule>
 
+
+
 # /* == Rewrites */
 
 	# engine
@@ -105,14 +107,23 @@
 	# Note: when force SSL is turned on, change http:// to https:// in the following lines
 	#
 	RewriteCond %{HTTP_HOST} !^www.
-	RewriteRule (.*) https://www.%{HTTP_HOST}%{REQUEST_URI} [R=301,L,QSA]
+	RewriteRule (.*) http://www.%{HTTP_HOST}%{REQUEST_URI} [R=301,L,QSA]
 
 	# force SSL
-	RewriteCond %{HTTPS} off
-	RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L,QSA]
+	#RewriteCond %{HTTPS} off
+	#RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L,QSA]
 
+
+	# Dont rewrite external-files.
+	RewriteCond %{REQUEST_URI} ^/system/external/(.+?)
+	RewriteRule .* - [S=999]
+
+	# com
+	RewriteRule ^com/([^./]+)\.(json|html|css)$ /index.php?ys_mode=com&ys_route=$1 [QSA]
+	RewriteRule ^com/([^./]+)/([^./]+)\.(json|html|css)$ /index.php?ys_mode=com&ys_route=$1/$2 [QSA]
 	
 	# CSS minifier
+	RewriteCond %{REQUEST_URI} !^/com/(.*?)$
 	RewriteRule (.+)\.css$ /system/com/compressCSS.php?file=$1.css [L,QSA]
 	
 	# JS minifier (excluding libaries)
@@ -139,10 +150,6 @@
 	
 	# favicon
 	RewriteRule ^favicon\.ico$ /system/com/imagecache.php?file=application/resources/image/layout/favicon/favicon&ext=ico [L]
-	
-	# com
-	RewriteRule ^com/([^./]+)\.(json|html)$ /index.php?ys_mode=com&ys_route=en/$1 [QSA]
-	RewriteRule ^com/([^./]+)/([^./]+)\.(json|html)$ /index.php?ys_mode=com&ys_route=en/$1/$2 [QSA]
 
 	# Dont rewrite external .html-files, these can be used as documentation.
 	RewriteCond %{REQUEST_URI} ^/system/external/(.+?)\.html

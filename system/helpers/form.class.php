@@ -149,6 +149,11 @@ class HTML_Element
 	 * @var HTML_Form $parent Parent-form
 	 */
  	protected $parent;
+ 	
+	/**
+	 * @var bool $colorpicker Use a color-picker? (jscolor)
+ 	 */
+	protected $colorpicker = false;
 	/**#@-*/
 	
  	/**
@@ -316,7 +321,7 @@ class HTML_Element
 	public function __get($name)
 	{
 		
-		if (empty($this->attributes[$name]))
+		if (!isset($this->attributes[$name]))
 			return false;
 			
 		return $this->attributes[$name];
@@ -588,6 +593,24 @@ class HTML_Element
 		// opening tag
 		$html = $tabs . '<' . $this->type;
 		
+		// colorpicker
+		if ($this->colorpicker) {
+			
+			if (!empty($this->attributes['class'])) {
+				
+				$this->attributes['class'] .= ' color';
+			
+			} else {
+			
+				$this->attributes['class'] = 'color';
+			
+			}
+			
+			// add to layout
+			YS_Layout::Load()->set_header('script', array('src' => '/system/external/jscolor/jscolor.js'), true);
+			
+		}
+		
 		
 		if (!empty($this->attributes)) {
 			
@@ -672,6 +695,21 @@ class HTML_Element
 		return true;
 		
 	}
+	
+	/** Adds a colorpicker to this element
+	 * 
+	 * @access public
+	 * @param bool $status Set or unset?
+	 * @return HTML_Element this
+	 */
+ 	public function colorpicker($status = true)
+ 	{
+	 	
+	 	$this->colorpicker = (bool)$status;
+	 	return $this;
+	 	
+ 	}
+ 	
 }
 
 /** Form-element
@@ -859,10 +897,11 @@ class HTML_Form extends HTML_Element
 	public function textarea($name)
 	{
 		
-		$el = $this->append('textarea', false);
-		$el->name = $name;
+		$element = new HTML_Textarea('textarea', $this, false);
+		$this->elements[] = $element;
+		$element->name = $name;
 			
-		return $el;
+		return $element;
 		
 	}
 	
@@ -1159,6 +1198,108 @@ class HTML_Form extends HTML_Element
 	
 }
 
+/** Textarea-element
+ * 
+ * This class contains a new textarea-element of the form.
+ * Do never create this class this way. Always use {@link HTML_Form::textarea}.
+ *
+ * @name Textarea-element
+ * @package helpers
+ * @subpackage forms
+ */
+class HTML_Textarea extends HTML_Element
+{
+	
+	/** Is this textarea a wysiwyg?
+	 * 
+	 * @access protected
+	 * @see {HTML_Textarea:wysiwyg}
+	 */
+	protected $wysiwyg;
+	
+	/** Makes this element a wysiwyg-editor
+	 * 
+	 * @access public
+	 * @param bool $status Set or unset?
+	 * @return HTML_Textarea this
+	 */
+ 	public function wysiwyg($status = true)
+ 	{
+	 	
+	 	$this->wysiwyg = (bool)$status;
+	 	return $this;
+	 	
+ 	}
+ 	
+	
+	/** Builds the HTML-code
+	 * 
+	 * You will probably never call this function, use the function of the FORM_Element instead.
+	 * 
+	 * @access public
+	 * @param string $tabs Prefix for every new line
+	 * @return string HTML-code
+	 */
+	public function build($tabs = "")
+	{
+		
+		// fill
+		if ($this->isEmpty($_POST) == false && $this->remember)
+			$this->fill($_POST);
+			
+		if ($this->wysiwyg) {
+			
+			$id = empty($this->attributes['id']) ? 'wysiwyg_'.substr(str_shuffle(str_repeat('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',8)), 0, 8) : $this->attributes['id'];
+			$this->attributes['id'] = $id;
+			
+			YS_Layout::Load()->set_header('script', array('src' => '/system/external/xinha/initialize.js', 'async' => false), true);
+			YS_Layout::Load()->set_header('script', array('src' => '/system/external/xinha/XinhaCore.js', 'async' => false), true);
+			YS_Layout::Load()->set_header('script', array('src' => '/system/external/xinha/settings.php?wysiwyg_ID='.$id, 'async' => false), true);
+			
+		}	
+			
+		// opening tag
+		$html = $tabs . '<' . $this->type;
+		
+		if (!empty($this->attributes)) {
+			
+			// check for name-attribute
+			if (!empty($this->attributes['name'])) {
+				
+				if ($this->nameIndex !== null && strpos($this->attributes['name'], '[]') !== false) {
+					
+					$this->attributes['name'] = preg_replace('/[^a-zA-Z0-9_]/', '', $this->attributes['name']) . '[' . $this->nameIndex . ']';
+					
+				}
+				
+			}
+			
+			// set attributes
+			foreach($this->attributes as $key => $value) {
+				
+				if ($key != "innerHTML" && $value !== false && $value !== null)
+					$html .= ' '.htmlspecialchars($key).'="'.htmlspecialchars($value).'"';
+					
+			}
+					
+					
+		}
+		
+		$html .= ($this->close) ? " />\n" : ">";
+		
+		if (empty($this->attributes['innerHTML']) == false && $this->close == false)
+			$html .= htmlspecialchars($this->attributes['innerHTML']);
+		
+		// close tag?
+		if (!$this->close)
+			$html .= "</".$this->type.">\n";
+		
+		return $html;
+		
+	}
+ 	
+}
+
 /** Select-element
  * 
  * This class contains a new select-element of the form.
@@ -1196,10 +1337,15 @@ class HTML_Select extends HTML_Element
 		
 		if ($value !== null) {
 			
+			$value = (string)$value;
+			
 			if (substr($value, 0, 1) == '_' || substr($value, 0, 1) == '0')
 				$value = '_'.$value;
+				
 			
 		} else {
+			
+			$name = (string)$name;
 			
 			if (substr($name, 0, 1) == '_' || substr($name, 0, 1) == '0')
 				$name = '_'.$name;
@@ -1210,6 +1356,7 @@ class HTML_Select extends HTML_Element
 		return $this;
 		
 	}
+		
 	
 	/** Sets the default value
 	 * 
@@ -1335,12 +1482,21 @@ class HTML_Select extends HTML_Element
 		
 		if ($this->default !== null)
 			$html .= '<option value="'.sha1($this->default).'">'.(htmlspecialchars($this->default)).'</option>'."\n";
-
+		
+		
 		// options
 		if (!empty($this->options)) 
 			foreach($this->options as $option) {
 				
-				$html .= '<option'.(($option->value !== null) ? ' value="'.htmlspecialchars($option->value).'"' : '').((($option->value !== null && $option->value == $this->getAttribute('value')) || $option->name == $this->getAttribute('value')) ? ' selected="selected"' : '').'>'.$option->name."</option>\n";
+				$html .= '<option'.(($option->value !== null) ? ' value="'.htmlspecialchars($option->value).'"' : '').
+					(
+						(
+							($option->value !== null && $option->value == $this->getAttribute('value')) 
+								|| 
+							$option->name == $this->getAttribute('value')
+						) 	? ' selected="selected"' : ''
+					).
+					'>'.$option->name."</option>\n";
 				
 			}
 		

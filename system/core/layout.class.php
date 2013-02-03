@@ -333,7 +333,9 @@ class YS_Layout Extends YS_Singleton
 	 */
 	public function set_header($type, $options, $noshort = false)
 	{
-		$this->headers[] = array('type' => $type, 'options' => $options, 'noshort' => $noshort);
+		
+		if (array_search(array('type' => $type, 'options' => $options, 'noshort' => $noshort), $this->headers, falsE) === false)
+			$this->headers[] = array('type' => $type, 'options' => $options, 'noshort' => $noshort);
 		
 	}
 	
@@ -354,7 +356,7 @@ class YS_Layout Extends YS_Singleton
 			return "";
 			
 		//sort
-		usort($this->headers, array($this, "sort"));
+		//usort($this->headers, array($this, "sort"));
 		
 		// create string
 		$string = "";
@@ -368,7 +370,7 @@ class YS_Layout Extends YS_Singleton
 		return trim($string);
 		
 	}
-	
+	/* OUT OF ORDER, BUGGING SYSTEMS
 	/** Sort-function
 	 * 
 	 * Used in {@link build_headers}.
@@ -378,15 +380,21 @@ class YS_Layout Extends YS_Singleton
 	 * @param array $el_2 Second element.
 	 * @return int is_script_item
 	 * @see build_headers
-	 */
+	 * /
 	private function sort($el_1, $el_2)
 	{
-		if ($el_1['type'] == 'script')
-			return 1;
+		var_dump($el_1, $el_2);
+		echo '<br /><br /><br />';
 		
+		if ($el_1['type'] != 'script' && $el_2['type'] == 'script')
+			return 1;
+			
+		if ($el_1['type'] == 'script' && $el_2['type'] != 'script')
+			return -1;
+			
 		return 0;
 		
-	}
+	}*/
 	
 	/** Builds a single head-element into HTML
 	 * 
