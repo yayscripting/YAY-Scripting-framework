@@ -1,6 +1,7 @@
 <?php
 return array(
 	
+	'smart_placeholder' => true, // include smart placeholder script to fix placeholder bug on older browsers
 	'wysiwyg' => (object) array
 	(
 	

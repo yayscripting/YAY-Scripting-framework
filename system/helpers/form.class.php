@@ -150,6 +150,12 @@ class HTML_Element
 	 */
  	protected $parent;
  	
+ 	/** Did we include placeholder.js?
+ 	 * 
+ 	 * @access protected
+ 	 */
+ 	protected $placeholder_included;
+ 	
 	/**
 	 * @var bool $colorpicker Use a color-picker? (jscolor)
  	 */
@@ -628,8 +634,21 @@ class HTML_Element
 			// set attributes
 			foreach($this->attributes as $key => $value) {
 				
-				if ($key != "innerHTML" && $value !== false && $value !== null)
+				if ($key != "innerHTML" && $value !== false && $value !== null){
+				
 					$html .= ' '.htmlspecialchars($key).'="'.htmlspecialchars($value).'"';
+					
+				}
+				
+				if($this->placeholder_included !== true &&
+				   YS_Config::Load()->form->smart_placeholder === true &&
+				   ($key == "placeholder" && $value != '' && is_string($value))){
+				
+					YS_Layout::Load()->javascript('placeholder', false, false, true);
+					
+					$this->placeholder_included = true;
+				
+				}
 					
 			}
 					
@@ -1277,8 +1296,12 @@ class HTML_Textarea extends HTML_Element
 			// set attributes
 			foreach($this->attributes as $key => $value) {
 				
-				if ($key != "innerHTML" && $value !== false && $value !== null)
+				if ($key != "innerHTML" && $value !== false && $value !== null){
+				
 					$html .= ' '.htmlspecialchars($key).'="'.htmlspecialchars($value).'"';
+					
+				}
+				
 					
 			}
 					
@@ -1627,7 +1650,7 @@ class HTML_Upload extends HTML_Element
 	{
 		
 		$this->multiple = (bool)$bool;
-		YS_Layout::Load()->javascript('multiupload');
+		YS_Layout::Load()->javascript('multiupload', false, false, true);
 		
 		return $this;
 		
@@ -1922,16 +1945,25 @@ class HTML_Upload extends HTML_Element
 			
 		}
 		
+		
 		// opening tag
 		$html .= $tabs . '<input type="hidden" name="MAX_FILE_SIZE" value="'.htmlspecialchars($this->maxSize).'" />' . "\n";
 		$html .= $tabs . '<' . $this->type;
 		
 		
-		if (!empty($this->attributes))
-			foreach($this->attributes as $key => $value)
-				if ($key != "innerHTML" && $value != '' && is_string($value))
+		if (!empty($this->attributes)){
+		
+			foreach($this->attributes as $key => $value){
+			
+				if ($key != "innerHTML" && $value != '' && is_string($value)){
+				
 					$html .= ' '.htmlspecialchars($key).'="'.htmlspecialchars($value).'"';
 					
+				}
+					
+			}
+		
+		}			
 		
 		$html .= ($this->close) ? " />\n" : ">";
 		

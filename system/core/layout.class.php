@@ -250,11 +250,12 @@ class YS_Layout Extends YS_Singleton
 	 * @param string $name Filename 
 	 * @param bool $async Load asynchroniously?
 	 * @param bool $base Complete url or filename?
+	 * @param bool $system Search file in system folder
 	 * @return void
 	 * @see style
 	 * @see set_header
 	 */
-	public function javascript($name, $async = true, $base = false) 
+	public function javascript($name, $async = true, $base = false, $system = false) 
 	{
 	
 		// check for javascript used before
@@ -273,7 +274,7 @@ class YS_Layout Extends YS_Singleton
 		
 		}
 		
-		$name = ($base) ? $name : "/application/resources/javascript/".$name.".js";
+		$name = ($base) ? $name : "/".(($system == false) ? "application" : "system")."/resources/javascript/".$name.".js";
 		
 		// attributes
 		$attributes = array("type" => "text/javascript", "src" => $name);
