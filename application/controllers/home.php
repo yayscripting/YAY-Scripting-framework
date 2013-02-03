@@ -124,7 +124,7 @@ class Home Extends YS_Controller
 	public function dutch()
 	{
 		
-		$this->helpers->http->redirect('/nl.html');
+		$this->helpers->http->redirect('/nl/');
 		
 	}
 	
