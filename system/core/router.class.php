@@ -87,12 +87,12 @@ class YS_Router Extends YS_Core
 		// fire event
 		YS_Events::Load()->fire('shutdown');
 
+		// minify HTML
+		require $this->cwd . '/system/functions/router.minifyHTML.inc.php';
+		
 		// call timer
 		if ($this->config->script->show_render_time === true && $this->mode == 'browser')
 			echo '<!-- RENDER TIME: ' . substr((STRING) abs(microtime(true) - $this->_timer), 0, 6) . ' seconds -->';
-
-		// minify HTML
-		require $this->cwd . '/system/functions/router.minifyHTML.inc.php';
 
 	}
 	/** Loads the right controller
@@ -233,7 +233,8 @@ class YS_Router Extends YS_Core
 		$route = (empty($_GET['ys_route'])) ? array() : $routes = explode('/', $_GET['ys_route']);
 		
 		// parse language
-		if ($this->config->language->language_on && $this->config->language->default_language != null) {
+		if ($this->config->language->language_on && $this->config->language->default_language != null && ($this->mode == 'browser' || $this->mode == 'com')) {
+		
 		
 			// lang exists?
 			if (isset($_GET['ys_lang']) && !file_exists('application/language/'.preg_replace('/[^a-zA-Z]/s', '', $_GET['ys_lang']).'.lang.php')) {

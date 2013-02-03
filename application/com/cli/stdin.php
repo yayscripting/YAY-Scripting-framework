@@ -13,6 +13,9 @@ class Stdin Extends YS_Controller
 		
 		var_dump(json_decode($line, true));
 		
+		
+		var_dump($this->language->getLang());
+				
 	}
 	
 }
