@@ -55,18 +55,17 @@ if ($new === true) {
 	
 	$content = file_get_contents($filepath);
 	
+	// lessPHP
+	if ($config->compress->use_less === true) {
+		
+		require 'system/external/lessphp/lessc.inc.php';
+			
+		$less = new lessc();
+		$content = $less->parse($content);
+		
+	}
+	
 	if ($config->compress->css === true) {
-		
-		// lessPHP
-		if ($config->compress->use_less === true) {
-			
-			require 'system/external/lessphp/lessc.inc.php';
-			
-			$less = new lessc();
-			$content = $less->parse($content);
-			
-		}
-		
 		// strip comments/compress
 		$content = preg_replace("/\/\*[^!](.+?)\*\//s", "", $content);
 		$content = preg_replace("/[\n\t\r]/", "", $content);
@@ -74,15 +73,6 @@ if ($new === true) {
 		
 		// add newline after special comment (/*!)
 		$content = preg_replace("/(\/\*[!\*].+?\*\/)/s", "\n".'$1'."\n", $content);
-	
-	// just lessphp?	
-	} else if ($config->compress->use_less === true) {
-		
-		require 'system/external/lessphp/lessc.inc.php';
-			
-		$less = new lessc();
-		$content = $less->parse($content);
-		
 	}
 	
 	// cache
