@@ -47,7 +47,7 @@ class YS_Models extends YS_Singleton
 		
 	}
 	
-	/** Magic function - selects an model
+	/** Magic function - selects a model
 	 * 
 	 * If the class still needs to be created, the event 'loadModel' will be called.
 	 * 
@@ -89,7 +89,7 @@ class YS_Models extends YS_Singleton
 		
 	}
 	
-	/** Acces the DB-object
+	/** Access the DB-object
 	 * 
 	 * Returns the database-object, without a model interface.
 	 * 
