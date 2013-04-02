@@ -74,7 +74,7 @@ class String extends \System\Helper
 				// check array
 				if(is_array($p)){
 				
-					$this->strip_slashes_deep(&$array[$k]);
+					$this->strip_slashes_deep($array[$k]);
 				
 				}else{
 			
