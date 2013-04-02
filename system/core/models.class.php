@@ -3,14 +3,14 @@
  * @author YAY!Scripting
  * @package files
  */
-
+namespace System;
 
 /** Models
  * 
  * This class loads all models
  * 
  */
-class YS_Models extends YS_Singleton
+class Models extends Singleton
 {
 	
 	/**
@@ -43,7 +43,7 @@ class YS_Models extends YS_Singleton
 	{
 		
 		// config
-		$this->config = YS_Config::Load();
+		$this->config = Config::Load();
 		
 	}
 	
@@ -62,7 +62,7 @@ class YS_Models extends YS_Singleton
 		if (empty($this->sql)) {
 			
 			require_once 'system/core/database.class.php';
-			$this->sql = YS_Database::Load();
+			$this->sql = Database\Connection::Load(); 
 			
 		}
 		
@@ -71,12 +71,14 @@ class YS_Models extends YS_Singleton
 		// load helper
 		if (empty($this->models->$model)) {
 			
-			YS_Events::Load()->fire('loadModel', $model);
+			Events::Load()->fire('loadModel', $model);
 			
 			require_once('application/models/'.strtolower($model).'.class.php');
 			
-			$class = 'YS_'.ucfirst(strtolower($model));
+			$class = '\Application\Model\\'.ucfirst(strtolower($model));
 			$this->models->{strtolower($model)} = new $class ($this->sql);	
+			
+		
 			
 		}
 		
@@ -85,7 +87,7 @@ class YS_Models extends YS_Singleton
 			return $this->models->$model;
 			
 			
-		throw new ModelException(1, 'Couldn\'t load the model: '.$model.'.');
+		throw new Exception\Model(1, 'Couldn\'t load the model: '.$model.'.');
 		
 	}
 	
@@ -102,7 +104,7 @@ class YS_Models extends YS_Singleton
  		if (empty($this->sql)) {
 			
 			require_once 'system/core/database.class.php';
-			$this->sql = YS_Database::Load();
+			$this->sql = Database\ConnectionDatabase::Load();
 			
 		}
 		
@@ -112,7 +114,7 @@ class YS_Models extends YS_Singleton
 	
 }					
 
-/** ModelController
+/** Model
  * 
  * This class is the parent of every model.
  *
@@ -120,7 +122,7 @@ class YS_Models extends YS_Singleton
  * @package core
  * @subpackage Database
  */
-class YS_ModelController
+class Model
 {
 	
 	/** Name of primary key
@@ -159,6 +161,13 @@ class YS_ModelController
 	 */
 	protected $helpers;
 	
+	/** Models
+	 * 
+	 * @access protected
+	 * @var YS_Models $models
+	 */
+	protected $models;
+	
 	/** Config
 	 * 
 	 * @access protected
@@ -187,8 +196,9 @@ class YS_ModelController
 		$this->sql = $sql;
 		
 		// helpers/config
-		$this->helpers = YS_Helpers::Load();
-		$this->config  = YS_Config::Load();
+		$this->helpers = Helpers::Load();
+		$this->models  = Models::Load();
+		$this->config  = Config::Load();
 		
 		// other parameters
 		$this->table		= $parameters['table'];

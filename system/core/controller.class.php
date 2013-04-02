@@ -3,7 +3,7 @@
  * @author YAY!Scripting
  * @package files
  */
-
+namespace System;
 
 /** Controller
  * 
@@ -13,7 +13,7 @@
  * @package core
  * @subpackage Controller
  */
-class YS_Controller
+class Controller
 {
 
 	/** Helpers
@@ -99,15 +99,15 @@ class YS_Controller
 	public function __construct()
 	{
 		
-		$this->helpers = YS_Helpers::Load();
-		$this->config  = YS_Config::Load();
-		$this->models  = YS_Models::Load();
+		$this->helpers = Helpers::Load();
+		$this->config  = Config::Load();
+		$this->models  = Models::Load();
 		
 		// environment
-		$this->environment = YS_Environment::Load();
+		$this->environment = Environment::Load();
 		
 		// language
-		$this->language = YS_Language::Load();
+		$this->language = Language::Load();
 			
 		// escape POST
 		require_once 'system/functions/controller.handlePOST.inc.php';
@@ -117,12 +117,12 @@ class YS_Controller
 		$this->post = $_POST;
 		
 		// error
-		$this->error = YS_Error::Load();
+		$this->error = Error::Load();
 		
 		// load smarty
 		try {
 			
-			$this->layout = YS_Layout::Load();
+			$this->layout = Layout::Load();
 		
 		} catch (exception $ex) {
 			
@@ -131,9 +131,9 @@ class YS_Controller
 		}
 		
 		// loads the event module
-		$this->event = YS_Events::Load();
+		$this->event = Events::Load();
 		$this->event->injectController($this);
-		YS_Events::Load()->fire('runtime');
+		Events::Load()->fire('runtime');
 		
 	}
 	
@@ -233,7 +233,7 @@ class YS_Controller
 	{
 		
 		// load form helper
-		require_once 'system/helpers/form.class.php';
+		require_once 'system/core/form.class.php';
 		
 		// fire event
 		$this->event->fire('loadForm', $title);
@@ -246,18 +246,18 @@ class YS_Controller
 		} catch(Exception $ex) {
 			
 			// form_exception?
-			if (get_class($ex) == 'FormException')
+			if (get_class($ex) == '/System/Exception/Form')
 				throw $ex;
 			
 			// ordinair exception
 			if (!file_exists('application/forms/'.$title.'.php')) {
 				
-				throw new FormException("Form '".'application/forms/'.$title.'.php'."' doesn't exist.");
+				throw new Exception\Form("Form '".'application/forms/'.$title.'.php'."' doesn't exist.");
 				
 			}
 			
 			// thrown exception
-			throw new FormException("Form '".'application/forms/'.$title.'.php'."' could not be loaded: <br />".$ex->fullMessage());
+			throw new Exception\Form("Form '".'application/forms/'.$title.'.php'."' could not be loaded: <br />".$ex->fullMessage());
 			
 		}
 		
@@ -277,10 +277,12 @@ class YS_Controller
 		if($type == 'model'){
 		
 			// set prefix path
-			$prefix =  'application/models/';	
+			$prefix =  'application/models/';
 			
 			// set parameters
 			$parameter = "\$this->references['database']";
+			
+			$nSpace = '\Application\Model\\';
 		
 		}else
 		if($type == 'load'){
@@ -290,6 +292,8 @@ class YS_Controller
 			
 			// set parameters
 			$parameter = "";
+			
+			$nSpace = '\System\\';
 		
 		}else{
 		
@@ -323,7 +327,7 @@ class YS_Controller
 			}
 			
 			// prepare
-			$sfile = 'YS_'.ucfirst($file);
+			$sfile = $nSpace.ucfirst($file);
 			
 			// check already defined
 			if(! class_exists($sfile)){
@@ -342,7 +346,7 @@ class YS_Controller
 				
 				}else{
 				
-					throw new LoadException('Trying to initialize a '.$type.'. File does not exist at '.$path);
+					throw new Exception\Load('Trying to initialize a '.$type.'. File does not exist at '.$path);
 				
 				}
 				

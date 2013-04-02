@@ -16,4 +16,4 @@ require_once('system/core/core.class.php');
 require_once('system/core/router.class.php');
 	
 // start core/router
-$router = new YS_Router();
+$router = new System\Router();

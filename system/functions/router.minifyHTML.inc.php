@@ -7,10 +7,11 @@
  * @package functions
  * @subpackage router
  */
+namespace System;
  
 try {
  	
- 	$config = YS_Config::Load();
+ 	$config = Config::Load();
  	
 	// compress
 	if ($config->compress->html === true) {
@@ -46,8 +47,8 @@ try {
 		
 	}
 
-} catch (ConfigException $ex) {
+} catch (Exception\Config $ex) {
 	
-	YS_Error::exceptionHandler($ex);
+	Error::exceptionHandler($ex);
 	
 }

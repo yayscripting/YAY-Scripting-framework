@@ -2,7 +2,9 @@
 
 /** Example of STDIN controlling via CLI */
 
-class Stdin Extends YS_Controller 
+namespace Application\Controller;
+
+class Stdin Extends \System\Controller 
 {
 
 	public function index()

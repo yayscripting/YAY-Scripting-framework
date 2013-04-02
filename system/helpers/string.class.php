@@ -4,12 +4,9 @@
  * @package files
  */
  
-function seo($param) {
-	
-	
-	return YS_Helpers::Load()->string->seo($param);
-	
-}
+namespace System\Helper;
+
+require_once 'system/functions/seo.string.inc.php';
 
 /** String-helper
  * 
@@ -19,7 +16,7 @@ function seo($param) {
  * @package helpers
  * @subpackage string
  */
-class YSH_String extends YS_Helper
+class String extends \System\Helper
 {
 	
 	/** Manipulate string to make it url-safe.

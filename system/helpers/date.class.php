@@ -3,6 +3,7 @@
  * @author YAY!Scripting
  * @package files
  */
+namespace System\Helper;
 
 /** Date-helper
  *
@@ -12,7 +13,7 @@
  */
 
 // create class
-class YSH_Date extends YS_Helper
+class Date extends \System\Helper
 {
 	
 	/** names of the days, 0=monday.

@@ -3,6 +3,7 @@
  * @author YAY!Scripting
  * @package files
  */
+namespace System;
 
 /** 
  * Loads parent class
@@ -17,7 +18,7 @@ require_once('system/external/Smarty/Smarty.class.php');
  * @package core
  * @subpackage Controller
  */
-class YS_Layout Extends YS_Singleton
+class Layout Extends Singleton
 {
 	
 	/** Smarty
@@ -87,11 +88,11 @@ class YS_Layout Extends YS_Singleton
 		parent::__construct();
 		
 		// get config/helpers
-		$this->config  = YS_Config::Load();
-		$this->helpers = YS_Helpers::Load();
+		$this->config  = Config::Load();
+		$this->helpers = Helpers::Load();
 		
 		// get smarty
-		$this->smarty = new Smarty();
+		$this->smarty = new \Smarty();
 		
 		// smarty debug
 		$this->smarty->debugging = (($this->config->script->debug_mode === true) ? ((!empty($_GET['debug'])) ? true : false) : false);
@@ -104,7 +105,7 @@ class YS_Layout Extends YS_Singleton
 		$this->headers	= array();
 		
 		// environment
-		$this->environment = YS_Environment::Load();
+		$this->environment = Environment::Load();
 		
 	}
 	
@@ -135,7 +136,7 @@ class YS_Layout Extends YS_Singleton
 	{
 		
 		// get lang folder
-		$langFolder = YS_Language::Load()->getDir();
+		$langFolder = Language::Load()->getDir();
 		
 		if (!is_null($langFolder))
 			$langFolder .= '/';
@@ -172,7 +173,7 @@ class YS_Layout Extends YS_Singleton
 		
 			}else{
 				
-				throw new LoadException('Error loading page: '.$path);
+				throw new Exception\Load('Error loading page: '.$path);
 				
 			}
 			
@@ -543,7 +544,7 @@ class YS_Layout Extends YS_Singleton
 	{
 	
 		// get lang folder
-		$langFolder = YS_Language::Load()->getDir();
+		$langFolder = Language::Load()->getDir();
 		
 		if (!is_null($langFolder))
 			$langFolder .= '/';

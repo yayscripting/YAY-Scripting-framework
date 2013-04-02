@@ -3,7 +3,7 @@
  * @author YAY!Scripting
  * @package files
  */
-
+namespace system;
 
 /** Core
  * 
@@ -14,7 +14,7 @@
  * @package core
  * @subpackage Router
  */
-class YS_Core
+class Core
 {
 	
 	/** All config-data
@@ -50,17 +50,42 @@ class YS_Core
 		// make sure not to quit if the user stops executing a page
 		ignore_user_abort(true);
 	
-		// start session, buffer
-		session_set_cookie_params(3600 * 4);
-		session_start();
-		ob_start();
-		
 		// load required core 'functions'
 		require_once 'system/core/singleton.class.php';
 		
 		// load exceptions and error handlers
 		require_once 'system/core/exception.class.php';
 		require_once 'system/core/error.class.php';
+		
+		
+		// load config
+		$this->load_config();
+		
+		// handle sessions/output buffer
+		session_set_cookie_params(3600 * 4);
+		ob_start();
+		
+		// permanent session?
+		if ($this->config->script->permanent_session) {
+			
+			if (empty($_COOKIE['ysf_session'])) {
+				
+				session_start();
+				setcookie('ysf_session', session_id(), time() + 126147624/*+4years*/); 
+				
+			} else {
+				
+				session_id($_COOKIE['ysf_session']);
+				session_start();
+				
+			}
+			
+		} else {
+			
+			session_start();
+			
+		}
+		
 		
 		// load real core files
 		require_once 'system/core/controller.class.php';
@@ -79,8 +104,6 @@ class YS_Core
 		// event handler
 		require_once 'system/core/event.class.php';
 		
-		// load config
-		$this->load_config();
 		
 		// license check
 		if (empty($this->config->license->license)) {
@@ -99,7 +122,7 @@ class YS_Core
 		}
 		
 		// load helpers
-		$this->helpers = YS_Helpers::Load();
+		$this->helpers = Helpers::Load();
 		
 		// system check
 		$this->systemCheck();
@@ -129,7 +152,7 @@ class YS_Core
 		require_once('system/core/config.class.php');
 				
 		// save
-		$this->config = YS_Config::Load();
+		$this->config = Config::Load();
 	
 	}
 		

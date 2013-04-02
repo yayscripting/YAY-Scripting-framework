@@ -3,7 +3,9 @@
  * @author YAY!Scripting
  * @package files
  */
+namespace System;
 
+require_once 'system/functions/__.language.inc.php';
 
 /** Environment
  * 
@@ -13,7 +15,7 @@
  * @package core
  * @subpackage Router
  */
-class YS_Language extends YS_Singleton
+class Language extends Singleton
 {
 	
 	/** All config-data
@@ -48,7 +50,7 @@ class YS_Language extends YS_Singleton
 	{
 		
 		// load config
-		$this->config = YS_Config::Load();
+		$this->config = Config::Load();
 		
 		// checks singleton
 		parent::__construct();
@@ -141,11 +143,14 @@ class YS_Language extends YS_Singleton
 		// fool-proof
 		if (is_null($language)) {
 			
+			if ($this->config->language->return_default_on_error)
+				return $this->translate($keyword, $this->config->language->default_language);
+			
 			// return_keyword_on_error check
 			if (true == $this->config->language->return_keyword_on_error && $language == $this->config->language->default_language)
 				return $keyword;
 				
-			throw new TranslateException('The language system is inavailable right now.');
+			throw new Exception\Translate('The language system is inavailable right now.');
 			
 		}
 		
@@ -155,7 +160,7 @@ class YS_Language extends YS_Singleton
 			if (true == $this->config->language->return_keyword_on_error && $language == $this->config->language->default_language)
 				return $keyword;
 			
-			throw new TranslateException('The translate-system is unable to provide this language: '.htmlspecialchars($language).'.');
+			throw new Exception\Translate('The translate-system is unable to provide this language: '.htmlspecialchars($language).'.');
 		
 		}
 		
@@ -175,31 +180,12 @@ class YS_Language extends YS_Singleton
 			if (true == $this->config->language->return_keyword_on_error && $language == $this->config->language->default_language)
 				return $keyword;
 			
-			throw new TranslateException('The translate-system is unable to translate the language \''.htmlspecialchars($language).'\' with the following keyword: \''.htmlspecialchars(substr($keyword, 0, 100)).'\'');
+			throw new Exception\Translate('The translate-system is unable to translate the language \''.htmlspecialchars($language).'\' with the following keyword: \''.htmlspecialchars(substr($keyword, 0, 100)).'\'');
 			
 		}
 			
 		return $this->cache[$language][$keyword];
 		
 	}
-	
-}
-
-/** This function translates words into other languages
- * 
- * @static
- * @param string $keyword The word to translate
- * @param string $lang The language to translate the keyword to, default is the current one (null).
- */
-function __($keyword, $lang = null)
-{
-	
-	// load language class
-	static $language = null;
-	if (is_null($language))
-		$language = YS_Language::Load();
-	
-	
-	return $language->translate($keyword, $lang);
 	
 }

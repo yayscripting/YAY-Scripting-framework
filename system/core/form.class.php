@@ -3,6 +3,8 @@
  * @author YAY!Scripting
  * @package files
  */
+namespace System\Form;
+
 
 /** 
  * @global regex FILTER_ALPHA FORM_Validator-constant, upper/lowercase characters only.
@@ -59,52 +61,33 @@ define('FILTER_DATE_SYSTEM', '/^(2[0-9]{3}|19[0-9]{2})\-([0][1-9]|[1][012])\-(0[
  */
 define('FILTER_URL', '/^http:\/\/([a-zA-Z0-9\-_]{1,}\.){1,}\.[a-zA-Z]$/');
 
-
-/** Form-helper
+/** Loads a new form
  * 
- * This helper can be used to load a new form.
- *
- * @name Form_loader
- * @package helpers
- * @subpackage forms
+ * @access public
+ * @param string $title Title of the form.
+ * @param bool $upload Do you want to handle file-uploads also?
+ * @return HTML_Form New form.
  */
-class YSH_Form extends YS_Helper
+function create($title = "", $upload = false)
 {
+	static $iForms = 0;
+	$iForms++;
 	
-	/**
-	 * @access private
-	 * @var int $forms Counts how many forms are loaded in one page, and makes sure that the form-identifiers are unique.
-	 */
-	private $forms = 0;
-	
-	/** Loads a new form
-	 * 
-	 * @access public
-	 * @param string $method Method of the form, either POST or GET.
-	 * @param string $title Title of the form.
-	 * @param bool $upload Do you want to handle file-uploads also?
-	 * @return HTML_Form New form.
-	 */
-	public function newForm($method = "POST", $title = "", $upload = false)
-	{
-		$this->forms++;
-		
-		return new HTML_Form($this->forms, $title, $method, $upload);
-		
-	}
+	return new Form($iForms, $title, "POST", $upload);
 	
 }
+
 
 /** Form-child-element
  * 
  * This class contains a new child-element of the form, such as an input, or a textarea.
- * Do never create this class this way. Always use {@link HTML_Form::input} or {@link HTML_Form::textarea} or {@link HTML_Form::append}.
+ * Do never create this class this way. Always use {@link Form::input} or {@link Form::textarea} or {@link Form::append}.
  *
  * @name Form-child-element
  * @package helpers
  * @subpackage forms
  */
-class HTML_Element
+class Element
 {
 	
 	/**#@+
@@ -380,7 +363,7 @@ class HTML_Element
 	{
 		
 		if (empty($this->attributes['name']) && $required)
-			throw new FormException("You have to set a 'name' before you set the required-variable");
+			throw new \System\Exception\Form("You have to set a 'name' before you set the required-variable");
 		
 		
 		$this->validator= null;
@@ -424,7 +407,7 @@ class HTML_Element
 		
 		// fool-proof
 		if (empty($this->attributes['name']))
-			throw new FormException("You have to set a 'name' before you set the validator");
+			throw new \System\Exception\Form("You have to set a 'name' before you set the validator");
 		
 		// set required
 		$this->required = true;
@@ -436,7 +419,7 @@ class HTML_Element
 			
 			foreach($validator as $key => $val) {
 				
-				$this->validator[] = (is_string($key) && is_string($val)) ? new FORM_Validator($key, $val) : $val;
+				$this->validator[] = (is_string($key) && is_string($val)) ? new Validator($key, $val) : $val;
 				
 			}
 			
@@ -536,6 +519,9 @@ class HTML_Element
 		
 		$name = preg_replace('/[^a-zA-Z0-9_]/', '', $this->getAttribute("name"));
 		
+		if (substr($this->getAttribute("name"), -2, 2) == '[]')
+			return $container[$name];
+		
 		return $container[$name][$this->nameIndex];
 		
 	}
@@ -613,7 +599,7 @@ class HTML_Element
 			}
 			
 			// add to layout
-			YS_Layout::Load()->set_header('script', array('src' => '/system/external/jscolor/jscolor.js'), true);
+			\System\Layout::Load()->set_header('script', array('src' => '/system/external/jscolor/jscolor.js'), true);
 			
 		}
 		
@@ -641,10 +627,10 @@ class HTML_Element
 				}
 				
 				if($this->placeholder_included !== true &&
-				   YS_Config::Load()->form->smart_placeholder === true &&
+				   \System\Config::Load()->form->smart_placeholder === true &&
 				   ($key == "placeholder" && $value != '' && is_string($value))){
 				
-					YS_Layout::Load()->javascript('placeholder', false, false, true);
+					\System\Layout::Load()->javascript('placeholder', false, false, true);
 					
 					$this->placeholder_included = true;
 				
@@ -739,7 +725,7 @@ class HTML_Element
  * @package helpers
  * @subpackage forms
  */
-class HTML_Form extends HTML_Element
+class Form extends Element
 {
 	
 	/**#@+
@@ -748,7 +734,7 @@ class HTML_Form extends HTML_Element
 	 
 	/** Used to assign errors.
 	 * 
-	 * @var YS_Layout
+	 * @var Layout
 	 */
 	private $layout;
 	
@@ -800,7 +786,7 @@ class HTML_Form extends HTML_Element
 	{
 		
 		// get layout-engine
-		$this->layout = YS_Layout::Load();
+		$this->layout = \System\Layout::Load();
 		
 		// get form_ID
 		$this->form_ID = sha1($name . $instance . $method);
@@ -829,7 +815,7 @@ class HTML_Form extends HTML_Element
 	private function append($type, $close = false)
 	{
 		
-		$element = new HTML_Element($type, $this, $close);	
+		$element = new Element($type, $this, $close);	
 		$this->elements[] = $element;
 		
 		// return element
@@ -868,7 +854,7 @@ class HTML_Form extends HTML_Element
 	{
 		
 		// new upload-element
-		$element = new HTML_Select('select', $this, false);
+		$element = new Select('select', $this, false);
 		$element->setAttribute('name', $name);
 		$element->setDefault($default);
 		
@@ -893,11 +879,32 @@ class HTML_Form extends HTML_Element
 		
 		// error?
 		if (!$this->upload)
-			throw new HelperException(1, "Uw formulier heeft het uploaden uitgeschakeld.");
+			throw new \System\Exception\Form(1, "Uw formulier heeft het uploaden uitgeschakeld.");
 		
 		
 		// new upload-element
-		$element = new HTML_Upload($name, $this, $maxSize);
+		$element = new Upload($name, $this, $maxSize);
+		
+		// save element
+		$this->elements[] = $element;
+		$this->uploads[$name] = $element;
+		
+		return $element;
+		
+	}
+	
+	/** Appends a new captcha-element.
+	 * 
+	 * @access public
+	 * @param string $name Name of the element.
+	 * @return HTML_Captcha
+	 */
+	public function captcha($name)
+	{
+		
+		
+		// new upload-element
+		$element = new Captcha($name, $this);
 		
 		// save element
 		$this->elements[] = $element;
@@ -916,7 +923,7 @@ class HTML_Form extends HTML_Element
 	public function textarea($name)
 	{
 		
-		$element = new HTML_Textarea('textarea', $this, false);
+		$element = new Textarea('textarea', $this, false);
 		$this->elements[] = $element;
 		$element->name = $name;
 			
@@ -1179,9 +1186,9 @@ class HTML_Form extends HTML_Element
 					$value = (!$element->isEmpty($container)) ? $element->value($container) : "";
 				
 					// assign value
-					if (is_null($element->nameIndex)) {
+					if (is_null($element->nameIndex) || strpos($element->getAttribute('name'), '[]') !== false) {
 						
-						$values[$element->getAttribute('name')] = $value;
+						$values[preg_replace('/[^a-zA-Z0-9_]/', '', $element->getAttribute('name'))] = $value;
 						
 					} else {
 						
@@ -1217,6 +1224,118 @@ class HTML_Form extends HTML_Element
 	
 }
 
+
+/** captcha-element
+ * 
+ * This class creates a ReCaptcha-verification
+ *
+ * @name captcha-element
+ * @package helpers
+ * @subpackage forms
+ */
+class Captcha extends Element
+{
+	
+	protected $private;
+	protected $public;
+	
+	/** Constructor
+	 * 
+	 * @access public
+	 * @param string $name Name of the input.
+	 * @return HTML_Captcha
+	 */
+	public function __construct($name, $parent)
+	{
+		
+		parent::__construct('captcha', $parent);
+		
+		require_once 'system/external/recaptcha/recaptchalib.php';
+		
+		$data = \System\Config::Load()->form->recaptcha;
+		$this->private = $data->private_key;
+		$this->public  = $data->public_key;
+		
+		$this->errorMessage = null;
+		$this->required = true;
+		$this->setAttribute('type', 'captcha');
+		$this->setAttribute('name', $name);
+		
+	}
+	
+	/** Set this element to required.
+	 * 
+	 * If this element is not filled in, and $required is true, the validation failed.
+	 * 
+	 * @access public
+	 * @param bool $required Is it required?
+	 * @param string $errorMSG if $required is false, it can never be false!
+	 * @return HTML_Element $this
+	 */
+	public function setRequired($required, $errorMSG)
+	{
+		
+		if (!(bool)$required)
+			throw new \System\Exception\Form("The captcha is always required!");
+		
+		
+		$this->validator= null;
+		$this->required = true;
+		$this->errorMessage = $errorMSG;
+		
+		return $this;
+		
+	}
+	
+	/** Validates input
+	 * 
+	 * Checks if the upload has succeed
+	 * 
+	 * @access public
+	 * @param void $containing Just for compatibility methods.
+	 * @return mixed True on success, errormessage on error.
+	 */
+	public function validate($containing)
+	{
+		
+		$answer = \System\External\Recaptcha\recaptcha_check_answer
+			(
+				$this->private,
+				$_SERVER["REMOTE_ADDR"],
+                                $containing["recaptcha_challenge_field"],
+                                $containing["recaptcha_response_field"]
+			);
+		if (!$answer->is_valid) {
+			
+			if (is_null($this->errorMessage))
+				return $answer->error;
+				
+			return $this->errorMessage;
+				
+		} else {
+			
+			return true;
+			
+		}
+		
+	}
+	
+	/** Generates the right HTML-code
+	 * 
+	 * @access public
+	 * @param string $tabs suffix for newline
+	 * @return string HTML-code
+	 */
+	public function build($tabs = "")
+	{
+		
+		$html = \System\External\Recaptcha\recaptcha_get_html($this->public);
+		return $tabs . '<div id="recaptcha">' . $html . '</div>';
+		
+	}
+	
+}
+
 /** Textarea-element
  * 
  * This class contains a new textarea-element of the form.
@@ -1226,7 +1345,7 @@ class HTML_Form extends HTML_Element
  * @package helpers
  * @subpackage forms
  */
-class HTML_Textarea extends HTML_Element
+class Textarea extends Element
 {
 	
 	/** Is this textarea a wysiwyg?
@@ -1271,9 +1390,9 @@ class HTML_Textarea extends HTML_Element
 			$id = empty($this->attributes['id']) ? 'wysiwyg_'.substr(str_shuffle(str_repeat('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',8)), 0, 8) : $this->attributes['id'];
 			$this->attributes['id'] = $id;
 			
-			YS_Layout::Load()->set_header('script', array('src' => '/system/external/xinha/initialize.js', 'async' => false), true);
-			YS_Layout::Load()->set_header('script', array('src' => '/system/external/xinha/XinhaCore.js', 'async' => false), true);
-			YS_Layout::Load()->set_header('script', array('src' => '/system/external/xinha/settings.php?wysiwyg_ID='.$id, 'async' => false), true);
+			\System\Layout::Load()->set_header('script', array('src' => '/system/external/xinha/initialize.js', 'async' => false), true);
+			\System\Layout::Load()->set_header('script', array('src' => '/system/external/xinha/XinhaCore.js', 'async' => false), true);
+			\System\Layout::Load()->set_header('script', array('src' => '/system/external/xinha/settings.php?wysiwyg_ID='.$id, 'async' => false), true);
 			
 		}	
 			
@@ -1332,7 +1451,7 @@ class HTML_Textarea extends HTML_Element
  * @package helpers
  * @subpackage forms
  */
-class HTML_Select extends HTML_Element
+class Select extends Element
 {
 	
 	/** Contains all options
@@ -1448,7 +1567,7 @@ class HTML_Select extends HTML_Element
 	public function setValidator() 
 	{
 		
-		throw new FormException('You can not use the setValidator()-function, this does not work.', 1);
+		throw new \System\Exception\Form('You can not use the setValidator()-function, this does not apply for SELECT-elements.', 1);
 		
 	}
 	
@@ -1562,7 +1681,7 @@ class HTML_Select extends HTML_Element
  * @package helpers
  * @subpackage forms
  */
-class HTML_Upload extends HTML_Element
+class Upload extends Element
 {
 	
 	/** Max size of the file
@@ -1621,7 +1740,7 @@ class HTML_Upload extends HTML_Element
 	{
 		
 		if (empty($this->attributes['name']) && $required)
-			throw new FormException("You have to set a 'name' before you set the required-variable");
+			throw new \System\Exception\Form("You have to set a 'name' before you set the required-variable");
 		
 		
 		$this->validator= null;
@@ -1650,7 +1769,7 @@ class HTML_Upload extends HTML_Element
 	{
 		
 		$this->multiple = (bool)$bool;
-		YS_Layout::Load()->javascript('multiupload', false, false, true);
+		\System\Layout::Load()->javascript('multiupload', false, false, true);
 		
 		return $this;
 		
@@ -1705,7 +1824,7 @@ class HTML_Upload extends HTML_Element
 				
 		// fool-proof
 		if (empty($this->attributes['name']))
-			throw new FormException("You have to set a 'name' before you set the validator");
+			throw new \System\Exception\Form("You have to set a 'name' before you set the validator");
 		
 		
 		// set required and errors
@@ -1727,7 +1846,7 @@ class HTML_Upload extends HTML_Element
 				if (is_string($val))
 					$val = array($val);
 				
-				$this->validator[] = (is_string($key) && is_array($val)) ? new UPLOAD_Validator($val, $key) : $val;
+				$this->validator[] = (is_string($key) && is_array($val)) ? new UploadValidator($val, $key) : $val;
 				
 			}
 			
@@ -1834,7 +1953,7 @@ class HTML_Upload extends HTML_Element
 				if ($this->validator !== null) {
 				
 					// get MIME-type
-					$mime = YS_Helpers::Load()->file->getMimeType($_FILES[$name]['tmp_name'][$index], substr($_FILES[$name]['name'][$index], strrpos($_FILES[$name]['name'][$index], '.') + 1));
+					$mime = \System\Helpers::Load()->file->getMimeType($_FILES[$name]['tmp_name'][$index], substr($_FILES[$name]['name'][$index], strrpos($_FILES[$name]['name'][$index], '.') + 1));
 		
 					// unknown mime-type, lets trust the client :+)
 					if ($mime == 'application/octet-stream')
@@ -2002,7 +2121,7 @@ class HTML_Upload extends HTML_Element
  * @package helpers
  * @subpackage forms
  */
-class FORM_Validator
+class Validator
 {
 	
 	/** Regex to match the input
@@ -2080,7 +2199,8 @@ class FORM_Validator
  * @package helpers
  * @subpackage forms
  */
-class UPLOAD_Validator
+ 
+class UploadValidator
 {
 	
 	/** Mimetypes that are allowed to upload

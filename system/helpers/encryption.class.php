@@ -3,7 +3,7 @@
  * @author YAY!Scripting
  * @package files
  */
-
+namespace System\Helper;
 
 /** Encryption-helper
  * 
@@ -13,7 +13,7 @@
  * @package helpers
  * @subpackage encryption
  */
-class YSH_Encryption extends YS_Helper
+class Encryption extends \System\Helper
 {
 	
 	/** Encryption function.
@@ -232,11 +232,11 @@ class YSH_Encryption extends YS_Helper
 		
 		// verify input
 		if ($length / $Hlength > pow(2, 32) - 1)
-			throw new HelperException(1, 'Given key length is to big, max is: (2^32 - 1) * '.$Hlength.' ( = '.((pow(2, 32) - 1) * $Hlength).').');
+			throw new \System\Exception\Helper(1, 'Given key length is to big, max is: (2^32 - 1) * '.$Hlength.' ( = '.((pow(2, 32) - 1) * $Hlength).').');
 		
 		
 		if ($loop <= 0)
-			throw new HelperException(2, 'Loop-count must be higher than zero.');
+			throw new \System\Exception\Helper(2, 'Loop-count must be higher than zero.');
 		
 		// loop through all blocks
 		for ($block = 1; $block <= $blockC; $block++) {

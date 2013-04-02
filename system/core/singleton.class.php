@@ -3,7 +3,7 @@
  * @author YAY!Scripting
  * @package files
  */
-
+namespace System;
 
 /** Singleton
  * 
@@ -13,7 +13,7 @@
  * @package core
  * @subpackage Specialities
  */
-class YS_Singleton
+class Singleton
 {
 	
 	/** Remembers all instances
@@ -66,10 +66,10 @@ class YS_Singleton
 			{
 				
 				if (!$bt) $bt = debug_backtrace();
-				if (!isset($bt[$l])) throw new SingletonException("Cannot find called class -> stack level too deep.");
+				if (!isset($bt[$l])) throw new Exception\Singleton("Cannot find called class -> stack level too deep.");
 				if (!isset($bt[$l]['type'])) {
 					
-					throw new SingletonException ('type not set');
+					throw new Exception\Singleton('type not set');
 				
 				} else {
 				
@@ -89,7 +89,7 @@ class YS_Singleton
 			            			preg_match('/([a-zA-Z0-9\_]+)::'.strtolower($bt[$l]['function']).'/', strtolower($callerLine), $matches);
 			            			
 							if (!isset($matches[1]))
-								throw new SingletonException ("Could not find caller class: originating method call is obscured.");
+								throw new Exception\Singleton("Could not find caller class: originating method call is obscured.");
 			            
 							switch ($matches[1]) {
 								
@@ -106,7 +106,7 @@ class YS_Singleton
 							switch ($bt[$l]['function']) {
 								
 			                			case '__get':
-			                   				 if (!is_object($bt[$l]['object'])) throw new SingletonException ("Edge case fail. __get called on non object.");
+			                   				 if (!is_object($bt[$l]['object'])) throw new Exception\Singleton("Edge case fail. __get called on non object.");
 			                    				return get_class($bt[$l]['object']);
 			                			default: 
 									return $bt[$l]['class'];
@@ -114,7 +114,7 @@ class YS_Singleton
 			            			}
 			
 			        		default: 
-							throw new SingletonException ("Unknown backtrace method type");
+							throw new Exception\Singleton("Unknown backtrace method type");
 							
 					}
 					
@@ -139,7 +139,7 @@ class YS_Singleton
 	{
 		
 		if (empty(self::$instances[get_class($this)]) !== true && self::$instances[get_class($this)] !== $this)
-			throw new SingletonException("The class '".get_class($this)."' is a singleton class, and can one be created once.");
+			throw new Exception\Singleton("The class '".get_class($this)."' is a singleton class, and can one be created once.");
 		
 		if (empty(self::$instances[get_class($this)]))
 			self::$instances[get_class($this)] = $this;

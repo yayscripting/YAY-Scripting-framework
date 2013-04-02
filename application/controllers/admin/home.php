@@ -3,7 +3,9 @@
 	This controller will be called after visiting /admin.html while beeing logged in.
 	Visiting this url as default has been defined in /config/environment.cfg.php.
 */
-class Home Extends YS_Controller 
+namespace Application\Controller;
+
+class Home Extends \System\Controller  
 {
 	
 	

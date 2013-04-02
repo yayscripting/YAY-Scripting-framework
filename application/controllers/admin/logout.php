@@ -1,6 +1,8 @@
 <?php
+namespace Application\Controller;
 
-class Logout extends YS_Controller 
+
+class Logout extends \System\Controller  
 {
 	
 	
@@ -11,7 +13,7 @@ class Logout extends YS_Controller
 		$this->environment->logout('admin');
 		
 		// redirect to login
-		$this->helpers->http->redirect($this->language->getLang().'/home.html');
+		$this->helpers->http->redirect('/'.$this->language->getLang().'/home.html');
 		
 	}
 	

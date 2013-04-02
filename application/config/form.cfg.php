@@ -2,6 +2,11 @@
 return array(
 	
 	'smart_placeholder' => true, // include smart placeholder script to fix placeholder bug on older browsers
+	'recaptcha' => (object)array
+	( 	// this is a global key and will therefor work on all domains, you can always use a private key for extra security
+		'public_key' => '6LcqDt8SAAAAAL-G5NrfJiHgFL6lTfYG6osMzFyF',
+		'private_key'=> '6LcqDt8SAAAAAJjXNb7SaAfol9TOMyCgXDWAQiuZ',
+	),
 	'wysiwyg' => (object) array
 	(
 	

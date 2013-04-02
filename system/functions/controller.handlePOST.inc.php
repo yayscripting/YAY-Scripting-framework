@@ -5,6 +5,7 @@
  * @package functions
  * @subpackage controller
  */
+
 if (!function_exists('strip_slashes')) {
 	
 

@@ -3,6 +3,7 @@
  * @author YAY!Scripting
  * @package files
  */
+namespace System\Helper;
 
 /**
  * Include DirectAdmin
@@ -17,13 +18,13 @@ require_once 'system/external/directadmin/DirectAdmin.php';
  * @package helpers
  * @subpackage mail
  */
-class YSH_Directadmin extends YS_Helper
+class Directadmin extends \System\Helper
 {
 	
 	public function login($username, $password, $host)
 	{
 	
-		$this->daClass = new DirectAdmin('http://'.$username.':'.$password.'@'.$host);
+		$this->daClass = new \DirectAdmin('http://'.$username.':'.$password.'@'.$host);
 	
 	}
 	

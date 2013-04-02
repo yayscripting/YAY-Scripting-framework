@@ -3,7 +3,7 @@
  * @author YAY!Scripting
  * @package files
  */
-
+namespace System;
 
 /** Helpers loader
  * 
@@ -13,7 +13,7 @@
  * @package core
  * @subpackage helpers
  */
-class YS_Helpers extends YS_Singleton
+class Helpers extends Singleton
 {
 		
 	/**
@@ -39,7 +39,7 @@ class YS_Helpers extends YS_Singleton
 	{
 		
 		// config
-		$this->config = YS_Config::Load();
+		$this->config = Config::Load();
 		
 	}
 	
@@ -57,7 +57,7 @@ class YS_Helpers extends YS_Singleton
 		if (empty($this->helpers->$helper)) {
 			
 			require_once('system/helpers/'.strtolower($helper).'.class.php');
-			eval('$this->helpers->'.strtolower($helper).' = new YSH_'.ucfirst(strtolower($helper)).'();');	
+			eval('$this->helpers->'.strtolower($helper).' = new \System\Helper\\'.ucfirst(strtolower($helper)).'();');	
 			
 		}
 		
@@ -66,7 +66,7 @@ class YS_Helpers extends YS_Singleton
 			return $this->helpers->$helper;
 			
 			
-		throw new HelperException(1, 'Couldn\'t load the helper: '.$helper.'.');
+		throw new Exception\Helper(1, 'Couldn\'t load the helper: '.$helper.'.');
 		
 	}
 	
@@ -80,7 +80,7 @@ class YS_Helpers extends YS_Singleton
  * @package core
  * @subpackage helpers
  */
-class YS_Helper
+class Helper
 {
 	
 	/**
@@ -113,8 +113,8 @@ class YS_Helper
 	{
 		
 		// load config/helpers
-		$this->config = YS_Config::Load();
-		$this->helpers = YS_Helpers::Load();
+		$this->config = Config::Load();
+		$this->helpers = Helpers::Load();
 		
 	}
 	
@@ -134,7 +134,7 @@ class YS_Helper
 			
 		}
 		
-		throw new HelperException(1, 'Cannot load a helper twice: '.get_class($this).'.');
+		throw new Exception\Helper(1, 'Cannot load a helper twice: '.get_class($this).'.');
 		
 	}
 	

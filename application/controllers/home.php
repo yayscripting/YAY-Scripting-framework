@@ -1,5 +1,4 @@
 <?php
-
 /*	
 	The default controller is home,
 	Adding new controllers just requires you to add a new file to the controllers-directory, with the name 'NAME.php'
@@ -14,7 +13,9 @@
 	and after that visited /home/preparedatabase.html once.
 	
 */
-class Home Extends YS_Controller 
+namespace Application\Controller;
+
+class Home Extends \System\Controller 
 {
 	
 	/*
@@ -89,7 +90,7 @@ class Home Extends YS_Controller
 					$this->environment->login('admin');
 					
 					// redirect to admin
-					$this->helpers->http->redirect($this->getLang().'/admin.html');
+					$this->helpers->http->redirect('/'.$this->language->getLang().'/admin.html');
 					
 				} else {
 					

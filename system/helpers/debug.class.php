@@ -3,7 +3,7 @@
  * @author YAY!Scripting
  * @package files
  */
-
+namespace System\Helper;
 
 /** Debug-helper
  * 
@@ -13,7 +13,7 @@
  * @package helpers
  * @subpackage debug
  */
-class YSH_Debug extends YS_Helper
+class Debug extends \System\Helper
 {
 	
 	/** Shows the content of a variable, in var_dump-style.
@@ -76,10 +76,10 @@ class YSH_Debug extends YS_Helper
 		echo $prev;
 		
 		// get debug var
-		$all_tpl_vars = YS_Layout::Load()->getTemplateVars();
+		$all_tpl_vars = \System\Layout::Load()->getTemplateVars();
 		
 		// assign dump
-		YS_Layout::Load()->assign('debug', $all_tpl_vars['debug'].$dump);
+		\System\Layout::Load()->assign('debug', $all_tpl_vars['debug'].$dump);
 	
 	}
 }

@@ -7,7 +7,9 @@
 	Create a new form, $this is working because this file is included in the controller-class. 
 	This is a required statement.
 */
-$form = $this->helpers->form->newForm();
+use System\Form as Form;
+
+$form = Form\create("title", false);
 
 	/* Create a new input, with type 'text' and name 'username'. */
 	$form->input('text', 'username')

@@ -1,7 +1,7 @@
 <?php
+namespace Application;
 
-
-class YS_Event extends YS_Event_Data
+class Event extends \System\Event
 {
 	
 	public function runtime()

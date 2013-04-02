@@ -3,7 +3,7 @@
  * @author YAY!Scripting
  * @package files
  */
-
+namespace System;
 
 /** Environment
  * 
@@ -13,7 +13,7 @@
  * @package core
  * @subpackage Router
  */
-class YS_Environment extends YS_Singleton
+class Environment extends Singleton
 {
 	
 	/** The route to use while determining the environment
@@ -48,7 +48,7 @@ class YS_Environment extends YS_Singleton
 	{
 		
 		// load config
-		$this->config = YS_Config::Load();
+		$this->config = Config::Load();
 		
 		// checks singleton
 		parent::__construct();

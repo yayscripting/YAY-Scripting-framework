@@ -3,7 +3,7 @@
  * @author YAY!Scripting
  * @package files
  */
-
+namespace System\Helper;
 
 /** Intranet-helper
  *
@@ -13,7 +13,7 @@
  * @package helpers
  * @subpackage intranet
  */
-class YSH_Intranet extends YS_Helper
+class Intranet extends \System\Helper
 {
 	
 	/** Gets the MAC-address of the device, connection to a local IP-address.

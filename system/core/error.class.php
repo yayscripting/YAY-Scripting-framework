@@ -3,6 +3,7 @@
  * @author YAY!Scripting
  * @package files
  */
+namespace System;
 
 /** Error handler
  * 
@@ -12,7 +13,7 @@
  * @package core
  * @subpackage Error
  */
-class YS_Error extends YS_Singleton
+class Error extends Singleton
 {
 	 	 				
 	
@@ -38,7 +39,7 @@ class YS_Error extends YS_Singleton
 		
 		
 		// load config
-		$this->config = YS_Config::Load();
+		$this->config = Config::Load();
 		
 		// register error_handler
 		if ($this->config->error->register_error_handler === true) {
@@ -318,20 +319,20 @@ class YS_Error extends YS_Singleton
 			
 			
 			// load new layout?
-			if (!class_exists("YS_Layout"))
+			if (!class_exists("\System\Layout")) 
 				require_once 'system/core/layout.class.php';
 				
-			if (!class_exists("YS_Controller"))
+			if (!class_exists("\System\Controller"))
 				require_once 'system/core/controller.class.php';
 				
-			if (!class_exists("YS_Events"))
-				require_once 'system/core/events.class.php';
+			if (!class_exists("\System\Events"))
+				require_once 'system/core/event.class.php';
 				
-			$layout = YS_Layout::Load();
+			$layout = Layout::Load();
 			
 			$layout->assign('error', $errorMessage);
-			YS_Events::Load()->injectController(new YS_Controller()); 
-			YS_Events::Load()->fire('runtime'); 
+			Events::Load()->injectController(new Controller()); 
+			Events::Load()->fire('runtime'); 
 			$layout->view('errors/'.$type.'.tpl');
 			die();			
 			
@@ -348,9 +349,9 @@ class YS_Error extends YS_Singleton
 	{
 		
 		require_once 'system/core/controller.class.php';
-		eval('class RouterErrorHandler extends YS_Controller{}');
+		eval('class RouterErrorHandler extends \System\Controller{}');
 		
-		new RouterErrorHandler();
+		new \RouterErrorHandler();
 		
 		$this->http_error(404, true);
 		

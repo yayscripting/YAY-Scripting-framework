@@ -3,14 +3,14 @@
  * @author YAY!Scripting
  * @package files
  */
-
+namespace System\Exception;
 
 /** Core Error
  *
  * @package core
  * @subpackage Error
  */
-class CoreException extends Exception
+class Core extends \Exception
 {
 	
 	/** Show error-message
@@ -47,7 +47,7 @@ class CoreException extends Exception
  * @package core
  * @subpackage Error
  */
-class DatabaseException extends Exception
+class Database extends \Exception
 {
 	
 	/** Show error-message
@@ -58,7 +58,7 @@ class DatabaseException extends Exception
 	public function errorMessage()
 	{
 		
-		if(YS_Config::Load()->script->debug_mode === true){
+		if(\System\Config::Load()->script->debug_mode === true){
 		
 			return $this->getMessage();
 			
@@ -78,7 +78,7 @@ class DatabaseException extends Exception
 	public function fullMessage()
 	{
 		
-		if(YS_Config::Load()->script->debug_mode === true){
+		if(\System\Config::Load()->script->debug_mode === true){
 		
 			// error
 			return 'Error on line '.$this->getLine().' in '.$this->getFile().'.<br /> <b>'.$this->getMessage().'</b>';
@@ -99,7 +99,7 @@ class DatabaseException extends Exception
  * @package core
  * @subpackage Error
  */
-class QueryException extends Exception
+class Query extends \Exception
 {
 	
 	/** Show error-message
@@ -110,7 +110,7 @@ class QueryException extends Exception
 	public function errorMessage()
 	{
 		
-		if(YS_Config::Load()->script->debug_mode === true){
+		if(\System\Config::Load()->script->debug_mode === true){
 		
 			return $this->getMessage();
 			
@@ -130,7 +130,7 @@ class QueryException extends Exception
 	public function fullMessage()
 	{
 		
-		if(YS_Config::Load()->script->debug_mode === true){
+		if(\System\Config::Load()->script->debug_mode === true){
 		
 			// error
 			return 'Error on line '.$this->getLine().' in '.$this->getFile().'.<br /> <b>'.$this->getMessage().'</b>';
@@ -150,7 +150,7 @@ class QueryException extends Exception
  * @package core
  * @subpackage Error
  */
-class ConfigException extends Exception
+class Config extends \Exception
 {
 	
 	/** Show error-message
@@ -189,7 +189,7 @@ class ConfigException extends Exception
  * @package core
  * @subpackage Error
  */
-class ModelException extends Exception
+class Model extends \Exception
 {
 	
 	/** ErrorType
@@ -247,7 +247,7 @@ class ModelException extends Exception
  * @package core
  * @subpackage Error
  */
-class FormException extends Exception
+class Form extends \Exception
 {
 	
 	/** Show error-message
@@ -283,7 +283,7 @@ class FormException extends Exception
  * @package core
  * @subpackage Error
  */
-class SingletonException extends Exception
+class Singleton extends \Exception
 {
 	
 	/** Show error-message
@@ -320,7 +320,7 @@ class SingletonException extends Exception
  * @package core
  * @subpackage Error
  */
-class LoadException extends Exception
+class Load extends \Exception
 {
 	
 	/** Show error-message
@@ -359,7 +359,7 @@ class LoadException extends Exception
  * @package core
  * @subpackage Error
  */
-class HelperException extends Exception
+class Helper extends \Exception
 {
 	
 	/** ErrorType
@@ -417,7 +417,43 @@ class HelperException extends Exception
  * @package core
  * @subpackage Error
  */
-class TranslateException extends Exception
+class Translate extends \Exception
+{
+	
+	/** Show error-message
+	 * 
+	 * @access public
+	 * @return string ErrorMessage
+	 */
+	public function errorMessage()
+	{
+		
+		// error
+		return $this->getMessage();
+		
+	}
+	
+	/** Shows full errorMessage, inclusive linenumber and filename.
+	 * 
+	 * @access public
+	 * @return string Full errorMessage.
+	 */
+	public function fullMessage()
+	{
+		
+		// error
+		return 'Error on line '.$this->getLine().' in '.$this->getFile().'.<br /> <b>'.$this->getMessage().'</b>';
+		
+	}
+	
+}
+
+/** Route error
+ *
+ * @package core
+ * @subpackage Error
+ */
+class Route extends \Exception
 {
 	
 	/** Show error-message

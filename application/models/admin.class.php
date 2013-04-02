@@ -2,12 +2,14 @@
 /*
 	The prefix YS_ is required to prevent collisions.
 */
-class YS_Admin extends YS_ModelController
+namespace Application\Model;
+
+class Admin extends \System\Model
 {
 
 	public function __construct($sql)
 	{
-	
+		
 		// prepare parameters
 		$parameters = array();
 		$parameters['table'] 		= 'admin'; // The name of the table

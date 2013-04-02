@@ -3,7 +3,7 @@
  * @author YAY!Scripting
  * @package files
  */
-
+namespace System;
 
 /** Config loader
  * 
@@ -13,7 +13,7 @@
  * @package core
  * @subpackage config
  */
-class YS_Config extends YS_Singleton
+class Config extends Singleton
 {
 	
 	/** Config container
@@ -61,7 +61,7 @@ class YS_Config extends YS_Singleton
 			
 			if (!file_Exists($this->cwd . '/application/config/'.strtolower($name).'.cfg.php')) {
 				
-				throw (new ConfigException('Could not load config file: '.strtolower($name).'.'));
+				throw (new Exception\Config('Could not load config file: '.strtolower($name).'.'));
 				
 			}
 				

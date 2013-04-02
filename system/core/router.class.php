@@ -3,7 +3,7 @@
  * @author YAY!Scripting
  * @package files
  */
-
+namespace System;
 
 /** Core
  * 
@@ -13,7 +13,7 @@
  * @package core
  * @subpackage Router
  */
-class YS_Router Extends YS_Core
+class Router Extends Core
 {
 
 	/** Startime
@@ -63,7 +63,7 @@ class YS_Router Extends YS_Core
 		parent::__construct();
 
 		// load errorhandler
-		$this->error = YS_Error::Load();
+		$this->error = Error::Load();
 
 		// set mode
 		$this->setMode();
@@ -85,7 +85,7 @@ class YS_Router Extends YS_Core
 	{
 
 		// fire event
-		YS_Events::Load()->fire('shutdown');
+		Events::Load()->fire('shutdown');
 
 		// minify HTML
 		require $this->cwd . '/system/functions/router.minifyHTML.inc.php';
@@ -109,7 +109,7 @@ class YS_Router Extends YS_Core
 	{
 		
 		// fire event
-		YS_Events::Load()->fire('router');
+		Events::Load()->fire('router');
 
 		// get route
 		$route = $this->parseRoute();
@@ -125,7 +125,7 @@ class YS_Router Extends YS_Core
 		}
 
 		// get env
-		$env = YS_Environment::Load();
+		$env = Environment::Load();
 		$environment = $env->get();
 		
 		// determine controller name/position
@@ -172,33 +172,67 @@ class YS_Router Extends YS_Core
 		$folder = $this->getControllerFolder();
 		
 		// verify
-		if (file_exists('application/' . $folder.$prefix.$controller.'.php')) {
-
-			// load			
-			require_once('application/' . $folder.$prefix.$controller.'.php');
-
-			$method = (!empty($route[1])) ? $route[1] : 'index';
-			$method = strtolower($this->helpers->string->url_safe($method));
-
-			// verify
-			if (method_exists(ucfirst($controller), $method) === false && method_exists(ucfirst($controller), '__call') === false) {
-
-				$this->error->routerError();
-
-			}
-
-		} else {
-
-			$this->error->routerError();
-
+		switch ($this->mode) {
+			
+			case 'browser':
+				if (file_exists('application/' . $folder.$prefix.$controller.'.php')) {
+		
+					// load			
+					require_once('application/' . $folder.$prefix.$controller.'.php');
+		
+					$method = (!empty($route[1])) ? $route[1] : 'index';
+					$method = strtolower($this->helpers->string->url_safe($method));
+					
+					$class = '\Application\Controller\\'.ucfirst($controller);
+					
+					// verify
+					if (method_exists($class, $method) === false && method_exists($class, '__call') === false) {
+		
+						$this->error->routerError();
+		
+					}
+		
+				} else {
+		
+					$this->error->routerError();
+		
+				}
+				break;
+			case 'com':
+				if ($route[0] == 'application') {
+					
+					require_once('application/com/'.$route[1].'.php');
+					$class = '\Application\Com\\'.ucfirst($route[1]);
+					
+					$method = (!empty($route[2])) ? $route[2] : 'index';
+					$method = strtolower($this->helpers->string->url_safe($method));
+					
+					// verify
+					if (method_exists($class, $method) === false && method_exists($class, '__call') === false) {
+		
+						$this->error->routerError();
+		
+					}
+					
+				} else {
+					
+					
+					
+				}
+				break;
+			
+			case 'cli':
+			
+			case 'cronjob':
+		
 		}
 		
 		// load controller
 		try {
 
-			eval('$class = new '.ucfirst($controller).'();');
+			eval('$class = new '.$class.'();');
 			$class->injectRoute($route);
-			if (method_exists(ucfirst($controller), $method) === false)
+			if (method_exists($class, $method) === false)
 				eval('$class->__call("'.$method.'", null);');
 			else
 				eval('$class->'.$method.'();');
@@ -206,14 +240,14 @@ class YS_Router Extends YS_Core
 		}
 
 		// error handling
-		catch (CoreException	  $ex)	{ }
-		catch (DatabaseException  $ex)	{ }
-		catch (QueryException	  $ex)	{ }
-		catch (ConfigException	  $ex)	{ }
-		catch (LoadException	  $ex)	{ }
-		catch (FormException	  $ex)	{ }
-		catch (HelperException	  $ex)	{ }
-		catch (SingletonException $ex)	{ }
+		catch (Exception\Core	 $ex)	{ }
+		catch (Exception\Database  $ex)	{ }
+		catch (Exception\Query	 $ex)	{ }
+		catch (Exception\Config	 $ex)	{ }
+		catch (Exception\Load	 $ex)	{ }
+		catch (Exception\Form	 $ex)	{ }
+		catch (Exception\Helper	 $ex)	{ }
+		catch (Exception\Singleton $ex)	{ }
 
 		if (isset($ex))
 			$this->error->http_error(500, true, $ex->errorMessage().'<br /><br /><small>'.$ex->fullMessage().'</small>');
@@ -233,13 +267,12 @@ class YS_Router Extends YS_Core
 		$route = (empty($_GET['ys_route'])) ? array() : $routes = explode('/', $_GET['ys_route']);
 		
 		// parse language
-		if ($this->config->language->language_on && $this->config->language->default_language != null && ($this->mode == 'browser' || $this->mode == 'com')) {
-		
+		if ($this->config->language->language_on && $this->config->language->default_language != null && $this->mode == 'browser') {
 		
 			// lang exists?
 			if (isset($_GET['ys_lang']) && !file_exists('application/language/'.preg_replace('/[^a-zA-Z]/s', '', $_GET['ys_lang']).'.lang.php')) {
 				
-				YS_Language::Load()->setRoute(array($this->config->language->default_language));
+				Language::Load()->setRoute(array($this->config->language->default_language));
 				$this->error->http_error(404);
 				
 			}
@@ -265,7 +298,7 @@ class YS_Router Extends YS_Core
 
 				if ($route[0] != $this->config->language->default_language && false == is_null($this->config->language->default_language)) {
 				
-					if (YS_Events::Load()->fire('determineLanguage') === false)  {
+					if (Events::Load()->fire('determineLanguage') === false)  {
 					
 						exit;
 					
@@ -304,7 +337,7 @@ class YS_Router Extends YS_Core
 			if ($this->config->language->language_on) {		
 
 				// inform the language-class
-				$lang = YS_Language::Load();
+				$lang = Language::Load();
 				$lang->setRoute($route);
 
 				// delete language-prefix
@@ -314,23 +347,50 @@ class YS_Router Extends YS_Core
 
 		}
 
+
 		// get environment
-		$env = YS_Environment::Load();
-		$env->setRoute($route);
-		$environment = $env->get();
-		
-		if ($environment !== false)
-			array_shift($route);
-
-		if (empty($route[0])) {
-
-			$route[0] = ($environment === false) ? $this->config->script->default_controller : $env->default_controller;
-
+		if ($this->mode == 'browser') {
+			
+			$env = Environment::Load();
+			$env->setRoute($route);
+			$environment = $env->get();
+			
+			if ($environment !== false)
+				array_shift($route);
+	
+			if (empty($route[0])) {
+	
+				$route[0] = ($environment === false) ? $this->config->script->default_controller : $env->default_controller;
+	
+			}
+	
+			if (empty($route[1]))
+				$route[1] = 'index';
+				
 		}
-
-		if (empty($route[1]))
-			$route[1] = 'index';		
-
+		
+		// COM-routing
+		else if ($this->mode == 'com') {
+			
+			$env = Environment::Load();
+			$env->setRoute(array());
+			
+			if (!($route[0] == 'application' || $route[0] == 'system'))
+				throw new Exception\Route('Incorrect COM-file');
+				
+			$source = $route[0];
+			
+			if (($route[0] == 'application' || $route[0] == 'system') && $route[1] == 'com') {
+				
+				array_shift($route);
+				array_shift($route);
+				
+			}
+			
+			array_unshift($route, $source);
+			
+		}
+		
 		return $route;
 
 	}

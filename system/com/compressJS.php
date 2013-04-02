@@ -33,7 +33,7 @@ include('system/core/singleton.class.php');
 include('system/core/config.class.php');
 
 // load config
-$config = YS_Config::Load();
+$config = \System\Config::Load();
 
 // get cache-dir (with trailing slash)
 $cache = $config->cache->directory . '/';

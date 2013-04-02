@@ -3,6 +3,7 @@
  * @author YAY!Scripting
  * @package files
  */
+namespace System\Helper;
 
 /**
  * Include SWIFT
@@ -17,7 +18,7 @@ require_once 'system/external/swift/swift_required.php';
  * @package helpers
  * @subpackage mail
  */
-class YSH_Mail extends YS_Helper
+class Mail extends \System\Helper
 {
 
 	/** Contains the mail-message
@@ -87,14 +88,14 @@ class YSH_Mail extends YS_Helper
 			try {
 					
 				// transport
-				$this->transport = Swift_SendmailTransport::newInstance('sendmail -bs');
+				$this->transport = \Swift_SendmailTransport::newInstance('sendmail -bs');
 				
 				// load mailer
-				$this->mailer = Swift_Mailer::newInstance($this->transport);
+				$this->mailer = \Swift_Mailer::newInstance($this->transport);
 				
-			} catch (Swift_Connection_Exception $ex) {
+			} catch (\Swift_Connection_Exception $ex) {
 				
-				throw new HelperException(1, 'Could not connect to the Sendmail-transport');
+				throw new \System\Exception\Helper(1, 'Could not connect to the Sendmail-transport');
 				
 			}
 		
@@ -104,7 +105,7 @@ class YSH_Mail extends YS_Helper
 			try {
 					
 				// transport
-				$this->transport = Swift_SmtpTransport::newInstance($server, $port, $security);
+				$this->transport = \Swift_SmtpTransport::newInstance($server, $port, $security);
 								
 				// login
 				if(!empty($username))
@@ -114,11 +115,11 @@ class YSH_Mail extends YS_Helper
 					$this->transport->setPassword($password);
 				
 				// load mailer
-				$this->mailer = Swift_Mailer::newInstance($this->transport);
+				$this->mailer = \Swift_Mailer::newInstance($this->transport);
 				
-			} catch (Swift_Connection_Exception $ex) {
+			} catch (\Swift_Connection_Exception $ex) {
 				
-				throw new HelperException(1, 'Could not connect to the SMTP-server: '.$ex);
+				throw new \System\Exception\Helper(1, 'Could not connect to the SMTP-server: '.$ex);
 				
 			}
 			
@@ -138,10 +139,10 @@ class YSH_Mail extends YS_Helper
 		
 		// check transport
 		if(is_null($this->transport) || is_null($this->mailer))
-			throw new HelperException(1, 'No SMTP-connection.');
+			throw new \System\Exception\Helper(1, 'No SMTP-connection.');
 	
 		// create message
-		$this->message = Swift_Message::newInstance();
+		$this->message = \Swift_Message::newInstance();
 		
 	}
 	
@@ -168,7 +169,7 @@ class YSH_Mail extends YS_Helper
 		
 		// check from
 		if(!is_array($from))
-			throw new HelperException(2, 'No sender has been selected.');
+			throw new \System\Exception\Helper(2, 'No sender has been selected.');
 		
 		// set sender
 		$this->message->setFrom($from);
@@ -208,15 +209,15 @@ class YSH_Mail extends YS_Helper
 				// send
 				return $this->mailer->batchSend($this->message);
 			
-			} catch (Swift_TransportException $ex) {
+			} catch (\Swift_TransportException $ex) {
 				
-				throw new HelperException(2, 'Could not connect to the SMTP-server (1001): <hr />'.nl2br($ex));
+				throw new \System\Exception\Helper(2, 'Could not connect to the SMTP-server (1001): <hr />'.nl2br($ex));
 				
 			}
 			
 		}
 		
-		throw new HelperException(1, 'smtp_connect or prepare_message has not been called.');		
+		throw new \System\Exception\Helper(1, 'smtp_connect or prepare_message has not been called.');		
 	
 	}
 	
@@ -239,13 +240,13 @@ class YSH_Mail extends YS_Helper
 	public function send($template, $subject, $to, $from, $variables = array(), $header = 'default', $footer = 'default', $attachments = array(), $langDir = null)
 	{	
 		// globals
-		$layout = YS_Layout::Load();
+		$layout = \System\Layout::Load();
 		
 		// assign variables
 		foreach ($variables as $key => $replacement) 
 			$layout->assign($key, $replacement);
 			
-		if (is_null ($langDir)) $langDir = YS_Language::getDir();
+		if (is_null ($langDir)) $langDir = \System\Language::getDir();
 		if (is_null($langDir) == false && substr($langDir, -1, 1) != '/') $langDir .= '/';
 		
 		// assign headers
@@ -286,7 +287,7 @@ class YSH_Mail extends YS_Helper
 		
 				$this->message->attach(
 				
-					Swift_Attachment::fromPath($attachment['src'])
+					\Swift_Attachment::fromPath($attachment['src'])
 						->setFileName($attachment['name'])
 					
 				);

@@ -3,7 +3,7 @@
  * @author YAY!Scripting
  * @package files
  */
-
+namespace System\Helper;
 
 /** File-helper
  * 
@@ -13,7 +13,7 @@
  * @package helpers
  * @subpackage file
  */
-class YSH_File extends YS_Helper
+class File extends \System\Helper
 {
 
 	/** Determine the MIME-type of an file
@@ -201,7 +201,7 @@ class YSH_File extends YS_Helper
 	{
 		
 		if (!$this->isImage($src))
-			throw new HelperException(1, 'Given file('.$src.') is not an image.');
+			throw new \System\Exception\Helper(1, 'Given file('.$src.') is not an image.');
 		
 		$sizes = getimagesize($src);
 		

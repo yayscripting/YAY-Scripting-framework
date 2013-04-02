@@ -3,7 +3,7 @@
  * @author YAY!Scripting
  * @package files
  */
-
+namespace System\Helper;
 
 /** HTTP-helper
  * 
@@ -13,7 +13,7 @@
  * @package helpers
  * @subpackage HTTP
  */
-class YSH_Http extends YS_Helper
+class Http extends \System\Helper
 {
 		
 	/** Perform a cURL-POST-request
@@ -40,7 +40,7 @@ class YSH_Http extends YS_Helper
 	    $ch = curl_init();
 	    curl_setopt_array($ch, ($options + $defaults));
 	    if( ! $result = @curl_exec($ch))
-	    	Throw new HelperException(1, curl_error($ch));
+	    	Throw new \System\Exception\Helper(1, curl_error($ch));
 	    
 	    curl_close($ch);
 	    return $result;
@@ -67,7 +67,7 @@ class YSH_Http extends YS_Helper
 	    $ch = curl_init();
 	    curl_setopt_array($ch, ($options + $defaults));
 	    if( ! $result = @curl_exec($ch))
-	    	Throw new HelperException(1, curl_error($ch));
+	    	Throw new \System\Exception\Helper(1, curl_error($ch));
 	        
 	    curl_close($ch);
 	    return $result;
@@ -160,7 +160,7 @@ class YSH_Http extends YS_Helper
 			
 		}
 		
-		throw new HelperException(1, "File doesn't exist!");
+		throw new \System\Exception\Helper(1, "File doesn't exist!");
 		
 	}
 	

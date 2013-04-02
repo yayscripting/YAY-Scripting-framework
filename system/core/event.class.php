@@ -3,7 +3,7 @@
  * @author YAY!Scripting
  * @package files
  */
-
+namespace System;
 
 /** Load the actual event holder */
 require_once 'application/events.class.php';
@@ -16,7 +16,7 @@ require_once 'application/events.class.php';
  * @package core
  * @subpackage Event
  */
-class YS_Events extends YS_Singleton
+class Events extends Singleton
 {
 	
 	/** Contains the event
@@ -34,7 +34,7 @@ class YS_Events extends YS_Singleton
 	public function __construct()
 	{
 
-		$this->event = new YS_Event();
+		$this->event = new \Application\Event();
 		
 	}
 	
@@ -95,7 +95,7 @@ class YS_Events extends YS_Singleton
  * @package core
  * @subpackage Event
  */
-class YS_Event_Data
+class Event
 {
 	
 	/** Config
@@ -148,11 +148,11 @@ class YS_Event_Data
 	public function __construct()
 	{
 		
-		$this->helpers = YS_Helpers::Load();
-		$this->models = YS_Models::Load();
-		$this->config = YS_Config::Load();
-		$this->layout = YS_Layout::Load();
-		$this->environment = YS_Environment::Load();
+		$this->helpers = Helpers::Load();
+		$this->models = Models::Load();
+		$this->config = Config::Load();
+		$this->layout = Layout::Load();
+		$this->environment = Environment::Load();
 		
 		$this->controller = (object) array();
 		
@@ -181,9 +181,9 @@ class YS_Event_Data
 	final public function __runtime()
 	{
 		
-		$this->layout->assign('lang', YS_Language::Load()->getLang());
-		$this->layout->assign('language', YS_Language::Load()->getLang());
-		$this->layout->assign('langURL', YS_Language::Load()->getURL());
+		$this->layout->assign('lang', Language::Load()->getLang());
+		$this->layout->assign('language', Language::Load()->getLang());
+		$this->layout->assign('langURL', Language::Load()->getURL());
 		
 	}
 	

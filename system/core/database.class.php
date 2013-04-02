@@ -3,7 +3,7 @@
  * @author YAY!Scripting
  * @package files
  */
-
+namespace System\Database;
 
 /** Database Managment
  * 
@@ -13,7 +13,7 @@
  * @package core
  * @subpackage Database
  */
-class YS_Database extends YS_Singleton
+class Connection extends \System\Singleton
 {
 	
 	/** MySQL link identifier
@@ -62,7 +62,7 @@ class YS_Database extends YS_Singleton
 	{
 		
 		// get config
-		$this->_config = YS_Config::Load();
+		$this->_config = \System\Config::Load();
 		
 		// basic value
 		$this->transaction = false;
@@ -85,12 +85,12 @@ class YS_Database extends YS_Singleton
 			
 			}
 			
-			throw new DatabaseException('Could not select the database: '.$database);
+			throw new \System\Exception\Database('Could not select the database: '.$database . '-' . mysql_error());
 		
 		}
 		
 		// error
-		throw new DatabaseException('Could not connect to the database.');
+		throw new \System\Exception\Database('Could not connect to the database.' . mysql_error());
 	
 	}
 	
@@ -251,7 +251,7 @@ class YS_Database extends YS_Singleton
 			return $result;
 		
 		// handle error	
-		throw new QueryException('Er is een query-fout opgetreden.<br /><br />'.htmlspecialchars($sql).'<br /><br />'.htmlspecialchars(mysql_error($this->db_connection)));		
+		throw new \System\Exception\Query('Er is een query-fout opgetreden.<br /><br />'.htmlspecialchars($sql).'<br /><br />'.htmlspecialchars(mysql_error($this->db_connection)));		
 		
 	}
 	
@@ -469,7 +469,7 @@ class YS_Database extends YS_Singleton
 			return false;
 		
 		// create new object
-		return new DatabaseData($query);
+		return new Data($query);
 	
 	}
 	
@@ -505,11 +505,11 @@ class YS_Database extends YS_Singleton
  * 
  * This class contains all data, selected by YS_Database
  *
- * @name DatabaseData
+ * @name Data
  * @package core
  * @subpackage Database
  */
-class DatabaseData
+class Data
 {
 	
 	/** MySQL link identifier.
@@ -664,7 +664,7 @@ class DatabaseData
 	public function decrypt($colum, $parameters)
 	{
 		
-		$helper = YS_Helpers::Load();
+		$helper = \System\Helpers::Load();
 		
 		foreach($this->rows as &$row) {
 			
