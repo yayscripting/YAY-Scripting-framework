@@ -2,7 +2,7 @@
 
 /** Example of STDIN controlling via CLI */
 
-namespace Application\Controller;
+namespace Application\Cli;
 
 class Stdin Extends \System\Controller 
 {

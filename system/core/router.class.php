@@ -110,7 +110,7 @@ class Router Extends Core
 		
 		// fire event
 		Events::Load()->fire('router');
-
+		
 		// get route
 		$route = $this->parseRoute();
 
@@ -153,7 +153,7 @@ class Router Extends Core
 
 			// check if he's not logged in.
 			if ($env->login && $env->loggedin() == false) {
-
+				
 				$controller = $route[0] = $env->login_controller;
 				$route[1] = 'index';
 
@@ -214,16 +214,38 @@ class Router Extends Core
 		
 					}
 					
-				} else {
-					
-					
-					
 				}
 				break;
 			
-			case 'cli':
-			
 			case 'cronjob':
+				require_once('application/com/cronjob/'.$route[0].'.php');
+				$class = '\Application\Cronjob\\'.ucfirst($route[0]);
+				
+				$method = (!empty($route[1])) ? $route[1] : 'index';
+				$method = strtolower($this->helpers->string->url_safe($method));
+				
+				// verify
+				if (method_exists($class, $method) === false && method_exists($class, '__call') === false) {
+	
+					$this->error->routerError();
+	
+				}
+				break;
+				
+			case 'cli':
+				require_once('application/com/cli/'.$route[0].'.php');
+				$class = '\Application\Cli\\'.ucfirst($route[0]);
+				
+				$method = (!empty($route[1])) ? $route[1] : 'index';
+				$method = strtolower($this->helpers->string->url_safe($method));
+				
+				// verify
+				if (method_exists($class, $method) === false && method_exists($class, '__call') === false) {
+	
+					$this->error->routerError();
+	
+				}
+				break;
 		
 		}
 		
@@ -252,6 +274,8 @@ class Router Extends Core
 		if (isset($ex))
 			$this->error->http_error(500, true, $ex->errorMessage().'<br /><br /><small>'.$ex->fullMessage().'</small>');
 
+		// done
+		Events::Load()->fire('__done');
 
 	}
 
@@ -262,7 +286,7 @@ class Router Extends Core
 	 */
 	private function parseRoute()
 	{
-
+		
 		// cut into segments
 		$route = (empty($_GET['ys_route'])) ? array() : $routes = explode('/', $_GET['ys_route']);
 		
@@ -282,13 +306,14 @@ class Router Extends Core
 
 				if (file_exists('application/language/'.preg_replace('/[^a-zA-Z]/s', '', $_GET['ys_lang']).'.lang.php'))
 					$route = array($_GET['ys_lang']);
-				else
+				else 
 					$this->error->http_error(404);
 
 
 			}
 			else if ($this->config->language->use_slash == false && isset($_GET['ys_lang'])) {
 
+				
 				$this->error->http_error(404);
 
 			}
@@ -329,6 +354,7 @@ class Router Extends Core
 
 			} else if ($this->config->language->language_on && empty($_GET['ys_lang']) && count($route) == 1 && $this->config->language->use_slash) {
 
+
 				$this->helpers->http->redirect('/'.$route[0].'/');
 
 			}
@@ -346,8 +372,8 @@ class Router Extends Core
 			}
 
 		}
-
-
+		
+		
 		// get environment
 		if ($this->mode == 'browser') {
 			
@@ -368,29 +394,38 @@ class Router Extends Core
 				$route[1] = 'index';
 				
 		}
-		
 		// COM-routing
 		else if ($this->mode == 'com') {
 			
 			$env = Environment::Load();
 			$env->setRoute(array());
 			
-			if (!($route[0] == 'application' || $route[0] == 'system'))
-				throw new Exception\Route('Incorrect COM-file');
+			if ($route[0] == 'system') {
 				
-			$source = $route[0];
-			
-			if (($route[0] == 'application' || $route[0] == 'system') && $route[1] == 'com') {
+				die('Cannot load system-COM through router');
 				
-				array_shift($route);
-				array_shift($route);
+			} else {
+				
+				array_unshift($route, 'application');
 				
 			}
 			
-			array_unshift($route, $source);
+		}
+		// CRONJOB
+		else if ($this->mode == 'cronjob') {
+			
+			if ($this->config->language->language_on) {		
+
+				// inform the language-class
+				$lang = Language::Load();
+				$lang->setRoute($route);
+
+				// delete language-prefix
+				array_shift($route);
+
+			}
 			
 		}
-		
 		return $route;
 
 	}

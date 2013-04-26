@@ -224,8 +224,14 @@ class Environment extends Singleton
 		if (empty($_SESSION['environment'][$env]))
 			return false;
 			
-		if ($_SESSION['environment'][$env] != $_SERVER['REMOTE_ADDR'])
-			session_regenerate_id(false);
+		if ($_SESSION['environment'][$env] != $_SERVER['REMOTE_ADDR']) {
+			
+			unset($_SESSION['environment']);
+			session_regenerate_id(true);
+			setcookie("ysf_session", "", time() - 3600);
+			setcookie('ysf_session', session_id(), time() + 126147624/*+4years*/); 
+			
+		}
 		
 		// check
 		return ($_SESSION['environment'][$env] == $_SERVER['REMOTE_ADDR']);

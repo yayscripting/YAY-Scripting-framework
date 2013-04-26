@@ -190,7 +190,29 @@ class Event
 	final public function __done()
 	{
 		
-		$_SESSION['LAST_LOADED'] = implode('/',$this->controller->route) . '.html';
+		$lang = $this->controller->language->getUrl();
+		if (is_null($lang)) {
+			
+			$lang = '/';
+			
+		} else {
+			
+			$lang .= '/';
+			
+		}
+		
+		$env = $this->controller->environment->get();
+		if ($env  === false) {
+			
+			$env = '';
+			
+		} else {
+			
+			$env = $env . '/';
+			
+		}
+		
+		$_SESSION['LAST_LOADED'] = $lang.$env.implode('/',$this->controller->route) . '.html';
 		
 	}
 
