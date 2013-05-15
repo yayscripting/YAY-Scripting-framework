@@ -42,7 +42,7 @@ class Encryption extends \System\Helper
 		
 		// determine genkeyAlgorithm
 		if (is_null($genKeyAlgorithm))
-			$genKeyAlgorithm = $this->config->encryption->encryption_hash_algorithm;
+			$genKeyAlgorithm = $this->config->security->encryption_hash_algorithm;
 		
 		// generate key/IV
 		$key = $this->pbkdf2($key, $salt, mcrypt_enc_get_key_size($module),  2000 + ( mcrypt_enc_get_iv_size($module) * ( 1 + ceil(abs((mcrypt_enc_get_key_size($module) / $multiplyConstant))))), $genKeyAlgorithm);
@@ -93,7 +93,7 @@ class Encryption extends \System\Helper
 		
 		// determine genkeyAlgorithm
 		if (is_null($genKeyAlgorithm))
-			$genKeyAlgorithm = $this->config->encryption->encryption_hash_algorithm;
+			$genKeyAlgorithm = $this->config->security->encryption_hash_algorithm;
 		
 		// split IV from encrypted data
 		$iv	= "";
@@ -223,7 +223,7 @@ class Encryption extends \System\Helper
 		
 		// default hash-type
 		if (is_null($algorithm))
-			$algorithm = $this->config->encryption->hash_algorithm;
+			$algorithm = $this->config->security->hash_algorithm;
 		
 		// get hashlength
 		$Hlength = strlen(hash($algorithm, null, true));
