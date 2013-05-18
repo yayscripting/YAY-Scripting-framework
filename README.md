@@ -1,5 +1,4 @@
-*This framework is being developed and used by YAY!Scripting http://yayscripting.nl.*
-
+[![YAY!Scripting](http://yayscripting.nl/images/logo_medium.png)](http://yayscripting.nl?ref=github)
 ### What
 YAY!Scripting Framework does include the following functions and uses:
 - Build your application based on the "model-view-controller" structure
