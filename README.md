@@ -8,12 +8,20 @@ YAY!Scripting Framework does include the following functions and uses:
 - Use one of the many [helpers](https://github.com/yayscripting/YAY-Scripting-framework/tree/master/system/helpers)
 - Caching made easy for javascript, css and templates
 - Find errors in your application with very accurate error information
-- Create a command line based application with all the function of th YAY!Scripting framework
+- Create a command line based application with all the function of the YAY!Scripting framework
+- Add event based PHP-code to be executed
+- Build forms with magic, use [Xinha](http://trac.xinha.org/)
+- All configuration in one place and easily extentable for your own uses
 - Many easy to use - and very safe - database functions
+- Sending mails never has been easier with [Swift](http://swiftmailer.org/) combined with the YAY!Scripting framework
+- Reaching your application via Javascript has been made easy via the COM
 - Use encryption in your database with simply adding a couple of configuration variabels in your models
 - Building a multiple languge website is no problem with the built in language functions
 - CSS with ease using [LESS](http://lesscss.org/)
-- 
+- Extend YAY!Scripting framework with your own classes without any limitations
+- If so configured, automatically include [Mootools](http://mootools.net/)
+- Add an unlimited amount of enviroments to your application
+- *And just many more...*
 
 ### License
 The copyright of this framework can be found here: http://creativecommons.org/licenses/by-nc/3.0/
