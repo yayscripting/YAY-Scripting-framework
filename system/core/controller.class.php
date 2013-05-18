@@ -168,7 +168,7 @@ class Controller
  		$this->event->fire('loadClass', $className);
  		
  		// include class
- 		require 'application/classes/'.$className.'.class.php';
+ 		require_once 'application/classes/'.$className.'.class.php';
  		
  		
  		// create new object
