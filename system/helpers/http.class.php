@@ -122,7 +122,7 @@ class Http extends \System\Helper
 		header("Location: ".$url);
 		
 		// stop script running
-		exit();
+		exit(0);
 	
 	}
 	
@@ -156,7 +156,7 @@ class Http extends \System\Helper
 			ob_start();
 			echo file_get_contents($file);
 			
-			exit(254);
+			exit(0);
 			
 		}
 		
