@@ -26,6 +26,7 @@ YAY!Scripting Framework does include the following functions and uses:
 We are currently writing our GitHub wiki pages. Currently available:
 
 1. [Controllers](https://github.com/yayscripting/YAY-Scripting-framework/wiki/2.1.-controllers)
+2. [Models](https://github.com/yayscripting/YAY-Scripting-framework/wiki/2.2.-models)
 
 
 
