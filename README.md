@@ -22,6 +22,13 @@ YAY!Scripting Framework does include the following functions and uses:
 - Add an unlimited amount of environments to your application
 - *And just many more...*
 
+### How
+We are currently writing our GitHub wiki pages. Currently available:
+
+1. [Controllers](https://github.com/yayscripting/YAY-Scripting-framework/wiki/2.1.-controllers)
+
+
+
 ### License
 The copyright of this framework can be found here: http://creativecommons.org/licenses/by-nc/3.0/
 Full copyrights can be found in the LICENSE-file.
@@ -36,7 +43,7 @@ we will try to help you as good as possible.
 
 ### Bugs & Docs
 Bugs can be issued in the issue-part of github, documentation is available at http://phpdoc.yayscripting.nl/.
-Please note that the documentation is not as elaborated as I wish it would be.
+Please note that the documentation is not as elaborated as we wish it should be.
 
 ### Contact
 Contact us at contact@yayscripting.nl, or contact one of our developers:
