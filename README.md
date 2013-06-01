@@ -27,7 +27,7 @@ We are currently writing our GitHub wiki pages. Currently available:
 
 1. [Controllers](https://github.com/yayscripting/YAY-Scripting-framework/wiki/2.1.-controllers)
 2. [Models](https://github.com/yayscripting/YAY-Scripting-framework/wiki/2.2.-models)
-
+3. [Views](https://github.com/yayscripting/YAY-Scripting-framework/wiki/2.3.-views)
 
 
 ### License
