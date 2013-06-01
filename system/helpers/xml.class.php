@@ -6,10 +6,6 @@
  
 namespace System\Helper;
 
-require_once 'system/external/xml.php';
-\System\External\Xml\Array2XML::init();
-\System\External\Xml\XML2Array::init();
-
 /** Xml-helper
  * 
  * This helper can be used to transform XML to arrays and vica-versa
@@ -25,18 +21,105 @@ class Xml extends \System\Helper
 	public function Array2XML($array, $nodeName = 'Document')
 	{
 		
-		$xml = \System\External\Xml\Array2XML::createXML($nodeName, $array);
-		return $xml;
+		$node = new \SimpleXMLElement('<'.$nodeName.'></'.$nodeName.'>');
+		$node = $this->treeAdd($array, $node);
+		
+		return $node;
 		
 	}
 	
-	// See http://www.lalit.org/lab/convert-xml-to-array-in-php-xml2array
-	public function XML2Array($xml)
+	private function treeAdd($array, $parent)
 	{
 		
-		$array = \System\External\Xml\Array2XML::createArray($xml);
-		return $array;
+		if (isset($array['@attributes']) && isset($array['@values'])) {
+			
+			foreach ($array['@attributes'] as $aKey => $aValue) {
+				
+				$parent->addAttribute($aKey, $aValue);
+						
+			}
+			
+			if (is_array($array['@values'])) {
+				
+				$array = $array['@values'];
+			
+			}else {
+				
+				$text = $parent->createTextNode($array['@values']);
+				$parent->addChild($text);
+				return;
+				
+			}
+			
+		}
+		
+		foreach ($array as $key => $value) {
+			
+			if (is_Array($value)) {
+				
+				// @attributes/@value
+				if (isset($value['@attributes']) && isset($value['@values'])) {
+					
+					if (is_array($value['@values'])) {
+						
+						$child = $parent->addChild($key);
+						$this->treeAdd($value['@values'], $child);
+						
+					}else {
+						
+						if (is_bool($value))
+							$value = ($value) ? 'true' : 'false';
+						
+						$child = $parent->addChild($key, $value['@values']);
+						
+					}
+					
+					foreach ($value['@attributes'] as $aKey => $aValue) {
+				
+						$child->addAttribute($aKey, $aValue);
+								
+					}
+					
+					
+				// associatieve array
+				}else if ($this->is_assoc($value)) {
+					
+					$child = $parent->addChild($key);
+					$this->treeAdd($value, $child);
+				
+				// numeric array	
+				} else {
+					
+					foreach ($value as $nValue) {
+						
+						$child = $parent->addChild($key);
+						$this->treeAdd($nValue, $child);
+						
+					}
+					
+				}
+				
+			} else {
+				
+				if (is_bool($value))
+					$value = ($value) ? 'true' : 'false';
+				
+				$parent->addChild($key, $value);
+				
+			}
+			
+		}
+		
+		return $parent;
 		
 	}
+	
+	// Thanks Captain kurO, StackOverflow
+	private function is_assoc(array $array) {
+		
+		return (bool)count(array_filter(array_keys($array), 'is_string'));
+		
+	}
+	
 	
 }
