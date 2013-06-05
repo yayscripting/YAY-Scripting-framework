@@ -94,7 +94,7 @@ $last_modified_time = filemtime($filepath);
 
 
 // headers
-header("Content-type: text/css");
+header("Content-type: text/javascript");
 header("Cache-control: max-age");
 header("Expires: ".gmdate("r", strtotime("+1 year")));
 header("ETag: ".$etag);
