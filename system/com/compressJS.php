@@ -88,11 +88,25 @@ if ($new === true) {
 	
 }
 
+// get etag
+$etag = sha1($content);
+$last_modified_time = filemtime($filepath); 
+
+
 // headers
-header("Content-type: text/javascript");
+header("Content-type: text/css");
 header("Cache-control: max-age");
-header("Expires: max-age");
-header("ETag: ".sha1($content));
+header("Expires: ".gmdate("r", strtotime("+1 year")));
+header("ETag: ".$etag);
+header("Last-Modified: ".gmdate("r", $last_modified_time)); 
+
+// exit if not modified
+if (@strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE']) == $last_modified_time || @trim($_SERVER['HTTP_IF_NONE_MATCH']) == $etag) {
+
+	header("HTTP/1.1 304 Not Modified"); 
+	exit; 
+    
+}
 
 // echo
 echo $content;

@@ -55,17 +55,18 @@ if ($new === true) {
 	
 	$content = file_get_contents($filepath);
 	
-	// lessPHP
-	if ($config->compress->use_less === true) {
-		
-		require 'system/external/lessphp/lessc.inc.php';
-			
-		$less = new lessc();
-		$content = $less->parse($content);
-		
-	}
-	
 	if ($config->compress->css === true) {
+		
+		// lessPHP
+		if ($config->compress->use_less === true) {
+			
+			require 'system/external/lessphp/lessc.inc.php';
+			
+			$less = new lessc();
+			$content = $less->parse($content);
+			
+		}
+		
 		// strip comments/compress
 		$content = preg_replace("/\/\*[^!](.+?)\*\//s", "", $content);
 		$content = preg_replace("/[\n\t\r]/", "", $content);
@@ -73,6 +74,15 @@ if ($new === true) {
 		
 		// add newline after special comment (/*!)
 		$content = preg_replace("/(\/\*[!\*].+?\*\/)/s", "\n".'$1'."\n", $content);
+	
+	// just lessphp?	
+	} else if ($config->compress->use_less === true) {
+		
+		require 'system/external/lessphp/lessc.inc.php';
+			
+		$less = new lessc();
+		$content = $less->parse($content);
+		
 	}
 	
 	// cache
@@ -90,11 +100,26 @@ if ($new === true) {
 	
 }	
 
+// get etag
+$etag = sha1($content);
+$last_modified_time = filemtime($filepath); 
+
+
 // headers
 header("Content-type: text/css");
 header("Cache-control: max-age");
-header("Expires: max-age");
-header("ETag: ".sha1($content));
+header("Expires: ".gmdate("r", strtotime("+1 year")));
+header("ETag: ".$etag);
+header("Last-Modified: ".gmdate("r", $last_modified_time)); 
+
+// exit if not modified
+if (@strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE']) == $last_modified_time || @trim($_SERVER['HTTP_IF_NONE_MATCH']) == $etag) {
+
+	header("HTTP/1.1 304 Not Modified"); 
+	exit; 
+    
+}
+
 
 // echo
 echo $content;
