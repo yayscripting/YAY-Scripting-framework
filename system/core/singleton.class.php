@@ -139,7 +139,7 @@ class Singleton
 	{
 		
 		if (empty(self::$instances[get_class($this)]) !== true && self::$instances[get_class($this)] !== $this)
-			throw new Exception\Singleton("The class '".get_class($this)."' is a singleton class, and can one be created once.");
+			throw new Exception\Singleton("The class '".get_class($this)."' is a singleton class, and can only be created once.");
 		
 		if (empty(self::$instances[get_class($this)]))
 			self::$instances[get_class($this)] = $this;
